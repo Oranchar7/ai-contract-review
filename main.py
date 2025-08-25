@@ -224,6 +224,7 @@ async def upload_contract(
     email: str = Form(..., description="Email is required for user identification"),
     jurisdiction: str = Form(..., description="Jurisdiction is required (e.g., 'US-NY', 'CA-ON')"),
     contract_type: str = Form(..., description="Contract type is required (e.g., 'NDA', 'MSA', 'Other')"),
+    other_contract_type: str = Form(None, description="Specify contract type if 'Other' is selected"),
     user = Depends(get_current_user)
 ):
     """
@@ -286,9 +287,18 @@ async def upload_contract(
                 "contract_type": contract_type
             })
             
-            # Store document metadata in Firebase
-            vector_id = f"vector_{datetime.now().timestamp()}"
+            # Store secure contract submission in 'contracts' collection
             user_email = user.get('email', email) if user else email
+            contract_id = await firebase_client.store_contract_submission(
+                email=user_email,
+                jurisdiction=jurisdiction,
+                contract_type=contract_type,
+                other_contract_type=other_contract_type,
+                filename=filename
+            )
+            
+            # Also store legacy document metadata for backward compatibility
+            vector_id = f"vector_{datetime.now().timestamp()}"
             doc_meta_id = await firebase_client.store_document_metadata(
                 filename=filename,
                 email=user_email,
@@ -297,6 +307,7 @@ async def upload_contract(
                 vector_id=vector_id
             )
             
+            upload_result["contract_id"] = contract_id
             upload_result["document_metadata_id"] = doc_meta_id
             return upload_result
             
@@ -542,6 +553,21 @@ async def get_user_history(user = Depends(require_auth)):
         return {"success": True, "history": history}
     except Exception as e:
         return {"error": f"Failed to retrieve history: {str(e)}"}
+
+@app.get("/admin/contracts")
+async def get_all_contracts(user = Depends(require_auth)):
+    """Get all contract submissions (admin only)"""
+    try:
+        # Verify admin role
+        if not user.get('admin', False):
+            raise HTTPException(status_code=403, detail="Admin access required")
+        
+        contracts = await firebase_client.get_all_contracts()
+        return {"success": True, "contracts": contracts}
+    except HTTPException:
+        raise
+    except Exception as e:
+        return {"error": f"Failed to retrieve contracts: {str(e)}"}
 
 @app.get("/user/documents")
 async def get_user_documents(user = Depends(require_auth)):

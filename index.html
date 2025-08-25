@@ -295,6 +295,17 @@
                   </div>
                 </div>
               </div>
+              
+              <!-- Other Contract Type Input (hidden by default) -->
+              <div class="row" id="otherContractTypeRow" style="display: none;">
+                <div class="col-12">
+                  <div class="mb-3">
+                    <label for="otherContractType" class="form-label">Specify Contract Type</label>
+                    <input type="text" class="form-control" id="otherContractType" 
+                           placeholder="Please specify the contract type">
+                  </div>
+                </div>
+              </div>
 
               <button type="submit" class="btn btn-primary w-100">
                 <i class="fas fa-search me-2"></i>Analyze Contract
@@ -369,12 +380,21 @@
         showStatus('Please select a contract type.', 'error');
         return;
       }
+      if (contractType.value === 'Other' && !document.getElementById('otherContractType').value.trim()) {
+        showStatus('Please specify the contract type when selecting "Other".', 'error');
+        return;
+      }
 
       const formData = new FormData();
       formData.append('file', file);
       formData.append('jurisdiction', jurisdiction.value); // Jurisdiction is now required
       formData.append('contract_type', contractType.value); // Contract type is now required
       formData.append('email', email.value); // Email is now required
+      
+      // Add other contract type if specified
+      if (contractType.value === 'Other') {
+        formData.append('other_contract_type', document.getElementById('otherContractType').value.trim());
+      }
 
       showStatus('Analyzing your contract... This may take a few minutes.', 'loading');
       analysisReport.innerHTML = '';
@@ -588,6 +608,20 @@
       html += '</div>';
       analysisReport.innerHTML = html;
     }
+    
+    // Handle "Other" contract type selection
+    contractType.addEventListener('change', function() {
+      const otherRow = document.getElementById('otherContractTypeRow');
+      if (this.value === 'Other') {
+        otherRow.style.display = 'block';
+        document.getElementById('otherContractType').required = true;
+      } else {
+        otherRow.style.display = 'none';
+        document.getElementById('otherContractType').required = false;
+        document.getElementById('otherContractType').value = '';
+      }
+    });
+
   </script>
 </body>
 </html>

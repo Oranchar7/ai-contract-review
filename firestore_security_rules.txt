@@ -1,0 +1,55 @@
+FIRESTORE SECURITY RULES
+========================
+
+Copy and paste these rules into your Firebase Console:
+Go to Firestore Database > Rules tab
+
+```
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /contracts/{docId} {
+      allow create: if true;  
+      allow read, update, delete: if request.auth.token.admin == true;
+    }
+  }
+}
+```
+
+ADMIN SETUP INSTRUCTIONS
+========================
+
+1. Go to Firebase Console: https://console.firebase.google.com/project/contract-analyzer-967dc
+
+2. Enable Authentication:
+   - Click "Authentication" in the left sidebar
+   - Go to "Sign-in method" tab
+   - Enable "Email/Password" provider
+   - Create your admin user account
+
+3. Set Admin Role:
+   - Go to "Firestore Database"
+   - Create a new collection called "users"
+   - Add a document with your user UID as the document ID
+   - Add a field: "admin" with value: true
+
+4. Apply Security Rules:
+   - Go to "Firestore Database" > "Rules" tab
+   - Replace the content with the rules above
+   - Click "Publish"
+
+5. Index for Performance:
+   - Go to "Firestore Database" > "Indexes" tab
+   - Create a composite index for collection "contracts":
+     - Field: "timestamp" (Descending)
+     - This ensures fast sorting of submissions
+
+ACCESS CONTROL SUMMARY
+======================
+
+✅ Anyone can submit contract forms (create)
+✅ Only users with admin: true can read/export data
+✅ No public access to submitted data
+✅ Timestamps are indexed for efficient sorting
+
+Admin API Endpoint: GET /admin/contracts
+(Requires valid Firebase authentication token with admin role)

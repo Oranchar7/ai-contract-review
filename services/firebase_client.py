@@ -254,6 +254,47 @@ class FirebaseClient:
             print(f"Failed to verify user: {str(e)}")
             return None
     
+    async def store_contract_submission(
+        self,
+        email: str,
+        jurisdiction: str,
+        contract_type: str,
+        other_contract_type: str = None,
+        filename: str = None
+    ) -> str:
+        """Store contract form submission in secure 'contracts' collection"""
+        if not self.db:
+            return f"mock_contract_{datetime.now().timestamp()}"
+        
+        try:
+            # Build contract submission data
+            contract_data = {
+                'email': email,
+                'jurisdiction': jurisdiction,
+                'contractType': contract_type,
+                'timestamp': datetime.now(timezone.utc)
+            }
+            
+            # Add otherContractType if "Other" was selected
+            if contract_type == "Other" and other_contract_type:
+                contract_data['otherContractType'] = other_contract_type
+            
+            # Add filename if provided (for uploads)
+            if filename:
+                contract_data['filename'] = filename
+                contract_data['hasUpload'] = True
+            else:
+                contract_data['hasUpload'] = False
+            
+            # Store in 'contracts' collection with auto-generated ID
+            doc_ref = self.db.collection('contracts').add(contract_data)
+            print(f"Contract submission stored with ID: {doc_ref[1].id}")
+            return doc_ref[1].id
+            
+        except Exception as e:
+            print(f"Failed to store contract submission: {str(e)}")
+            return f"error_contract_{datetime.now().timestamp()}"
+    
     async def store_document_metadata(
         self,
         filename: str,
@@ -262,7 +303,7 @@ class FirebaseClient:
         contract_type: str,
         vector_id: str
     ) -> str:
-        """Store document metadata in Firestore"""
+        """Store document metadata in Firestore (legacy method)"""
         if not self.db:
             return f"mock_doc_{datetime.now().timestamp()}"
         
@@ -315,6 +356,27 @@ class FirebaseClient:
         except Exception as e:
             print(f"Failed to store chat history: {str(e)}")
             return f"error_chat_{datetime.now().timestamp()}"
+    
+    async def get_all_contracts(self, limit: int = 100) -> List[Dict[str, Any]]:
+        """Get all contract submissions (admin only)"""
+        if not self.db:
+            return []
+        
+        try:
+            # Get all contracts from the secure collection
+            docs = self.db.collection('contracts').order_by('timestamp', direction=firestore.Query.DESCENDING).limit(limit).stream()
+            
+            contracts = []
+            for doc in docs:
+                contract = doc.to_dict()
+                contract['id'] = doc.id
+                contracts.append(contract)
+            
+            return contracts
+            
+        except Exception as e:
+            print(f"Failed to retrieve contracts: {str(e)}")
+            return []
     
     async def get_user_chat_history(self, email: str, limit: int = 20) -> List[Dict[str, Any]]:
         """Get chat history for a user"""
