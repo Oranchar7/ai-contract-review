@@ -75,7 +75,7 @@ async def analyze_contract(
     """
     try:
         # Validate file type
-        if not validate_file_type(file.filename):
+        if not file.filename or not validate_file_type(file.filename):
             raise HTTPException(
                 status_code=400, 
                 detail="Invalid file type. Only PDF and DOCX files are supported."
@@ -89,14 +89,16 @@ async def analyze_contract(
             )
         
         # Create temporary file
-        with tempfile.NamedTemporaryFile(delete=False, suffix=f".{file.filename.split('.')[-1]}") as temp_file:
+        filename = file.filename or "unknown"
+        file_extension = filename.split('.')[-1] if '.' in filename else 'txt'
+        with tempfile.NamedTemporaryFile(delete=False, suffix=f".{file_extension}") as temp_file:
             content = await file.read()
             temp_file.write(content)
             temp_file_path = temp_file.name
         
         try:
             # Extract text from file
-            extracted_text = await file_processor.extract_text(temp_file_path, file.filename)
+            extracted_text = await file_processor.extract_text(temp_file_path, filename)
             
             if not extracted_text.strip():
                 raise HTTPException(
@@ -110,7 +112,7 @@ async def analyze_contract(
             # Store analysis in Firebase
             document_id = await firebase_client.store_analysis(
                 analysis_result.dict(),
-                file.filename,
+                filename,
                 email
             )
             
@@ -122,7 +124,7 @@ async def analyze_contract(
                 await notification_service.send_analysis_notification(
                     email, 
                     analysis_result, 
-                    file.filename
+                    filename
                 )
             
             return analysis_result

@@ -50,7 +50,10 @@ class AIAnalyzer:
             )
             
             # Parse the response
-            analysis_data = json.loads(response.choices[0].message.content)
+            content = response.choices[0].message.content
+            if not content:
+                raise Exception("AI response was empty")
+            analysis_data = json.loads(content)
             
             # Convert to structured response
             return self._parse_analysis_response(analysis_data)
@@ -184,7 +187,10 @@ class AIAnalyzer:
                 temperature=0.2
             )
             
-            return json.loads(response.choices[0].message.content)
+            content = response.choices[0].message.content
+            if not content:
+                return {"error": "AI response was empty"}
+            return json.loads(content)
             
         except Exception as e:
             return {

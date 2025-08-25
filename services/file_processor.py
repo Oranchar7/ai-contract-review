@@ -67,10 +67,11 @@ class FileProcessor:
                 
                 return '\n\n'.join(text_content)
                 
-        except PyPDF2.errors.PdfReadError as e:
-            raise Exception(f"Invalid PDF file: {str(e)}")
-        except Exception as e:
-            raise Exception(f"Error reading PDF: {str(e)}")
+        except Exception as pdf_error:
+            if "PdfReadError" in str(type(pdf_error)) or "PDF" in str(pdf_error):
+                raise Exception(f"Invalid PDF file: {str(pdf_error)}")
+            else:
+                raise Exception(f"Error reading PDF: {str(pdf_error)}")
     
     async def _extract_docx_text(self, file_path: str) -> str:
         """Extract text from DOCX file"""

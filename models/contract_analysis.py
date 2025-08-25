@@ -25,7 +25,7 @@ class ContractAnalysisResponse(BaseModel):
     document_id: str = Field(default="", description="Firebase document ID for this analysis")
     
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "risk_score": 7,
                 "summary": "This contract contains several high-risk clauses that heavily favor the other party, with limited protections for your interests.",

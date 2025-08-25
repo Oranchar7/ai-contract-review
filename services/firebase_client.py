@@ -1,7 +1,7 @@
 import os
 import json
 from datetime import datetime, timezone
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 import firebase_admin
 from firebase_admin import credentials, firestore
 from google.cloud.firestore import Client
@@ -127,7 +127,7 @@ class FirebaseClient:
             query = (
                 self.db.collection('contract_analyses')
                 .where('email', '==', email)
-                .order_by('created_at', direction=firestore.Query.DESCENDING)
+                .order_by('created_at', direction='DESCENDING')
                 .limit(limit)
             )
             
