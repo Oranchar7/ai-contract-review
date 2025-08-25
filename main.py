@@ -400,23 +400,53 @@ Please provide a helpful, friendly response based on the contract content above.
                     yield "data: [DONE]\n\n"
                     return
             
-            # Fallback to general contract chat with streaming
-            stream = rag_service.openai_client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": "You are a helpful contract attorney providing general legal guidance. Be conversational and supportive. Always provide complete responses."},
-                    {"role": "user", "content": f"Please help with this contract question: {query}. Jurisdiction: {jurisdiction or 'Not specified'}. Contract type: {contract_type or 'Not specified'}."}
-                ],
-                stream=True,
-                max_tokens=1500,
-                temperature=0.4
-            )
+            # Check if this is a greeting or simple question
+            greeting_words = ['hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening', 'greetings']
+            is_greeting = any(word in query.lower() for word in greeting_words)
             
-            for chunk in stream:
-                if chunk.choices[0].delta.content is not None:
-                    content = chunk.choices[0].delta.content
-                    full_response += content
-                    yield f"data: {content}\n\n"
+            if is_greeting or len(query.strip()) < 20:
+                # Handle greetings with a friendly welcome message
+                welcome_response = """Hello! Welcome to our AI Contract Review service! 👋
+
+I'm your friendly contract assistant, here to help you navigate the world of contracts with confidence. Here's what I can do for you:
+
+📋 **Contract Analysis**: Upload your contract documents (PDF or Word) and I'll provide detailed risk assessment, identify problematic clauses, and suggest improvements.
+
+💬 **Legal Guidance**: Ask me questions about contract terms, legal concepts, or get advice before signing anything.
+
+🔍 **Risk Assessment**: I'll help you understand potential risks and missing protections in your agreements.
+
+✅ **Best Practices**: Get tips on what to look for in different types of contracts (NDAs, employment agreements, service contracts, etc.).
+
+**How may I help you today?** You can:
+- Upload a contract for analysis using the form on the left
+- Ask me specific questions about contract terms or legal concepts
+- Get guidance on what to watch out for in different types of agreements
+
+*Please note: This service provides educational guidance and should not replace professional legal advice. Always consult with a qualified attorney for important legal decisions.*
+
+What would you like to know about contracts?"""
+                
+                full_response = welcome_response
+                yield f"data: {welcome_response}\n\n"
+            else:
+                # Handle contract-specific questions
+                stream = rag_service.openai_client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": "You are a helpful contract attorney providing general legal guidance. Be conversational and supportive. Always provide complete responses."},
+                        {"role": "user", "content": f"Please help with this contract question: {query}. Jurisdiction: {jurisdiction or 'Not specified'}. Contract type: {contract_type or 'Not specified'}."}
+                    ],
+                    stream=True,
+                    max_tokens=1500,
+                    temperature=0.4
+                )
+                
+                for chunk in stream:
+                    if chunk.choices[0].delta.content is not None:
+                        content = chunk.choices[0].delta.content
+                        full_response += content
+                        yield f"data: {content}\n\n"
             
             # Store chat history in Firebase
             try:
