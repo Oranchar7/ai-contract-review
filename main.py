@@ -1,9 +1,11 @@
 import os
 import tempfile
+from datetime import datetime
 from typing import Optional
 from fastapi import FastAPI, File, UploadFile, Form, Request, HTTPException
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
+from sse_starlette.sse import EventSourceResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
@@ -59,9 +61,9 @@ async def read_root(request: Request):
 @app.post("/analyze")
 async def analyze_contract(
     file: UploadFile = File(...),
-    email: Optional[str] = Form(None),
-    jurisdiction: Optional[str] = Form(None),
-    contract_type: Optional[str] = Form(None)
+    email: str = Form(..., description="Email is required for notifications"),
+    jurisdiction: str = Form(..., description="Jurisdiction is required (e.g., 'US-NY', 'CA-ON')"),
+    contract_type: str = Form(..., description="Contract type is required (e.g., 'NDA', 'MSA', 'Other')")
 ):
     """
     Analyze uploaded contract file and return structured analysis
@@ -128,13 +130,14 @@ async def analyze_contract(
             
             # Store analysis in Firebase
             document_id = await firebase_client.store_analysis(
-                analysis_result.dict(),
+                analysis_result if isinstance(analysis_result, dict) else analysis_result.dict(),
                 filename,
                 email
             )
             
-            # Add document ID to response
-            analysis_result.document_id = document_id
+            # Add document ID to response if analysis_result has dict method
+            if hasattr(analysis_result, 'document_id'):
+                analysis_result.document_id = document_id
             
             # Send notification if email provided
             if email:
@@ -168,8 +171,9 @@ async def analyze_contract(
 @app.post("/upload_contract")
 async def upload_contract(
     file: UploadFile = File(...),
-    jurisdiction: Optional[str] = Form(None),
-    contract_type: Optional[str] = Form(None)
+    email: str = Form(..., description="Email is required for user identification"),
+    jurisdiction: str = Form(..., description="Jurisdiction is required (e.g., 'US-NY', 'CA-ON')"),
+    contract_type: str = Form(..., description="Contract type is required (e.g., 'NDA', 'MSA', 'Other')")
 ):
     """
     Upload and process contract for RAG analysis
@@ -215,16 +219,33 @@ async def upload_contract(
                     detail="No text could be extracted from the file. Please ensure the file is not corrupted or password-protected."
                 )
             
-            # Upload to RAG service
-            upload_result = await rag_service.upload_contract(extracted_text, filename)
+            # Upload to RAG service with metadata
+            upload_result = await rag_service.upload_contract(
+                extracted_text, 
+                filename,
+                email=email,
+                jurisdiction=jurisdiction,
+                contract_type=contract_type
+            )
             
-            # Add optional context info
-            if jurisdiction or contract_type:
-                upload_result.update({
-                    "jurisdiction": jurisdiction,
-                    "contract_type": contract_type
-                })
+            # Context info is now stored in RAG service during upload
+            upload_result.update({
+                "email": email,
+                "jurisdiction": jurisdiction,
+                "contract_type": contract_type
+            })
             
+            # Store document metadata in Firebase
+            vector_id = f"vector_{datetime.now().timestamp()}"
+            doc_meta_id = await firebase_client.store_document_metadata(
+                filename=filename,
+                email=email,
+                jurisdiction=jurisdiction,
+                contract_type=contract_type,
+                vector_id=vector_id
+            )
+            
+            upload_result["document_metadata_id"] = doc_meta_id
             return upload_result
             
         finally:
@@ -239,6 +260,76 @@ async def upload_contract(
             "status": "error",
             "error": f"Upload failed: {str(e)}"
         }
+
+@app.post("/chat")
+async def chat_streaming(
+    query: str = Form(...),
+    jurisdiction: Optional[str] = Form(None),
+    contract_type: Optional[str] = Form(None)
+):
+    """Streaming chat endpoint with RAG integration"""
+    async def generate_stream():
+        try:
+            # Check if we have uploaded documents for RAG
+            if rag_service.index is not None and rag_service.index.ntotal > 0:
+                # Use RAG-enhanced response
+                relevant_chunks = await rag_service._retrieve_relevant_chunks(query, k=5)
+                
+                if relevant_chunks:
+                    # Build context from retrieved chunks
+                    context = "\n\n".join([
+                        f"[Document Section {i+1}]:\n{chunk['text']}"
+                        for i, chunk in enumerate(relevant_chunks)
+                    ])
+                    
+                    # Build RAG prompt
+                    rag_prompt = f"""
+                    Based on the following uploaded contract sections, please answer the user's question.
+                    
+                    JURISDICTION: {jurisdiction or 'Not specified'}
+                    CONTRACT TYPE: {contract_type or 'Not specified'}
+                    
+                    USER QUESTION: {query}
+                    
+                    RELEVANT CONTRACT SECTIONS:
+                    {context}
+                    
+                    Please provide a helpful, friendly response based on the contract content above.
+                    """
+                    
+                    # Stream the response
+                    stream = rag_service.openai_client.chat.completions.create(
+                        model=rag_service.chat_model,
+                        messages=[
+                            {"role": "system", "content": "You are a helpful contract attorney providing guidance based on specific contract documents. Be conversational and supportive."},
+                            {"role": "user", "content": rag_prompt}
+                        ],
+                        stream=True,
+                        max_tokens=500,
+                        temperature=0.7
+                    )
+                    
+                    for chunk in stream:
+                        if chunk.choices[0].delta.content is not None:
+                            yield f"data: {chunk.choices[0].delta.content}\n\n"
+                    yield "data: [DONE]\n\n"
+                    return
+            
+            # Fallback to general contract chat
+            result = await chat_service.general_chat(
+                query=query,
+                jurisdiction=jurisdiction,
+                contract_type=contract_type
+            )
+            # Stream the result as a single response
+            yield f"data: {result.get('answer', 'I apologize, but I cannot process your request at this time.')}\n\n"
+            yield "data: [DONE]\n\n"
+            
+        except Exception as e:
+            yield f"data: I apologize, but I encountered an error processing your question: {str(e)}\n\n"
+            yield "data: [DONE]\n\n"
+    
+    return EventSourceResponse(generate_stream(), media_type="text/plain")
 
 @app.post("/ask_contract")
 async def ask_contract(
@@ -318,6 +409,32 @@ async def get_rag_status():
             "status": "error",
             "error": str(e)
         }
+
+@app.post("/auth/register")
+async def register_user(
+    email: str = Form(...),
+    password: str = Form(...)
+):
+    """Register a new user with email and password"""
+    try:
+        result = await firebase_client.create_user(email, password)
+        return result
+    except Exception as e:
+        return {"error": f"Registration failed: {str(e)}"}
+
+@app.post("/auth/verify")
+async def verify_token(
+    id_token: str = Form(...)
+):
+    """Verify Firebase ID token"""
+    try:
+        user_info = await firebase_client.verify_user(id_token)
+        if user_info:
+            return {"success": True, "user": user_info}
+        else:
+            return {"error": "Invalid token"}
+    except Exception as e:
+        return {"error": f"Token verification failed: {str(e)}"}
 
 @app.get("/health")
 async def health_check():

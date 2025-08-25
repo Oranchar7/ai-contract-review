@@ -3,7 +3,7 @@ import json
 from datetime import datetime, timezone
 from typing import Dict, Any, Optional, List
 import firebase_admin
-from firebase_admin import credentials, firestore
+from firebase_admin import credentials, firestore, auth
 from google.cloud.firestore import Client
 
 class FirebaseClient:
@@ -192,6 +192,150 @@ class FirebaseClient:
             print(f"Failed to delete analysis: {str(e)}")
             return False
     
+    async def create_user(self, email: str, password: str) -> Dict[str, Any]:
+        """Create a new user with email and password"""
+        if not self.db:
+            return {"error": "Firebase not available"}
+        
+        try:
+            # Create user in Firebase Auth
+            user_record = auth.create_user(
+                email=email,
+                password=password,
+                email_verified=False
+            )
+            
+            # Create user profile in Firestore
+            user_data = {
+                'uid': user_record.uid,
+                'email': email,
+                'created_at': datetime.now(timezone.utc),
+                'last_login': None,
+                'documents_uploaded': 0,
+                'total_chat_messages': 0
+            }
+            
+            self.db.collection('users').document(user_record.uid).set(user_data)
+            
+            return {
+                "success": True,
+                "uid": user_record.uid,
+                "email": email
+            }
+            
+        except Exception as e:
+            return {"error": f"Failed to create user: {str(e)}"}
+    
+    async def verify_user(self, id_token: str) -> Optional[Dict[str, Any]]:
+        """Verify Firebase ID token and return user info"""
+        if not self.db:
+            return None
+        
+        try:
+            # Verify the token
+            decoded_token = auth.verify_id_token(id_token)
+            uid = decoded_token['uid']
+            
+            # Get user profile from Firestore
+            user_doc = self.db.collection('users').document(uid).get()
+            
+            if user_doc.exists:
+                return user_doc.to_dict()
+            return None
+            
+        except Exception as e:
+            print(f"Failed to verify user: {str(e)}")
+            return None
+    
+    async def store_document_metadata(
+        self,
+        filename: str,
+        email: str,
+        jurisdiction: str,
+        contract_type: str,
+        vector_id: str
+    ) -> str:
+        """Store document metadata in Firestore"""
+        if not self.db:
+            return f"mock_doc_{datetime.now().timestamp()}"
+        
+        try:
+            doc_data = {
+                'filename': filename,
+                'email': email,
+                'jurisdiction': jurisdiction,
+                'contract_type': contract_type,
+                'vector_id': vector_id,
+                'upload_time': datetime.now(timezone.utc),
+                'status': 'processed'
+            }
+            
+            doc_ref = self.db.collection('documents').add(doc_data)
+            return doc_ref[1].id
+            
+        except Exception as e:
+            print(f"Failed to store document metadata: {str(e)}")
+            return f"error_doc_{datetime.now().timestamp()}"
+    
+    async def store_chat_history(
+        self,
+        email: str,
+        user_question: str,
+        ai_response: str,
+        retrieved_chunks: List[Dict[str, Any]],
+        jurisdiction: Optional[str] = None,
+        contract_type: Optional[str] = None
+    ) -> str:
+        """Store chat interaction in Firestore"""
+        if not self.db:
+            return f"mock_chat_{datetime.now().timestamp()}"
+        
+        try:
+            chat_data = {
+                'email': email,
+                'user_question': user_question,
+                'ai_response': ai_response,
+                'retrieved_chunks': retrieved_chunks,
+                'jurisdiction': jurisdiction,
+                'contract_type': contract_type,
+                'timestamp': datetime.now(timezone.utc),
+                'response_length': len(ai_response)
+            }
+            
+            doc_ref = self.db.collection('chat_history').add(chat_data)
+            return doc_ref[1].id
+            
+        except Exception as e:
+            print(f"Failed to store chat history: {str(e)}")
+            return f"error_chat_{datetime.now().timestamp()}"
+    
+    async def get_user_chat_history(self, email: str, limit: int = 20) -> List[Dict[str, Any]]:
+        """Get chat history for a user"""
+        if not self.db:
+            return []
+        
+        try:
+            query = (
+                self.db.collection('chat_history')
+                .where('email', '==', email)
+                .order_by('timestamp', direction='DESCENDING')
+                .limit(limit)
+            )
+            
+            docs = query.stream()
+            history = []
+            
+            for doc in docs:
+                chat_data = doc.to_dict()
+                chat_data['id'] = doc.id
+                history.append(chat_data)
+            
+            return history
+            
+        except Exception as e:
+            print(f"Failed to retrieve chat history: {str(e)}")
+            return []
+    
     async def get_analytics(self) -> Dict[str, Any]:
         """
         Get basic analytics about contract analyses
@@ -203,18 +347,27 @@ class FirebaseClient:
             return {"error": "Firebase not available"}
         
         try:
-            # Get total count
+            # Get total count of analyses
             analyses_ref = self.db.collection('contract_analyses')
-            total_count = len(list(analyses_ref.stream()))
+            total_analyses = len(list(analyses_ref.stream()))
             
-            # Get recent count (last 30 days)
-            thirty_days_ago = datetime.now(timezone.utc).replace(day=1)  # Simplified for demo
-            recent_query = analyses_ref.where('created_at', '>=', thirty_days_ago)
-            recent_count = len(list(recent_query.stream()))
+            # Get total documents uploaded
+            docs_ref = self.db.collection('documents')
+            total_documents = len(list(docs_ref.stream()))
+            
+            # Get total users
+            users_ref = self.db.collection('users')
+            total_users = len(list(users_ref.stream()))
+            
+            # Get total chat messages
+            chat_ref = self.db.collection('chat_history')
+            total_chats = len(list(chat_ref.stream()))
             
             return {
-                'total_analyses': total_count,
-                'recent_analyses': recent_count,
+                'total_analyses': total_analyses,
+                'total_documents': total_documents,
+                'total_users': total_users,
+                'total_chats': total_chats,
                 'last_updated': datetime.now(timezone.utc).isoformat()
             }
             

@@ -15,13 +15,13 @@ class RAGService:
         self.openai_client = OpenAI(
             api_key=os.environ.get("OPENAI_API_KEY")
         )
-        self.embedding_model = "text-embedding-3-large"
+        self.embedding_model = "text-embedding-3-small"
         # Use GPT-4o mini for friendly, conversational contract chat
         # Keep GPT-5 for detailed analysis, but use the more conversational model for chat
         self.chat_model = "gpt-4o-mini"
         self.tokenizer = tiktoken.get_encoding("cl100k_base")
-        self.chunk_size = 500  # tokens per chunk
-        self.overlap = 50      # token overlap between chunks
+        self.chunk_size = 1000  # characters per chunk
+        self.overlap = 100     # character overlap between chunks
         
         # FAISS index and document storage
         self.index = None
@@ -34,20 +34,21 @@ class RAGService:
     
     def _chunk_document(self, text: str, filename: str) -> List[Dict[str, Any]]:
         """Chunk document into smaller sections with metadata"""
-        tokens = self.tokenizer.encode(text)
         chunks = []
+        text_length = len(text)
         
-        for i in range(0, len(tokens), self.chunk_size - self.overlap):
-            chunk_tokens = tokens[i:i + self.chunk_size]
-            chunk_text = self.tokenizer.decode(chunk_tokens)
+        for i in range(0, text_length, self.chunk_size - self.overlap):
+            chunk_end = min(i + self.chunk_size, text_length)
+            chunk_text = text[i:chunk_end]
             
             chunks.append({
                 "text": chunk_text,
                 "filename": filename,
                 "chunk_index": len(chunks),
-                "token_count": len(chunk_tokens),
-                "start_token": i,
-                "end_token": i + len(chunk_tokens)
+                "char_count": len(chunk_text),
+                "start_char": i,
+                "end_char": chunk_end,
+                "token_count": self._count_tokens(chunk_text)
             })
         
         return chunks
@@ -67,7 +68,14 @@ class RAGService:
         except Exception as e:
             raise Exception(f"Failed to generate embeddings: {str(e)}")
     
-    async def upload_contract(self, contract_text: str, filename: str) -> Dict[str, Any]:
+    async def upload_contract(
+        self, 
+        contract_text: str, 
+        filename: str,
+        email: Optional[str] = None,
+        jurisdiction: Optional[str] = None,
+        contract_type: Optional[str] = None
+    ) -> Dict[str, Any]:
         """
         Chunk document, generate embeddings, and store in FAISS index
         
@@ -104,7 +112,11 @@ class RAGService:
             self.document_metadata.extend([{
                 "filename": filename,
                 "chunk_index": i,
-                "global_index": start_idx + i
+                "global_index": start_idx + i,
+                "email": email,
+                "jurisdiction": jurisdiction,
+                "contract_type": contract_type,
+                "upload_time": asyncio.get_event_loop().time()
             } for i in range(len(chunks))])
             
             # Add to FAISS index
@@ -125,7 +137,7 @@ class RAGService:
                 "error": f"Failed to upload contract: {str(e)}"
             }
     
-    async def _retrieve_relevant_chunks(self, query: str, k: int = 3) -> List[Dict[str, Any]]:
+    async def _retrieve_relevant_chunks(self, query: str, k: int = 5) -> List[Dict[str, Any]]:
         """Retrieve relevant document chunks for a query"""
         if self.index is None or self.index.ntotal == 0:
             return []
@@ -178,7 +190,7 @@ class RAGService:
         """
         try:
             # Retrieve relevant chunks
-            relevant_chunks = await self._retrieve_relevant_chunks(query, k=3)
+            relevant_chunks = await self._retrieve_relevant_chunks(query, k=5)
             
             if not relevant_chunks:
                 return {
