@@ -16,9 +16,9 @@ class RAGService:
             api_key=os.environ.get("OPENAI_API_KEY")
         )
         self.embedding_model = "text-embedding-3-large"
-        # the newest OpenAI model is "gpt-5" which was released August 7, 2025.
-        # do not change this unless explicitly requested by the user
-        self.chat_model = "gpt-5"
+        # Use GPT-4o mini for friendly, conversational contract chat
+        # Keep GPT-5 for detailed analysis, but use the more conversational model for chat
+        self.chat_model = "gpt-4o-mini"
         self.tokenizer = tiktoken.get_encoding("cl100k_base")
         self.chunk_size = 500  # tokens per chunk
         self.overlap = 50      # token overlap between chunks
@@ -197,7 +197,7 @@ class RAGService:
                 messages=[
                     {
                         "role": "system",
-                        "content": "You are an expert contract attorney with 20+ years of experience. Analyze contract documents and provide structured responses in JSON format."
+                        "content": "You are a friendly, experienced contract attorney who helps people understand their contracts in plain English. You're warm and approachable while being thorough and professional. Provide structured responses in JSON format, but write in a conversational, helpful tone."
                     },
                     {
                         "role": "user",

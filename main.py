@@ -14,6 +14,7 @@ from services.ai_analyzer import AIAnalyzer
 from services.firebase_client import FirebaseClient
 from services.notification_service import NotificationService
 from services.rag_service import RAGService
+from services.contract_chat_service import ContractChatService
 from models.contract_analysis import ContractAnalysisResponse
 from utils.validators import validate_file_type
 
@@ -46,6 +47,7 @@ ai_analyzer = AIAnalyzer()
 firebase_client = FirebaseClient()
 notification_service = NotificationService()
 rag_service = RAGService()
+chat_service = ContractChatService()
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
@@ -234,7 +236,7 @@ async def ask_contract(
     contract_type: Optional[str] = Form(None)
 ):
     """
-    Ask questions about uploaded contracts using RAG
+    Ask questions about contracts using friendly chat - works before, during, and after upload
     
     Args:
         query: Question about the contract
@@ -242,50 +244,87 @@ async def ask_contract(
         contract_type: Optional contract type context
     
     Returns:
-        Contract analysis results in JSON format
+        Friendly conversational response about contracts
     """
     try:
-        result = await rag_service.ask_contract(
+        # Check if we have contract data uploaded for RAG
+        if rag_service.index is not None and len(rag_service.document_chunks) > 0:
+            # Use RAG for specific contract questions
+            result = await rag_service.ask_contract(
+                query=query,
+                jurisdiction=jurisdiction,
+                contract_type=contract_type
+            )
+            
+            # Add a conversational answer field for the chat interface
+            if "error" not in result:
+                # Create a conversational answer from the analysis
+                answer_parts = []
+                
+                if result.get("summary"):
+                    answer_parts.append(result["summary"])
+                
+                if result.get("risky_clauses"):
+                    risk_count = len(result["risky_clauses"])
+                    if risk_count > 0:
+                        answer_parts.append(f"I found {risk_count} potentially risky clause(s) in your contract.")
+                
+                if result.get("missing_protections"):
+                    missing_count = len(result["missing_protections"])
+                    if missing_count > 0:
+                        answer_parts.append(f"There are {missing_count} missing protection(s) I'd recommend adding.")
+                
+                if result.get("overall_risk_score"):
+                    score = result["overall_risk_score"]
+                    answer_parts.append(f"Overall risk score: {score}/10.")
+                
+                result["answer"] = " ".join(answer_parts) if answer_parts else "Analysis completed."
+            
+            return result
+        else:
+            # Use general contract chat for questions before upload
+            result = await chat_service.general_chat(
+                query=query,
+                jurisdiction=jurisdiction,
+                contract_type=contract_type
+            )
+            return result
+        
+    except Exception as e:
+        return {
+            "answer": "I'm sorry, I encountered an issue while trying to help you with your contract question. Please try rephrasing your question or ask about something specific.",
+            "error": f"Failed to process contract question: {str(e)}"
+        }
+
+@app.post("/chat_general")
+async def chat_general(
+    query: str = Form(...),
+    jurisdiction: Optional[str] = Form(None),
+    contract_type: Optional[str] = Form(None)
+):
+    """
+    General contract chat before upload - friendly legal guidance
+    
+    Args:
+        query: General question about contracts, legal terms, or guidance
+        jurisdiction: Optional jurisdiction context
+        contract_type: Optional contract type context
+    
+    Returns:
+        Friendly conversational response with legal guidance
+    """
+    try:
+        result = await chat_service.general_chat(
             query=query,
             jurisdiction=jurisdiction,
             contract_type=contract_type
         )
-        
-        # Add a simple answer field for the chat interface
-        if "error" not in result:
-            # Create a conversational answer from the analysis
-            answer_parts = []
-            
-            if result.get("summary"):
-                answer_parts.append(result["summary"])
-            
-            if result.get("risky_clauses"):
-                risk_count = len(result["risky_clauses"])
-                if risk_count > 0:
-                    answer_parts.append(f"I found {risk_count} potentially risky clause(s).")
-            
-            if result.get("missing_protections"):
-                missing_count = len(result["missing_protections"])
-                if missing_count > 0:
-                    answer_parts.append(f"There are {missing_count} missing protection(s) to consider.")
-            
-            if result.get("overall_risk_score"):
-                score = result["overall_risk_score"]
-                answer_parts.append(f"Overall risk score: {score}/10.")
-            
-            result["answer"] = " ".join(answer_parts) if answer_parts else "Analysis completed."
-        
         return result
         
     except Exception as e:
         return {
-            "error": "Analysis failed",
-            "details": str(e),
-            "risky_clauses": [],
-            "missing_protections": [],
-            "overall_risk_score": 0,
-            "summary": "Could not analyze contract",
-            "notes": []
+            "answer": "I apologize, but I'm having trouble processing your question right now. Please try asking again or rephrase your question.",
+            "error": f"General chat failed: {str(e)}"
         }
 
 @app.get("/rag_status")
