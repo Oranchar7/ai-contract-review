@@ -1,0 +1,82 @@
+Prompt:
+"Update the existing contract form UI without breaking the current layout, theme, or styling. Implement the following changes carefully:
+
+1. Jurisdiction Field Update
+
+Change the current label to “Contract Jurisdiction”.
+
+Replace the jurisdiction input with a searchable dropdown.
+
+Dropdown Structure:
+
+U.S. Federal & National Options
+• United States – Federal
+• Multi-State / Nationwide
+
+U.S. States (alphabetical)
+Alabama, Alaska, Arizona, Arkansas, California, Colorado, Connecticut, Delaware, Florida, Georgia, Hawaii, Idaho, Illinois, Indiana, Iowa, Kansas, Kentucky, Louisiana, Maine, Maryland, Massachusetts, Michigan, Minnesota, Mississippi, Missouri, Montana, Nebraska, Nevada, New Hampshire, New Jersey, New Mexico, New York, North Carolina, North Dakota, Ohio, Oklahoma, Oregon, Pennsylvania, Rhode Island, South Carolina, South Dakota, Tennessee, Texas, Utah, Vermont, Virginia, Washington, West Virginia, Wisconsin, Wyoming
+
+International Options
+• Canada
+• United Kingdom
+• European Union
+• Australia
+• India
+• Other (Enter Manually)
+
+If “Other” is selected, dynamically show a text input labeled:
+“Enter custom jurisdiction”.
+
+Make Contract Jurisdiction a mandatory field — block submission if not selected or filled.
+
+2. Validation Rules
+
+Enforce these required fields:
+• Email
+• Contract Type
+• Contract Jurisdiction
+
+If any are missing, show a real-time error message styled consistently with the existing UI.
+
+Keep other existing validations unchanged.
+
+3. Contract Type Update
+
+Keep the existing contract type dropdown.
+
+Add an “Other” option at the end of the contract type list.
+
+If “Other” is selected, show a conditional text input labeled:
+“Enter custom contract type”.
+
+4. Firebase Integration
+
+Ensure the following fields are stored in Firebase:
+
+email (string)
+
+contractType (string)
+
+customContractType (if “Other” is used)
+
+jurisdiction (string from dropdown)
+
+customJurisdiction (if “Other” is used)
+
+Do not break the existing Firebase setup — simply extend it to handle the new fields.
+
+Keep the submission flow intact.
+
+5. UI Integrity
+
+Keep the existing theme, responsiveness, and layout unchanged.
+
+Ensure the new dropdown and conditional inputs visually match the existing UI.
+
+Test on desktop and mobile.
+
+6. Deployment
+
+Maintain the same port 5000 configuration.
+
+No changes to other backend or frontend components unless required for these updates."

@@ -259,8 +259,9 @@ class FirebaseClient:
         email: str,
         jurisdiction: str,
         contract_type: str,
-        other_contract_type: str = None,
-        filename: str = None
+        other_contract_type: Optional[str] = None,
+        custom_jurisdiction: Optional[str] = None,
+        filename: Optional[str] = None
     ) -> str:
         """Store contract form submission in secure 'contracts' collection"""
         if not self.db:
@@ -278,6 +279,10 @@ class FirebaseClient:
             # Add otherContractType if "Other" was selected
             if contract_type == "Other" and other_contract_type:
                 contract_data['otherContractType'] = other_contract_type
+            
+            # Add customJurisdiction if "Other" was selected for jurisdiction
+            if jurisdiction == "Other" and custom_jurisdiction:
+                contract_data['customJurisdiction'] = custom_jurisdiction
             
             # Add filename if provided (for uploads)
             if filename:
@@ -364,7 +369,7 @@ class FirebaseClient:
         
         try:
             # Get all contracts from the secure collection
-            docs = self.db.collection('contracts').order_by('timestamp', direction=firestore.Query.DESCENDING).limit(limit).stream()
+            docs = self.db.collection('contracts').order_by('timestamp', direction='DESCENDING').limit(limit).stream()
             
             contracts = []
             for doc in docs:

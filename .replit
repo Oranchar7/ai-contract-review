@@ -23,13 +23,13 @@ args = "FastAPI Server"
 name = "FastAPI Server"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "uv add fastapi uvicorn python-multipart jinja2 PyPDF2 python-docx firebase-admin requests && python main.py"
-waitForPort = 5000
-
 [workflows.workflow.metadata]
 outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python main.py"
+waitForPort = 5000
 
 [[ports]]
 localPort = 5000

@@ -257,20 +257,79 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="jurisdiction" class="form-label">Jurisdiction <span class="text-danger">*</span></label>
+                    <label for="jurisdiction" class="form-label">Contract Jurisdiction <span class="text-danger">*</span></label>
                     <select class="form-select" id="jurisdiction" required>
-                      <option value="">Select Jurisdiction</option>
-                      <option value="US-Federal">United States (Federal)</option>
-                      <option value="US-CA">California, USA</option>
-                      <option value="US-NY">New York, USA</option>
-                      <option value="US-TX">Texas, USA</option>
-                      <option value="US-FL">Florida, USA</option>
-                      <option value="UK">United Kingdom</option>
-                      <option value="CA">Canada</option>
-                      <option value="AU">Australia</option>
-                      <option value="DE">Germany</option>
-                      <option value="FR">France</option>
-                      <option value="Other">Other</option>
+                      <option value="">Select Contract Jurisdiction</option>
+                      
+                      <!-- U.S. Federal & National Options -->
+                      <optgroup label="U.S. Federal & National">
+                        <option value="US-Federal">United States – Federal</option>
+                        <option value="US-Multistate">Multi-State / Nationwide</option>
+                      </optgroup>
+                      
+                      <!-- U.S. States (Alphabetical) -->
+                      <optgroup label="U.S. States">
+                        <option value="US-AL">Alabama</option>
+                        <option value="US-AK">Alaska</option>
+                        <option value="US-AZ">Arizona</option>
+                        <option value="US-AR">Arkansas</option>
+                        <option value="US-CA">California</option>
+                        <option value="US-CO">Colorado</option>
+                        <option value="US-CT">Connecticut</option>
+                        <option value="US-DE">Delaware</option>
+                        <option value="US-FL">Florida</option>
+                        <option value="US-GA">Georgia</option>
+                        <option value="US-HI">Hawaii</option>
+                        <option value="US-ID">Idaho</option>
+                        <option value="US-IL">Illinois</option>
+                        <option value="US-IN">Indiana</option>
+                        <option value="US-IA">Iowa</option>
+                        <option value="US-KS">Kansas</option>
+                        <option value="US-KY">Kentucky</option>
+                        <option value="US-LA">Louisiana</option>
+                        <option value="US-ME">Maine</option>
+                        <option value="US-MD">Maryland</option>
+                        <option value="US-MA">Massachusetts</option>
+                        <option value="US-MI">Michigan</option>
+                        <option value="US-MN">Minnesota</option>
+                        <option value="US-MS">Mississippi</option>
+                        <option value="US-MO">Missouri</option>
+                        <option value="US-MT">Montana</option>
+                        <option value="US-NE">Nebraska</option>
+                        <option value="US-NV">Nevada</option>
+                        <option value="US-NH">New Hampshire</option>
+                        <option value="US-NJ">New Jersey</option>
+                        <option value="US-NM">New Mexico</option>
+                        <option value="US-NY">New York</option>
+                        <option value="US-NC">North Carolina</option>
+                        <option value="US-ND">North Dakota</option>
+                        <option value="US-OH">Ohio</option>
+                        <option value="US-OK">Oklahoma</option>
+                        <option value="US-OR">Oregon</option>
+                        <option value="US-PA">Pennsylvania</option>
+                        <option value="US-RI">Rhode Island</option>
+                        <option value="US-SC">South Carolina</option>
+                        <option value="US-SD">South Dakota</option>
+                        <option value="US-TN">Tennessee</option>
+                        <option value="US-TX">Texas</option>
+                        <option value="US-UT">Utah</option>
+                        <option value="US-VT">Vermont</option>
+                        <option value="US-VA">Virginia</option>
+                        <option value="US-WA">Washington</option>
+                        <option value="US-WV">West Virginia</option>
+                        <option value="US-WI">Wisconsin</option>
+                        <option value="US-WY">Wyoming</option>
+                      </optgroup>
+                      
+                      <!-- International Options -->
+                      <optgroup label="International">
+                        <option value="CA">Canada</option>
+                        <option value="UK">United Kingdom</option>
+                        <option value="EU">European Union</option>
+                        <option value="AU">Australia</option>
+                        <option value="IN">India</option>
+                        <option value="Other">Other (Enter Manually)</option>
+                      </optgroup>
                     </select>
                   </div>
                 </div>
@@ -303,6 +362,17 @@
                     <label for="otherContractType" class="form-label">Specify Contract Type</label>
                     <input type="text" class="form-control" id="otherContractType" 
                            placeholder="Please specify the contract type">
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Custom Jurisdiction Input (hidden by default) -->
+              <div class="row" id="customJurisdictionRow" style="display: none;">
+                <div class="col-12">
+                  <div class="mb-3">
+                    <label for="customJurisdiction" class="form-label">Enter custom jurisdiction</label>
+                    <input type="text" class="form-control" id="customJurisdiction" 
+                           placeholder="Please specify the jurisdiction">
                   </div>
                 </div>
               </div>
@@ -373,7 +443,11 @@
         return;
       }
       if (!jurisdiction.value) {
-        showStatus('Please select a jurisdiction.', 'error');
+        showStatus('Please select or enter a contract jurisdiction.', 'error');
+        return;
+      }
+      if (jurisdiction.value === 'Other' && !document.getElementById('customJurisdiction').value.trim()) {
+        showStatus('Please specify the custom jurisdiction when selecting "Other".', 'error');
         return;
       }
       if (!contractType.value) {
@@ -390,6 +464,11 @@
       formData.append('jurisdiction', jurisdiction.value); // Jurisdiction is now required
       formData.append('contract_type', contractType.value); // Contract type is now required
       formData.append('email', email.value); // Email is now required
+      
+      // Add custom jurisdiction if specified
+      if (jurisdiction.value === 'Other') {
+        formData.append('custom_jurisdiction', document.getElementById('customJurisdiction').value.trim());
+      }
       
       // Add other contract type if specified
       if (contractType.value === 'Other') {
@@ -619,6 +698,19 @@
         otherRow.style.display = 'none';
         document.getElementById('otherContractType').required = false;
         document.getElementById('otherContractType').value = '';
+      }
+    });
+    
+    // Handle "Other" jurisdiction selection
+    jurisdiction.addEventListener('change', function() {
+      const customJurisdictionRow = document.getElementById('customJurisdictionRow');
+      if (this.value === 'Other') {
+        customJurisdictionRow.style.display = 'block';
+        document.getElementById('customJurisdiction').required = true;
+      } else {
+        customJurisdictionRow.style.display = 'none';
+        document.getElementById('customJurisdiction').required = false;
+        document.getElementById('customJurisdiction').value = '';
       }
     });
 
