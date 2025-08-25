@@ -803,7 +803,11 @@
       try {
         const formData = new FormData();
         formData.append('legal_term', term);
-        formData.append('context', contractType.value || '');
+        
+        // Get contract type context safely
+        const contractTypeElement = document.getElementById('contractType');
+        const context = contractTypeElement ? contractTypeElement.value : '';
+        formData.append('context', context);
         
         const response = await fetch('/translate_jargon', {
           method: 'POST',
