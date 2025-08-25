@@ -624,6 +624,10 @@
     const chatForm = document.getElementById('chatForm');
     const userQuestion = document.getElementById('userQuestion');
     const chatContainer = document.getElementById('chatContainer');
+    
+    // Track chat interactions and document upload status
+    let chatCount = 0;
+    let documentUploaded = false;
 
     // Contract Analysis
     analyzeForm.addEventListener('submit', async (e) => {
@@ -688,6 +692,9 @@
         showStatus('Analysis completed successfully!', 'success');
         displayAnalysisReport(result);
         
+        // Mark document as uploaded
+        documentUploaded = true;
+        
         // Add analysis completion message to chat
         addChatMessage('assistant', 'Your contract analysis is complete! I can now answer specific questions about your contract. What would you like to know?');
         
@@ -727,6 +734,15 @@
         
         if (result.response) {
           addChatMessage('assistant', result.response);
+          
+          // Increment chat count and check for upload reminder
+          chatCount++;
+          if (chatCount % 2 === 0 && !documentUploaded) {
+            // Add gentle reminder after every 2 chats if no document uploaded
+            setTimeout(() => {
+              addChatMessage('assistant', '💡 <em>Tip: For more personalized contract analysis, consider uploading your contract document above. I can provide specific insights about your contract\'s terms, risks, and recommendations!</em>');
+            }, 1000);
+          }
         } else {
           addChatMessage('assistant', 'I apologize, but I encountered an error processing your question. Please try again.');
         }
