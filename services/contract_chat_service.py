@@ -81,10 +81,10 @@ Please provide helpful, conversational advice that's easy to understand. If this
                         "content": user_prompt
                     }
                 ],
-                max_tokens=400,
-                temperature=0.7,  # Higher temperature for more conversational responses
-                presence_penalty=0.1,  # Slight penalty to avoid repetition
-                frequency_penalty=0.1   # Slight penalty to encourage variety
+                max_tokens=1500,
+                temperature=0.4,  # Using requested temperature for focused, structured responses
+                presence_penalty=0.0,
+                frequency_penalty=0.0
             )
             
             content = response.choices[0].message.content

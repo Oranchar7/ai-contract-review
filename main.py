@@ -405,30 +405,23 @@ Please provide a helpful, friendly response based on the contract content above.
             is_greeting = any(word in query.lower() for word in greeting_words)
             
             if is_greeting or len(query.strip()) < 20:
-                # Handle greetings with a friendly welcome message
-                welcome_response = """Hello! Welcome to our AI Contract Review service! 👋
-
-I'm your friendly contract assistant, here to help you navigate the world of contracts with confidence. Here's what I can do for you:
-
-📋 **Contract Analysis**: Upload your contract documents (PDF or Word) and I'll provide detailed risk assessment, identify problematic clauses, and suggest improvements.
-
-💬 **Legal Guidance**: Ask me questions about contract terms, legal concepts, or get advice before signing anything.
-
-🔍 **Risk Assessment**: I'll help you understand potential risks and missing protections in your agreements.
-
-✅ **Best Practices**: Get tips on what to look for in different types of contracts (NDAs, employment agreements, service contracts, etc.).
-
-**How may I help you today?** You can:
-- Upload a contract for analysis using the form on the left
-- Ask me specific questions about contract terms or legal concepts
-- Get guidance on what to watch out for in different types of agreements
-
-*Please note: This service provides educational guidance and should not replace professional legal advice. Always consult with a qualified attorney for important legal decisions.*
-
-What would you like to know about contracts?"""
+                # Handle greetings with a structured welcome message using GPT-4o mini
+                stream = rag_service.openai_client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": "You are a professional contract attorney assistant. Provide a structured, concise welcome message introducing the AI Contract Review service. Be professional and organized."},
+                        {"role": "user", "content": f"User said: '{query}'. Please provide a professional welcome to our AI Contract Review service, explaining what we offer and how I can help them with contracts today."}
+                    ],
+                    stream=True,
+                    max_tokens=400,
+                    temperature=0.4
+                )
                 
-                full_response = welcome_response
-                yield f"data: {welcome_response}\n\n"
+                for chunk in stream:
+                    if chunk.choices[0].delta.content is not None:
+                        content = chunk.choices[0].delta.content
+                        full_response += content
+                        yield f"data: {content}\n\n"
             else:
                 # Handle contract-specific questions
                 stream = rag_service.openai_client.chat.completions.create(
