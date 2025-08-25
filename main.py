@@ -355,7 +355,14 @@ Return your output strictly in Markdown. Any tables, lists, or headings must fol
         if is_greeting:
             user_message = f"User said: '{query}'. Please provide a professional welcome message for our AI Contract Review service using proper Markdown formatting."
         else:
-            user_message = f"Please help with this contract question: {query}. Jurisdiction: {jurisdiction or 'Not specified'}. Contract type: {contract_type or 'Not specified'}. Use proper Markdown formatting in your response."
+            # Focus on the actual user question, only mention jurisdiction/contract type if relevant
+            context_info = ""
+            if jurisdiction and jurisdiction.strip():
+                context_info += f" (Context: Jurisdiction: {jurisdiction})"
+            if contract_type and contract_type.strip():
+                context_info += f" (Context: Contract type: {contract_type})"
+            
+            user_message = f"Please answer this specific contract question: {query}{context_info}. Focus on answering the user's actual question about contracts or legal terms. Use proper Markdown formatting in your response."
         
         # Use OpenAI directly with GPT-4o mini and temperature 0.4
         from openai import OpenAI
