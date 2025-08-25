@@ -608,7 +608,7 @@
         if (jurisdiction.value) formData.append('jurisdiction', jurisdiction.value);
         if (contractType.value) formData.append('contract_type', contractType.value);
 
-        // Use streaming chat endpoint
+        // Use simple chat endpoint
         const response = await fetch('/chat', {
           method: 'POST',
           body: formData
@@ -618,39 +618,12 @@
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        // Create placeholder for streaming response
-        const responseDiv = document.createElement('div');
-        responseDiv.className = 'message assistant';
-        responseDiv.innerHTML = '<strong>AI Assistant:</strong><br><span class=\"streaming-response\"></span>';
-        chatContainer.appendChild(responseDiv);
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-
-        const streamingSpan = responseDiv.querySelector('.streaming-response');
-        let fullResponse = '';
-
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
+        const result = await response.json();
         
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          
-          const chunk = decoder.decode(value, { stream: true });
-          const lines = chunk.split('\\n');
-          
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              const data = line.substring(6);
-              if (data === '[DONE]') {
-                // Apply final formatting to the complete response
-                streamingSpan.innerHTML = formatAssistantMessage(fullResponse);
-                return;
-              }
-              fullResponse += data;
-              streamingSpan.textContent = fullResponse;
-              chatContainer.scrollTop = chatContainer.scrollHeight;
-            }
-          }
+        if (result.response) {
+          addChatMessage('assistant', result.response);
+        } else {
+          addChatMessage('assistant', 'I apologize, but I encountered an error processing your question. Please try again.');
         }
         
       } catch (error) {

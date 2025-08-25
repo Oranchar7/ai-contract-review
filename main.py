@@ -327,68 +327,76 @@ async def upload_contract(
         }
 
 @app.post("/chat")
-async def chat_streaming(
+async def chat_simple(
     query: str = Form(...),
     jurisdiction: Optional[str] = Form(None),
     contract_type: Optional[str] = Form(None),
     user = Depends(get_current_user)
 ):
-    """Simple streaming chat endpoint with GPT-4o mini"""
-    async def generate_stream():
-        try:
-            full_response = ""
-            
-            # Check if this is a greeting
-            greeting_words = ['hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening', 'greetings']
-            is_greeting = any(word in query.lower() for word in greeting_words)
-            
-            if is_greeting:
-                system_message = "You are a professional AI contract review assistant. Provide a clear, structured welcome message that introduces our contract analysis service. Be professional, concise, and helpful. Explain what you can do and ask how you can help today."
-                user_message = f"User said: '{query}'. Please provide a professional welcome message for our AI Contract Review service."
-            else:
-                system_message = "You are a professional contract attorney providing legal guidance. Be structured, clear, and professional. Provide practical advice about contracts and legal terms. Always be helpful and organized in your responses."
-                user_message = f"Please help with this contract question: {query}. Jurisdiction: {jurisdiction or 'Not specified'}. Contract type: {contract_type or 'Not specified'}."
-            
-            # Use OpenAI directly with GPT-4o mini and temperature 0.4
-            from openai import OpenAI
-            openai_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-            
-            stream = openai_client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": system_message},
-                    {"role": "user", "content": user_message}
-                ],
-                stream=True,
-                max_tokens=800,
-                temperature=0.4
-            )
-            
-            for chunk in stream:
-                if chunk.choices[0].delta.content is not None:
-                    content = chunk.choices[0].delta.content
-                    full_response += content
-                    yield content
-            
-            # Store chat history (simplified, ignore errors)
+    """Simple non-streaming chat endpoint with GPT-4o mini"""
+    try:
+        # Check if this is a greeting
+        greeting_words = ['hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening', 'greetings']
+        is_greeting = any(word in query.lower() for word in greeting_words)
+        
+        if is_greeting:
+            system_message = "You are a professional AI contract review assistant. Provide a clear, structured welcome message that introduces our contract analysis service. Be professional, concise, and helpful. Explain what you can do and ask how you can help today."
+            user_message = f"User said: '{query}'. Please provide a professional welcome message for our AI Contract Review service."
+        else:
+            system_message = "You are a professional contract attorney providing legal guidance. Be structured, clear, and professional. Provide practical advice about contracts and legal terms. Always be helpful and organized in your responses."
+            user_message = f"Please help with this contract question: {query}. Jurisdiction: {jurisdiction or 'Not specified'}. Contract type: {contract_type or 'Not specified'}."
+        
+        # Use OpenAI directly with GPT-4o mini and temperature 0.4
+        from openai import OpenAI
+        import asyncio
+        
+        openai_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+        
+        # Add timeout wrapper
+        async def make_openai_request():
             try:
-                user_email = user.get('email', 'anonymous') if user else 'anonymous'
-                await firebase_client.store_chat_history(
-                    email=user_email,
-                    user_question=query,
-                    ai_response=full_response,
-                    retrieved_chunks=[],
-                    jurisdiction=jurisdiction,
-                    contract_type=contract_type
+                response = openai_client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": system_message},
+                        {"role": "user", "content": user_message}
+                    ],
+                    stream=False,
+                    max_tokens=800,
+                    temperature=0.4,
+                    timeout=15  # 15 second timeout
                 )
-            except:
-                pass  # Ignore Firebase errors
-            
-        except Exception as e:
-            print(f"Chat error: {str(e)}")
-            yield "I apologize, but I encountered an error. Please try again."
-    
-    return StreamingResponse(generate_stream(), media_type="text/plain")
+                return response
+            except Exception as e:
+                print(f"OpenAI request failed: {str(e)}")
+                return None
+        
+        response = await asyncio.wait_for(make_openai_request(), timeout=20.0)
+        
+        if response and response.choices:
+            full_response = response.choices[0].message.content or "I apologize, but I couldn't generate a response."
+        else:
+            full_response = "I apologize, but I'm experiencing technical difficulties. Please try again."
+        
+        # Store chat history (simplified, ignore errors)
+        try:
+            user_email = user.get('email', 'anonymous') if user else 'anonymous'
+            await firebase_client.store_chat_history(
+                email=user_email,
+                user_question=query,
+                ai_response=full_response,
+                retrieved_chunks=[],
+                jurisdiction=jurisdiction,
+                contract_type=contract_type
+            )
+        except:
+            pass  # Ignore Firebase errors
+        
+        return {"response": full_response}
+        
+    except Exception as e:
+        print(f"Chat error: {str(e)}")
+        return {"response": "I apologize, but I encountered an error. Please try again."}
 
 @app.post("/translate_jargon")
 async def translate_jargon(
