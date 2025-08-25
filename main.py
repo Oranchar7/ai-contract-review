@@ -2,11 +2,12 @@ import os
 import tempfile
 from datetime import datetime
 from typing import Optional
-from fastapi import FastAPI, File, UploadFile, Form, Request, HTTPException
+from fastapi import FastAPI, File, UploadFile, Form, Request, HTTPException, Depends, Header
 from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from sse_starlette.sse import EventSourceResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 import uvicorn
@@ -51,11 +52,60 @@ notification_service = NotificationService()
 rag_service = RAGService()
 chat_service = ContractChatService()
 
+# Security
+security = HTTPBearer(auto_error=False)
+
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """
+    Dependency to get current user from Firebase ID token
+    Returns user info if authenticated, None if not
+    """
+    if not credentials:
+        return None
+    
+    try:
+        # Verify Firebase ID token
+        user_info = await firebase_client.verify_user(credentials.credentials)
+        return user_info
+    except Exception as e:
+        print(f"Auth verification failed: {str(e)}")
+        return None
+
+async def require_auth(user = Depends(get_current_user)):
+    """
+    Dependency that requires authentication
+    Raises HTTPException if user is not authenticated
+    """
+    if not user:
+        raise HTTPException(
+            status_code=401,
+            detail="Authentication required. Please log in to access this resource.",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    return user
+
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
-    """Serve the RAG chat interface as main page"""
+    """Serve the RAG chat interface as main page with Firebase config"""
     with open("index.html", "r") as f:
         html_content = f.read()
+    
+    # Inject Firebase configuration into the HTML
+    firebase_config = f"""
+    <script>
+        window.firebaseConfig = {{
+            apiKey: "{os.environ.get('FIREBASE_API_KEY', '')}",
+            authDomain: "{os.environ.get('FIREBASE_PROJECT_ID', '')}.firebaseapp.com",
+            projectId: "{os.environ.get('FIREBASE_PROJECT_ID', '')}",
+            storageBucket: "{os.environ.get('FIREBASE_PROJECT_ID', '')}.appspot.com",
+            appId: "{os.environ.get('FIREBASE_APP_ID', '')}"
+        }};
+    </script>
+    """
+    
+    # Insert Firebase config before closing </head> tag
+    html_content = html_content.replace('</head>', f'{firebase_config}</head>')
+    
     return HTMLResponse(content=html_content)
 
 @app.post("/analyze")
@@ -173,7 +223,8 @@ async def upload_contract(
     file: UploadFile = File(...),
     email: str = Form(..., description="Email is required for user identification"),
     jurisdiction: str = Form(..., description="Jurisdiction is required (e.g., 'US-NY', 'CA-ON')"),
-    contract_type: str = Form(..., description="Contract type is required (e.g., 'NDA', 'MSA', 'Other')")
+    contract_type: str = Form(..., description="Contract type is required (e.g., 'NDA', 'MSA', 'Other')"),
+    user = Depends(get_current_user)
 ):
     """
     Upload and process contract for RAG analysis
@@ -237,9 +288,10 @@ async def upload_contract(
             
             # Store document metadata in Firebase
             vector_id = f"vector_{datetime.now().timestamp()}"
+            user_email = user.get('email', email) if user else email
             doc_meta_id = await firebase_client.store_document_metadata(
                 filename=filename,
-                email=email,
+                email=user_email,
                 jurisdiction=jurisdiction,
                 contract_type=contract_type,
                 vector_id=vector_id
@@ -265,7 +317,8 @@ async def upload_contract(
 async def chat_streaming(
     query: str = Form(...),
     jurisdiction: Optional[str] = Form(None),
-    contract_type: Optional[str] = Form(None)
+    contract_type: Optional[str] = Form(None),
+    user = Depends(get_current_user)
 ):
     """Streaming chat endpoint with RAG integration"""
     async def generate_stream():
@@ -396,13 +449,14 @@ async def chat_general(
         }
 
 @app.get("/rag_status")
-async def get_rag_status():
-    """Get current RAG index statistics"""
+async def get_rag_status(user = Depends(get_current_user)):
+    """Get current RAG index statistics (auth optional)"""
     try:
         stats = rag_service.get_index_stats()
         return {
             "status": "healthy",
-            "rag_stats": stats
+            "rag_stats": stats,
+            "authenticated": user is not None
         }
     except Exception as e:
         return {
@@ -436,10 +490,32 @@ async def verify_token(
     except Exception as e:
         return {"error": f"Token verification failed: {str(e)}"}
 
+@app.get("/user/history")
+async def get_user_history(user = Depends(require_auth)):
+    """Get user's chat history (requires authentication)"""
+    try:
+        history = await firebase_client.get_user_chat_history(user['email'])
+        return {"success": True, "history": history}
+    except Exception as e:
+        return {"error": f"Failed to retrieve history: {str(e)}"}
+
+@app.get("/user/documents")
+async def get_user_documents(user = Depends(require_auth)):
+    """Get user's uploaded documents (requires authentication)"""
+    try:
+        analyses = await firebase_client.get_user_analyses(user['email'])
+        return {"success": True, "documents": analyses}
+    except Exception as e:
+        return {"error": f"Failed to retrieve documents: {str(e)}"}
+
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
-    return {"status": "healthy", "service": "ai-contract-review"}
+    return {
+        "status": "healthy", 
+        "service": "ai-contract-review",
+        "firebase_connected": firebase_client.db is not None
+    }
 
 @app.post("/webhook/stripe")
 async def stripe_webhook(request: Request):

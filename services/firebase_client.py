@@ -14,11 +14,17 @@ class FirebaseClient:
         self._initialize_firebase()
     
     def _initialize_firebase(self):
-        """Initialize Firebase connection"""
+        """Initialize Firebase connection with production credentials"""
         try:
             # Check if Firebase is already initialized
             if not firebase_admin._apps:
-                # Initialize with service account key from environment
+                # Get Firebase project ID from environment
+                project_id = os.environ.get("FIREBASE_PROJECT_ID")
+                
+                if not project_id:
+                    raise Exception("FIREBASE_PROJECT_ID environment variable is required")
+                
+                # Initialize with service account key from environment if available
                 service_account_info = os.environ.get("FIREBASE_SERVICE_ACCOUNT_KEY")
                 
                 if service_account_info:
@@ -26,14 +32,15 @@ class FirebaseClient:
                     service_account = json.loads(service_account_info)
                     cred = credentials.Certificate(service_account)
                 else:
-                    # Fallback to default credentials (for Google Cloud environments)
+                    # Use default credentials for production (works in Google Cloud environments)
                     cred = credentials.ApplicationDefault()
                 
                 firebase_admin.initialize_app(cred, {
-                    'projectId': os.environ.get("FIREBASE_PROJECT_ID")
+                    'projectId': project_id
                 })
             
             self.db = firestore.client()
+            print(f"Firebase initialized successfully with project: {os.environ.get('FIREBASE_PROJECT_ID')}")
             
         except Exception as e:
             print(f"Warning: Firebase initialization failed: {str(e)}")
