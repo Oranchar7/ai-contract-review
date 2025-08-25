@@ -390,6 +390,78 @@ async def chat_streaming(
     
     return StreamingResponse(generate_stream(), media_type="text/plain")
 
+@app.post("/translate_jargon")
+async def translate_jargon(
+    legal_term: str = Form(...),
+    context: Optional[str] = Form(None)
+):
+    """
+    Translate legal jargon into plain English with examples
+    
+    Args:
+        legal_term: The legal term or phrase to translate
+        context: Optional context (contract type, jurisdiction, etc.)
+    
+    Returns:
+        Simple explanation, definition, and practical examples
+    """
+    try:
+        from openai import OpenAI
+        openai_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+        
+        context_info = f" in the context of {context}" if context else ""
+        
+        system_message = """You are a friendly legal translator that explains complex legal terms in simple, everyday language. 
+        
+        Your response should be:
+        - Clear and easy to understand
+        - Use analogies and real-world examples
+        - Include practical implications
+        - Warm and approachable tone
+        - Structure with clear sections
+        
+        Format your response as JSON with these fields:
+        {
+          "simple_definition": "One sentence explanation in plain English",
+          "detailed_explanation": "2-3 sentences with more detail and context",
+          "real_world_example": "Practical example showing how this applies",
+          "why_it_matters": "Why someone should care about this term",
+          "common_usage": "Where you'd typically see this term used"
+        }"""
+        
+        user_message = f"Please explain the legal term '{legal_term}'{context_info} in simple language that anyone can understand."
+        
+        response = openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": user_message}
+            ],
+            temperature=0.4,
+            max_tokens=800,
+            response_format={"type": "json_object"}
+        )
+        
+        import json
+        content = response.choices[0].message.content
+        if content:
+            translation = json.loads(content)
+        else:
+            raise Exception("No content received from OpenAI")
+        
+        return {
+            "status": "success",
+            "term": legal_term,
+            "translation": translation
+        }
+        
+    except Exception as e:
+        print(f"Translation error: {str(e)}")
+        return {
+            "status": "error",
+            "error": "Failed to translate legal term. Please try again."
+        }
+
 @app.post("/ask_contract")
 async def ask_contract(
     query: str = Form(...),

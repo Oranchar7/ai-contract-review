@@ -209,6 +209,160 @@
       background: linear-gradient(90deg, transparent, var(--border-color), transparent);
       margin: 2rem 0;
     }
+    
+    /* Legal Jargon Translator Animations */
+    .translation-results {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s ease;
+    }
+    
+    .translation-results.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .translation-section {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-left: 4px solid var(--secondary-color);
+      opacity: 0;
+      transform: translateX(-20px);
+      animation: slideInLeft 0.6s ease forwards;
+    }
+    
+    .translation-section:nth-child(2) { animation-delay: 0.1s; }
+    .translation-section:nth-child(3) { animation-delay: 0.2s; }
+    .translation-section:nth-child(4) { animation-delay: 0.3s; }
+    .translation-section:nth-child(5) { animation-delay: 0.4s; }
+    
+    @keyframes slideInLeft {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    .translation-term {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+    }
+    
+    .translation-term i {
+      margin-right: 0.5rem;
+      color: var(--secondary-color);
+      animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-5px); }
+      60% { transform: translateY(-3px); }
+    }
+    
+    .quick-term {
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .quick-term:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+    }
+    
+    .quick-term:active {
+      transform: scale(0.95);
+    }
+    
+    .quick-term::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      transition: left 0.5s;
+    }
+    
+    .quick-term:hover::before {
+      left: 100%;
+    }
+    
+    #translateBtn {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    #translateBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+    }
+    
+    #translateBtn.loading {
+      pointer-events: none;
+    }
+    
+    #translateBtn.loading i {
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .magic-sparkle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #fff;
+      border-radius: 50%;
+      animation: sparkle 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes sparkle {
+      0%, 100% {
+        opacity: 0;
+        transform: scale(0);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    
+    .translation-section h6 {
+      color: var(--secondary-color);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.5rem;
+    }
+    
+    .translation-section p {
+      margin-bottom: 0;
+      line-height: 1.5;
+    }
+    
+    .pulse-effect {
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(52, 152, 219, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0); }
+    }
   </style>
 </head>
 <body>
@@ -387,8 +541,49 @@
         </div>
       </div>
 
-      <!-- Right Column: AI Assistant Chat -->
+      <!-- Right Column: Chat Assistant & Legal Jargon Translator -->
       <div class="col-lg-4">
+        <!-- Legal Jargon Translator -->
+        <div class="card mb-3">
+          <div class="card-header">
+            <h5><i class="fas fa-language me-2"></i>Legal Jargon Translator</h5>
+          </div>
+          <div class="card-body p-0">
+            <div id="jargonTranslator">
+              <div class="p-3">
+                <div class="mb-3">
+                  <input type="text" class="form-control" id="legalTermInput" placeholder="Enter legal term or phrase..." maxlength="200">
+                  <div class="form-text">e.g., "force majeure", "indemnification", "consideration"</div>
+                </div>
+                
+                <!-- Quick Examples -->
+                <div class="mb-3">
+                  <div class="d-flex flex-wrap gap-2">
+                    <button type="button" class="btn btn-outline-primary btn-sm quick-term" data-term="force majeure">Force Majeure</button>
+                    <button type="button" class="btn btn-outline-primary btn-sm quick-term" data-term="indemnification">Indemnification</button>
+                    <button type="button" class="btn btn-outline-primary btn-sm quick-term" data-term="liquidated damages">Liquidated Damages</button>
+                    <button type="button" class="btn btn-outline-primary btn-sm quick-term" data-term="consideration">Consideration</button>
+                  </div>
+                </div>
+                
+                <button type="button" class="btn btn-primary w-100" id="translateBtn">
+                  <i class="fas fa-magic me-2"></i>Translate to Plain English
+                </button>
+              </div>
+              
+              <!-- Translation Results -->
+              <div id="translationResults" class="translation-results" style="display: none;">
+                <div class="p-3 border-top">
+                  <div class="translation-content">
+                    <!-- Dynamic content will be inserted here -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Chat Assistant -->
         <div class="card">
           <div class="card-header">
             <h5><i class="fas fa-robot me-2"></i>Contract Assistant</h5>
@@ -570,6 +765,143 @@
 
     function showStatus(message, type) {
       analyzeStatus.innerHTML = `<div class="status-message status-${type}">${message}</div>`;
+    }
+
+    // Legal Jargon Translator functionality
+    const legalTermInput = document.getElementById('legalTermInput');
+    const translateBtn = document.getElementById('translateBtn');
+    const translationResults = document.getElementById('translationResults');
+    const quickTermButtons = document.querySelectorAll('.quick-term');
+    
+    // Quick term button handlers
+    quickTermButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const term = button.dataset.term;
+        legalTermInput.value = term;
+        button.classList.add('pulse-effect');
+        setTimeout(() => button.classList.remove('pulse-effect'), 1000);
+      });
+    });
+    
+    // Translate button handler
+    translateBtn.addEventListener('click', async () => {
+      const term = legalTermInput.value.trim();
+      if (!term) {
+        legalTermInput.focus();
+        legalTermInput.classList.add('pulse-effect');
+        setTimeout(() => legalTermInput.classList.remove('pulse-effect'), 1000);
+        return;
+      }
+      
+      // Add loading state
+      translateBtn.classList.add('loading');
+      translateBtn.innerHTML = '<i class="fas fa-magic me-2"></i>Translating...';
+      
+      // Create sparkle effect
+      createSparkleEffect(translateBtn);
+      
+      try {
+        const formData = new FormData();
+        formData.append('legal_term', term);
+        formData.append('context', contractType.value || '');
+        
+        const response = await fetch('/translate_jargon', {
+          method: 'POST',
+          body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+          displayTranslation(result.term, result.translation);
+        } else {
+          showTranslationError(result.error || 'Translation failed');
+        }
+        
+      } catch (error) {
+        console.error('Translation error:', error);
+        showTranslationError('Failed to translate term. Please try again.');
+      } finally {
+        // Remove loading state
+        translateBtn.classList.remove('loading');
+        translateBtn.innerHTML = '<i class="fas fa-magic me-2"></i>Translate to Plain English';
+      }
+    });
+    
+    // Enter key handler for input
+    legalTermInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        translateBtn.click();
+      }
+    });
+    
+    function createSparkleEffect(element) {
+      for (let i = 0; i < 6; i++) {
+        setTimeout(() => {
+          const sparkle = document.createElement('div');
+          sparkle.className = 'magic-sparkle';
+          sparkle.style.left = Math.random() * element.offsetWidth + 'px';
+          sparkle.style.top = Math.random() * element.offsetHeight + 'px';
+          element.appendChild(sparkle);
+          
+          setTimeout(() => sparkle.remove(), 1500);
+        }, i * 100);
+      }
+    }
+    
+    function displayTranslation(term, translation) {
+      const content = `
+        <div class="translation-term">
+          <i class="fas fa-lightbulb"></i>
+          "${term}"
+        </div>
+        
+        <div class="translation-section">
+          <h6>Simple Definition</h6>
+          <p>${translation.simple_definition}</p>
+        </div>
+        
+        <div class="translation-section">
+          <h6>Detailed Explanation</h6>
+          <p>${translation.detailed_explanation}</p>
+        </div>
+        
+        <div class="translation-section">
+          <h6>Real-World Example</h6>
+          <p>${translation.real_world_example}</p>
+        </div>
+        
+        <div class="translation-section">
+          <h6>Why It Matters</h6>
+          <p>${translation.why_it_matters}</p>
+        </div>
+        
+        <div class="translation-section">
+          <h6>Common Usage</h6>
+          <p>${translation.common_usage}</p>
+        </div>
+      `;
+      
+      translationResults.querySelector('.translation-content').innerHTML = content;
+      translationResults.style.display = 'block';
+      
+      // Trigger show animation
+      setTimeout(() => {
+        translationResults.classList.add('show');
+      }, 50);
+    }
+    
+    function showTranslationError(message) {
+      const content = `
+        <div class="translation-section" style="border-left-color: var(--danger-color);">
+          <h6>Translation Error</h6>
+          <p>${message}</p>
+        </div>
+      `;
+      
+      translationResults.querySelector('.translation-content').innerHTML = content;
+      translationResults.style.display = 'block';
+      translationResults.classList.add('show');
     }
 
     function addChatMessage(sender, message) {
