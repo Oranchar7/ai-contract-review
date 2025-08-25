@@ -333,115 +333,44 @@ async def chat_streaming(
     contract_type: Optional[str] = Form(None),
     user = Depends(get_current_user)
 ):
-    """Streaming chat endpoint with RAG integration"""
+    """Simple streaming chat endpoint with GPT-4o mini"""
     async def generate_stream():
         try:
             full_response = ""
             
-            # Check if we have uploaded documents for RAG
-            if rag_service.index is not None and rag_service.index.ntotal > 0:
-                # Use RAG-enhanced response
-                relevant_chunks = await rag_service._retrieve_relevant_chunks(query, k=5)
-                
-                if relevant_chunks:
-                    # Build context from retrieved chunks
-                    context = "\n\n".join([
-                        f"[Document Section {i+1}]:\n{chunk['text']}"
-                        for i, chunk in enumerate(relevant_chunks)
-                    ])
-                    
-                    # Build RAG prompt
-                    rag_prompt = f"""
-Based on the following uploaded contract sections, please answer the user's question.
-
-JURISDICTION: {jurisdiction or 'Not specified'}
-CONTRACT TYPE: {contract_type or 'Not specified'}
-
-USER QUESTION: {query}
-
-RELEVANT CONTRACT SECTIONS:
-{context}
-
-Please provide a helpful, friendly response based on the contract content above.
-                    """
-                    
-                    # Stream the response using GPT-4o mini with temperature 0.4
-                    stream = rag_service.openai_client.chat.completions.create(
-                        model="gpt-4o-mini",
-                        messages=[
-                            {"role": "system", "content": "You are a helpful contract attorney providing guidance based on specific contract documents. Be conversational and supportive. Always provide complete responses."},
-                            {"role": "user", "content": rag_prompt}
-                        ],
-                        stream=True,
-                        max_tokens=1500,
-                        temperature=0.4
-                    )
-                    
-                    for chunk in stream:
-                        if chunk.choices[0].delta.content is not None:
-                            content = chunk.choices[0].delta.content
-                            full_response += content
-                            yield content
-                    
-                    # Store chat history in Firebase
-                    try:
-                        user_email = user.get('email', 'anonymous') if user else 'anonymous'
-                        await firebase_client.store_chat_history(
-                            email=user_email,
-                            user_question=query,
-                            ai_response=full_response,
-                            retrieved_chunks=relevant_chunks,
-                            jurisdiction=jurisdiction,
-                            contract_type=contract_type
-                        )
-                    except Exception as db_error:
-                        print(f"Database storage error: {db_error}")
-                    
-                    yield "[DONE]"
-                    return
-            
-            # Check if this is a greeting or simple question
+            # Check if this is a greeting
             greeting_words = ['hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening', 'greetings']
             is_greeting = any(word in query.lower() for word in greeting_words)
             
-            if is_greeting or len(query.strip()) < 20:
-                # Handle greetings with a structured welcome message using GPT-4o mini
-                stream = rag_service.openai_client.chat.completions.create(
-                    model="gpt-4o-mini",
-                    messages=[
-                        {"role": "system", "content": "You are a professional contract attorney assistant. Provide a structured, concise welcome message introducing the AI Contract Review service. Be professional and organized."},
-                        {"role": "user", "content": f"User said: '{query}'. Please provide a professional welcome to our AI Contract Review service, explaining what we offer and how I can help them with contracts today."}
-                    ],
-                    stream=True,
-                    max_tokens=400,
-                    temperature=0.4
-                )
-                
-                for chunk in stream:
-                    if chunk.choices[0].delta.content is not None:
-                        content = chunk.choices[0].delta.content
-                        full_response += content
-                        yield content
+            if is_greeting:
+                system_message = "You are a professional AI contract review assistant. Provide a clear, structured welcome message that introduces our contract analysis service. Be professional, concise, and helpful. Explain what you can do and ask how you can help today."
+                user_message = f"User said: '{query}'. Please provide a professional welcome message for our AI Contract Review service."
             else:
-                # Handle contract-specific questions
-                stream = rag_service.openai_client.chat.completions.create(
-                    model="gpt-4o-mini",
-                    messages=[
-                        {"role": "system", "content": "You are a helpful contract attorney providing general legal guidance. Be conversational and supportive. Always provide complete responses."},
-                        {"role": "user", "content": f"Please help with this contract question: {query}. Jurisdiction: {jurisdiction or 'Not specified'}. Contract type: {contract_type or 'Not specified'}."}
-                    ],
-                    stream=True,
-                    max_tokens=1500,
-                    temperature=0.4
-                )
-                
-                for chunk in stream:
-                    if chunk.choices[0].delta.content is not None:
-                        content = chunk.choices[0].delta.content
-                        full_response += content
-                        yield content
+                system_message = "You are a professional contract attorney providing legal guidance. Be structured, clear, and professional. Provide practical advice about contracts and legal terms. Always be helpful and organized in your responses."
+                user_message = f"Please help with this contract question: {query}. Jurisdiction: {jurisdiction or 'Not specified'}. Contract type: {contract_type or 'Not specified'}."
             
-            # Store chat history in Firebase
+            # Use OpenAI directly with GPT-4o mini and temperature 0.4
+            from openai import OpenAI
+            openai_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+            
+            stream = openai_client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": system_message},
+                    {"role": "user", "content": user_message}
+                ],
+                stream=True,
+                max_tokens=800,
+                temperature=0.4
+            )
+            
+            for chunk in stream:
+                if chunk.choices[0].delta.content is not None:
+                    content = chunk.choices[0].delta.content
+                    full_response += content
+                    yield content
+            
+            # Store chat history (simplified, ignore errors)
             try:
                 user_email = user.get('email', 'anonymous') if user else 'anonymous'
                 await firebase_client.store_chat_history(
@@ -452,17 +381,14 @@ Please provide a helpful, friendly response based on the contract content above.
                     jurisdiction=jurisdiction,
                     contract_type=contract_type
                 )
-            except Exception as db_error:
-                print(f"Database storage error: {db_error}")
-            
-            yield "[DONE]"
+            except:
+                pass  # Ignore Firebase errors
             
         except Exception as e:
-            print(f"Chat streaming error: {str(e)}")
-            yield "I apologize, but I encountered an error processing your question. Please try again."
-            yield "[DONE]"
+            print(f"Chat error: {str(e)}")
+            yield "I apologize, but I encountered an error. Please try again."
     
-    return EventSourceResponse(generate_stream(), media_type="text/event-stream")
+    return StreamingResponse(generate_stream(), media_type="text/plain")
 
 @app.post("/ask_contract")
 async def ask_contract(
