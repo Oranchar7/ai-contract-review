@@ -247,8 +247,8 @@
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="email" class="form-label">Email (Optional)</label>
-                    <input type="email" class="form-control" id="email" placeholder="your@email.com">
+                    <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control" id="email" placeholder="your@email.com" required>
                     <div class="form-text">Receive results via email</div>
                   </div>
                 </div>
@@ -257,8 +257,8 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="jurisdiction" class="form-label">Jurisdiction</label>
-                    <select class="form-select" id="jurisdiction">
+                    <label for="jurisdiction" class="form-label">Jurisdiction <span class="text-danger">*</span></label>
+                    <select class="form-select" id="jurisdiction" required>
                       <option value="">Select Jurisdiction</option>
                       <option value="US-Federal">United States (Federal)</option>
                       <option value="US-CA">California, USA</option>
@@ -276,13 +276,14 @@
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="contractType" class="form-label">Contract Type</label>
-                    <select class="form-select" id="contractType">
+                    <label for="contractType" class="form-label">Contract Type <span class="text-danger">*</span></label>
+                    <select class="form-select" id="contractType" required>
                       <option value="">Select Contract Type</option>
                       <option value="NDA">Non-Disclosure Agreement</option>
                       <option value="MSA">Master Service Agreement</option>
                       <option value="SaaS">SaaS Terms of Service</option>
                       <option value="Employment">Employment Agreement</option>
+                      <option value="Other">Other</option>
                       <option value="Consulting">Consulting Agreement</option>
                       <option value="License">License Agreement</option>
                       <option value="Purchase">Purchase Agreement</option>
@@ -355,11 +356,25 @@
       const file = contractFile.files[0];
       if (!file) return;
 
+      // Validate required fields
+      if (!email.value.trim()) {
+        showStatus('Please enter your email address.', 'error');
+        return;
+      }
+      if (!jurisdiction.value) {
+        showStatus('Please select a jurisdiction.', 'error');
+        return;
+      }
+      if (!contractType.value) {
+        showStatus('Please select a contract type.', 'error');
+        return;
+      }
+
       const formData = new FormData();
       formData.append('file', file);
-      if (jurisdiction.value) formData.append('jurisdiction', jurisdiction.value);
-      if (contractType.value) formData.append('contract_type', contractType.value);
-      if (email.value) formData.append('email', email.value);
+      formData.append('jurisdiction', jurisdiction.value); // Jurisdiction is now required
+      formData.append('contract_type', contractType.value); // Contract type is now required
+      formData.append('email', email.value); // Email is now required
 
       showStatus('Analyzing your contract... This may take a few minutes.', 'loading');
       analysisReport.innerHTML = '';

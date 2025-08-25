@@ -350,16 +350,16 @@ async def chat_streaming(
                     Please provide a helpful, friendly response based on the contract content above.
                     """
                     
-                    # Stream the response
+                    # Stream the response using GPT-4o mini with temperature 0.4
                     stream = rag_service.openai_client.chat.completions.create(
-                        model=rag_service.chat_model,
+                        model="gpt-4o-mini",
                         messages=[
                             {"role": "system", "content": "You are a helpful contract attorney providing guidance based on specific contract documents. Be conversational and supportive."},
                             {"role": "user", "content": rag_prompt}
                         ],
                         stream=True,
                         max_tokens=500,
-                        temperature=0.7
+                        temperature=0.4
                     )
                     
                     for chunk in stream:
