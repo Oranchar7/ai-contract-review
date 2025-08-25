@@ -1,7 +1,7 @@
 import os
 import json
 import asyncio
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 from openai import OpenAI
 from models.contract_analysis import ContractAnalysisResponse, RiskyClause, MissingProtection
 
@@ -16,19 +16,26 @@ class AIAnalyzer:
         # do not change this unless explicitly requested by the user
         self.model = "gpt-5"
     
-    async def analyze_contract(self, contract_text: str) -> ContractAnalysisResponse:
+    async def analyze_contract(
+        self, 
+        contract_text: str, 
+        jurisdiction: Optional[str] = None,
+        contract_type: Optional[str] = None
+    ) -> ContractAnalysisResponse:
         """
         Analyze contract text using AI and return structured results
         
         Args:
             contract_text: The extracted text from the contract
+            jurisdiction: Optional jurisdiction (e.g., "US-NY", "CA-ON")
+            contract_type: Optional contract type (e.g., "NDA", "MSA", "SaaS TOS")
             
         Returns:
             ContractAnalysisResponse: Structured analysis results
         """
         try:
             # Prepare the analysis prompt
-            analysis_prompt = self._build_analysis_prompt(contract_text)
+            analysis_prompt = self._build_analysis_prompt(contract_text, jurisdiction, contract_type)
             
             # Call OpenAI API
             response = await asyncio.to_thread(
@@ -63,10 +70,22 @@ class AIAnalyzer:
         except Exception as e:
             raise Exception(f"AI analysis failed: {str(e)}")
     
-    def _build_analysis_prompt(self, contract_text: str) -> str:
+    def _build_analysis_prompt(
+        self, 
+        contract_text: str, 
+        jurisdiction: Optional[str] = None,
+        contract_type: Optional[str] = None
+    ) -> str:
         """Build the comprehensive analysis prompt"""
+        # Build context information for jurisdiction and contract type
+        context_info = ""
+        if jurisdiction:
+            context_info += f"\nJURISDICTION: {jurisdiction}"
+        if contract_type:
+            context_info += f"\nCONTRACT TYPE: {contract_type}"
+        
         return f"""
-        Please analyze the following contract and provide a comprehensive risk assessment. 
+        Please analyze the following contract and provide a comprehensive risk assessment.{context_info}
         
         CONTRACT TEXT:
         {contract_text[:15000]}  # Limit text to avoid token limits
@@ -105,6 +124,9 @@ class AIAnalyzer:
         8. Payment and delivery terms
         9. Dispute resolution mechanisms
         10. Compliance and regulatory considerations
+        
+        {f"Consider the specific jurisdiction ({jurisdiction}) laws and requirements." if jurisdiction else ""}
+        {f"Focus on issues specific to {contract_type} contracts." if contract_type else ""}
         
         Provide specific, actionable recommendations for each identified issue.
         """

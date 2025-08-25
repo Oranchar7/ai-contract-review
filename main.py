@@ -58,10 +58,12 @@ async def read_root(request: Request):
         }
     )
 
-@app.post("/analyze", response_model=ContractAnalysisResponse)
+@app.post("/analyze")
 async def analyze_contract(
     file: UploadFile = File(...),
-    email: Optional[str] = Form(None)
+    email: Optional[str] = Form(None),
+    jurisdiction: Optional[str] = Form(None),
+    contract_type: Optional[str] = Form(None)
 ):
     """
     Analyze uploaded contract file and return structured analysis
@@ -69,6 +71,8 @@ async def analyze_contract(
     Args:
         file: PDF or DOCX contract file
         email: Optional email for notifications
+        jurisdiction: Optional jurisdiction (e.g., "US-NY", "CA-ON")
+        contract_type: Optional contract type (e.g., "NDA", "MSA", "SaaS TOS")
     
     Returns:
         ContractAnalysisResponse: Structured analysis results
@@ -107,7 +111,11 @@ async def analyze_contract(
                 )
             
             # Analyze contract with AI
-            analysis_result = await ai_analyzer.analyze_contract(extracted_text)
+            analysis_result = await ai_analyzer.analyze_contract(
+                extracted_text, 
+                jurisdiction=jurisdiction,
+                contract_type=contract_type
+            )
             
             # Store analysis in Firebase
             document_id = await firebase_client.store_analysis(
@@ -137,6 +145,12 @@ async def analyze_contract(
     except HTTPException:
         raise
     except Exception as e:
+        # Return specific error format for AI analysis failures
+        if "AI analysis failed" in str(e) or "OpenAI" in str(e):
+            return {
+                "error": "Analysis failed",
+                "details": str(e)
+            }
         raise HTTPException(
             status_code=500,
             detail=f"An error occurred while processing the file: {str(e)}"
