@@ -36,6 +36,7 @@ app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/", StaticFiles(directory=".", html=True), name="root_static")
 
 # Templates
 templates = Jinja2Templates(directory="templates")
