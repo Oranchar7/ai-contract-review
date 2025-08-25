@@ -688,30 +688,64 @@
     }
     
     // Handle "Other" contract type selection
-    contractType.addEventListener('change', function() {
-      const otherRow = document.getElementById('otherContractTypeRow');
-      if (this.value === 'Other') {
-        otherRow.style.display = 'block';
-        document.getElementById('otherContractType').required = true;
-      } else {
-        otherRow.style.display = 'none';
-        document.getElementById('otherContractType').required = false;
-        document.getElementById('otherContractType').value = '';
-      }
-    });
+    if (contractType) {
+      contractType.addEventListener('change', function() {
+        const otherRow = document.getElementById('otherContractTypeRow');
+        const otherInput = document.getElementById('otherContractType');
+        
+        console.log('Contract type changed to:', this.value); // Debug log
+        
+        if (this.value === 'Other') {
+          if (otherRow) {
+            otherRow.style.display = 'block';
+          }
+          if (otherInput) {
+            otherInput.required = true;
+            otherInput.focus(); // Focus the input for better UX
+          }
+        } else {
+          if (otherRow) {
+            otherRow.style.display = 'none';
+          }
+          if (otherInput) {
+            otherInput.required = false;
+            otherInput.value = '';
+          }
+        }
+      });
+    } else {
+      console.error('Contract type element not found');
+    }
     
     // Handle "Other" jurisdiction selection
-    jurisdiction.addEventListener('change', function() {
-      const customJurisdictionRow = document.getElementById('customJurisdictionRow');
-      if (this.value === 'Other') {
-        customJurisdictionRow.style.display = 'block';
-        document.getElementById('customJurisdiction').required = true;
-      } else {
-        customJurisdictionRow.style.display = 'none';
-        document.getElementById('customJurisdiction').required = false;
-        document.getElementById('customJurisdiction').value = '';
-      }
-    });
+    if (jurisdiction) {
+      jurisdiction.addEventListener('change', function() {
+        const customJurisdictionRow = document.getElementById('customJurisdictionRow');
+        const customJurisdictionInput = document.getElementById('customJurisdiction');
+        
+        console.log('Jurisdiction changed to:', this.value); // Debug log
+        
+        if (this.value === 'Other') {
+          if (customJurisdictionRow) {
+            customJurisdictionRow.style.display = 'block';
+          }
+          if (customJurisdictionInput) {
+            customJurisdictionInput.required = true;
+            customJurisdictionInput.focus(); // Focus the input for better UX
+          }
+        } else {
+          if (customJurisdictionRow) {
+            customJurisdictionRow.style.display = 'none';
+          }
+          if (customJurisdictionInput) {
+            customJurisdictionInput.required = false;
+            customJurisdictionInput.value = '';
+          }
+        }
+      });
+    } else {
+      console.error('Jurisdiction element not found');
+    }
 
   </script>
 </body>
