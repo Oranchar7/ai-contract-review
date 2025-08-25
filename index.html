@@ -439,13 +439,46 @@
       messageDiv.className = `message ${sender}`;
       
       if (sender === 'assistant') {
-        messageDiv.innerHTML = `<strong>AI Assistant:</strong> ${message}`;
+        // Format the assistant message with better structure
+        const formattedMessage = formatAssistantMessage(message);
+        messageDiv.innerHTML = `<strong>AI Assistant:</strong><br>${formattedMessage}`;
       } else {
         messageDiv.innerHTML = `<strong>You:</strong> ${message}`;
       }
       
       chatContainer.appendChild(messageDiv);
       chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function formatAssistantMessage(message) {
+      // Structure the message for better readability
+      let formatted = message;
+      
+      // Add line breaks for better readability
+      formatted = formatted.replace(/\n/g, '<br>');
+      
+      // Format numbered lists
+      formatted = formatted.replace(/(\d+\.\s)/g, '<br><strong>$1</strong>');
+      
+      // Format bullet points
+      formatted = formatted.replace(/([•\-\*]\s)/g, '<br>&nbsp;&nbsp;$1');
+      
+      // Format headers with ###
+      formatted = formatted.replace(/###\s(.+?):/g, '<br><strong>$1:</strong>');
+      
+      // Format bold text with **
+      formatted = formatted.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      
+      // Format sections that start with capital letters and colon
+      formatted = formatted.replace(/([A-Z][^:]*?):/g, '<strong>$1:</strong>');
+      
+      // Add spacing between major sections
+      formatted = formatted.replace(/<br><strong>(\d+\.)/g, '<br><br><strong>$1');
+      
+      // Clean up multiple consecutive breaks
+      formatted = formatted.replace(/<br><br><br>/g, '<br><br>');
+      
+      return formatted;
     }
 
     function displayAnalysisReport(analysis) {

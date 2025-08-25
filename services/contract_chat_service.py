@@ -79,7 +79,7 @@ Please provide helpful, conversational advice that's easy to understand. If this
                         "content": user_prompt
                     }
                 ],
-                max_tokens=800,
+                max_tokens=530,
                 temperature=0.7,  # Higher temperature for more conversational responses
                 presence_penalty=0.1,  # Slight penalty to avoid repetition
                 frequency_penalty=0.1   # Slight penalty to encourage variety
@@ -163,7 +163,7 @@ Please help me understand what this means for my specific situation and what I s
                         "content": user_prompt
                     }
                 ],
-                max_tokens=1000,
+                max_tokens=670,
                 temperature=0.6,  # Balanced for accuracy and conversational tone
                 presence_penalty=0.1,
                 frequency_penalty=0.1
@@ -261,7 +261,7 @@ Please help me understand what this means and what I should do next."""
                         "content": user_prompt
                     }
                 ],
-                max_tokens=900,
+                max_tokens=600,
                 temperature=0.5,  # Lower temperature for more focused advice
                 presence_penalty=0.1,
                 frequency_penalty=0.1
