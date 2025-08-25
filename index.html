@@ -723,6 +723,7 @@
         }
 
         const result = await response.json();
+        console.log('Chat result:', result);
         
         if (result.response) {
           addChatMessage('assistant', result.response);
@@ -732,6 +733,7 @@
         
       } catch (error) {
         console.error('Chat error:', error);
+        console.error('Chat error details:', error.message);
         addChatMessage('assistant', 'I apologize, but I encountered an error processing your question. Please try again.');
       }
     });
@@ -790,7 +792,12 @@
           body: formData
         });
         
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const result = await response.json();
+        console.log('Translation result:', result);
         
         if (result.status === 'success') {
           displayTranslation(result.term, result.translation);
@@ -800,6 +807,7 @@
         
       } catch (error) {
         console.error('Translation error:', error);
+        console.error('Error details:', error.message);
         showTranslationError('Failed to translate term. Please try again.');
       } finally {
         // Remove loading state
