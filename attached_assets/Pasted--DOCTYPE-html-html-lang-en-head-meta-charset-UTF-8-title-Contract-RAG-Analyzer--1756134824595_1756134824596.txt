@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Contract RAG Analyzer</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1 { text-align: center; }
+    #chat { border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: scroll; margin-bottom: 10px; }
+    .message { margin: 5px 0; }
+    .user { color: blue; }
+    .agent { color: green; }
+    #uploadForm, #chatForm { margin-bottom: 20px; }
+    input, button, select { margin-top: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Contract RAG Analyzer</h1>
+
+  <!-- Upload Contract -->
+  <form id="uploadForm">
+    <label>Upload Contract (PDF):</label><br>
+    <input type="file" id="fileInput" accept=".pdf" required><br>
+    <label>Jurisdiction:</label><br>
+    <input type="text" id="jurisdiction" placeholder="US-NY"><br>
+    <label>Contract Type:</label><br>
+    <input type="text" id="contractType" placeholder="NDA, MSA, SaaS TOS"><br>
+    <button type="submit">Upload Contract</button>
+  </form>
+
+  <div id="uploadStatus"></div>
+
+  <!-- Chat -->
+  <div id="chat"></div>
+
+  <form id="chatForm">
+    <input type="text" id="userQuery" placeholder="Ask a question about the contract..." style="width:80%" required>
+    <button type="submit">Send</button>
+  </form>
+
+  <script>
+    const uploadForm = document.getElementById("uploadForm");
+    const fileInput = document.getElementById("fileInput");
+    const jurisdictionInput = document.getElementById("jurisdiction");
+    const contractTypeInput = document.getElementById("contractType");
+    const uploadStatus = document.getElementById("uploadStatus");
+
+    const chatForm = document.getElementById("chatForm");
+    const userQuery = document.getElementById("userQuery");
+    const chatDiv = document.getElementById("chat");
+
+    // Upload contract
+    uploadForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("jurisdiction", jurisdictionInput.value);
+      formData.append("contract_type", contractTypeInput.value);
+
+      uploadStatus.textContent = "Uploading...";
+
+      try {
+        const res = await fetch("/upload_contract", {
+          method: "POST",
+          body: formData
+        });
+        const data = await res.json();
+        uploadStatus.textContent = "Upload complete: " + JSON.stringify(data);
+      } catch (err) {
+        console.error(err);
+        uploadStatus.textContent = "Upload failed.";
+      }
+    });
+
+    // Chat with RAG agent
+    chatForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const query = userQuery.value;
+      if (!query) return;
+
+      // Display user message
+      const userMsg = document.createElement("div");
+      userMsg.className = "message user";
+      userMsg.textContent = "You: " + query;
+      chatDiv.appendChild(userMsg);
+
+      userQuery.value = "";
+      chatDiv.scrollTop = chatDiv.scrollHeight;
+
+      try {
+        const formData = new FormData();
+        formData.append("query", query);
+
+        const res = await fetch("/ask_contract", {
+          method: "POST",
+          body: formData
+        });
+        const data = await res.json();
+
+        const agentMsg = document.createElement("div");
+        agentMsg.className = "message agent";
+        agentMsg.textContent = "Agent: " + data.answer;
+        chatDiv.appendChild(agentMsg);
+        chatDiv.scrollTop = chatDiv.scrollHeight;
+      } catch (err) {
+        console.error(err);
+        const agentMsg = document.createElement("div");
+        agentMsg.className = "message agent";
+        agentMsg.textContent = "Agent: Error getting response.";
+        chatDiv.appendChild(agentMsg);
+      }
+    });
+  </script>
+</body>
+</html>
