@@ -36,7 +36,6 @@ app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
-app.mount("/", StaticFiles(directory=".", html=True), name="root_static")
 
 # Templates
 templates = Jinja2Templates(directory="templates")
@@ -50,21 +49,10 @@ rag_service = RAGService()
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
-    """Serve the main HTML page with Firebase configuration"""
-    return templates.TemplateResponse(
-        "index.html", 
-        {
-            "request": request,
-            "firebase_api_key": os.environ.get("FIREBASE_API_KEY", ""),
-            "firebase_project_id": os.environ.get("FIREBASE_PROJECT_ID", ""),
-            "firebase_app_id": os.environ.get("FIREBASE_APP_ID", ""),
-        }
-    )
-
-@app.get("/rag", response_class=HTMLResponse)
-async def rag_interface(request: Request):
-    """Serve the RAG chat interface"""
-    return templates.TemplateResponse("rag.html", {"request": request})
+    """Serve the RAG chat interface as main page"""
+    with open("index.html", "r") as f:
+        html_content = f.read()
+    return HTMLResponse(content=html_content)
 
 @app.post("/analyze")
 async def analyze_contract(
