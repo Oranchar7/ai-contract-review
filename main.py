@@ -323,6 +323,8 @@ async def chat_streaming(
     """Streaming chat endpoint with RAG integration"""
     async def generate_stream():
         try:
+            full_response = ""
+            
             # Check if we have uploaded documents for RAG
             if rag_service.index is not None and rag_service.index.ntotal > 0:
                 # Use RAG-enhanced response
@@ -337,49 +339,91 @@ async def chat_streaming(
                     
                     # Build RAG prompt
                     rag_prompt = f"""
-                    Based on the following uploaded contract sections, please answer the user's question.
-                    
-                    JURISDICTION: {jurisdiction or 'Not specified'}
-                    CONTRACT TYPE: {contract_type or 'Not specified'}
-                    
-                    USER QUESTION: {query}
-                    
-                    RELEVANT CONTRACT SECTIONS:
-                    {context}
-                    
-                    Please provide a helpful, friendly response based on the contract content above.
+Based on the following uploaded contract sections, please answer the user's question.
+
+JURISDICTION: {jurisdiction or 'Not specified'}
+CONTRACT TYPE: {contract_type or 'Not specified'}
+
+USER QUESTION: {query}
+
+RELEVANT CONTRACT SECTIONS:
+{context}
+
+Please provide a helpful, friendly response based on the contract content above.
                     """
                     
                     # Stream the response using GPT-4o mini with temperature 0.4
                     stream = rag_service.openai_client.chat.completions.create(
                         model="gpt-4o-mini",
                         messages=[
-                            {"role": "system", "content": "You are a helpful contract attorney providing guidance based on specific contract documents. Be conversational and supportive."},
+                            {"role": "system", "content": "You are a helpful contract attorney providing guidance based on specific contract documents. Be conversational and supportive. Always provide complete responses."},
                             {"role": "user", "content": rag_prompt}
                         ],
                         stream=True,
-                        max_tokens=500,
+                        max_tokens=1500,
                         temperature=0.4
                     )
                     
                     for chunk in stream:
                         if chunk.choices[0].delta.content is not None:
-                            yield f"data: {chunk.choices[0].delta.content}\n\n"
+                            content = chunk.choices[0].delta.content
+                            full_response += content
+                            yield f"data: {content}\n\n"
+                    
+                    # Store chat history in Firebase
+                    try:
+                        user_email = user.get('email', 'anonymous') if user else 'anonymous'
+                        await firebase_client.store_chat_history(
+                            email=user_email,
+                            user_question=query,
+                            ai_response=full_response,
+                            retrieved_chunks=relevant_chunks,
+                            jurisdiction=jurisdiction,
+                            contract_type=contract_type
+                        )
+                    except Exception as db_error:
+                        print(f"Database storage error: {db_error}")
+                    
                     yield "data: [DONE]\n\n"
                     return
             
-            # Fallback to general contract chat
-            result = await chat_service.general_chat(
-                query=query,
-                jurisdiction=jurisdiction,
-                contract_type=contract_type
+            # Fallback to general contract chat with streaming
+            stream = rag_service.openai_client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": "You are a helpful contract attorney providing general legal guidance. Be conversational and supportive. Always provide complete responses."},
+                    {"role": "user", "content": f"Please help with this contract question: {query}. Jurisdiction: {jurisdiction or 'Not specified'}. Contract type: {contract_type or 'Not specified'}."}
+                ],
+                stream=True,
+                max_tokens=1500,
+                temperature=0.4
             )
-            # Stream the result as a single response
-            yield f"data: {result.get('answer', 'I apologize, but I cannot process your request at this time.')}\n\n"
+            
+            for chunk in stream:
+                if chunk.choices[0].delta.content is not None:
+                    content = chunk.choices[0].delta.content
+                    full_response += content
+                    yield f"data: {content}\n\n"
+            
+            # Store chat history in Firebase
+            try:
+                user_email = user.get('email', 'anonymous') if user else 'anonymous'
+                await firebase_client.store_chat_history(
+                    email=user_email,
+                    user_question=query,
+                    ai_response=full_response,
+                    retrieved_chunks=[],
+                    jurisdiction=jurisdiction,
+                    contract_type=contract_type
+                )
+            except Exception as db_error:
+                print(f"Database storage error: {db_error}")
+            
             yield "data: [DONE]\n\n"
             
         except Exception as e:
-            yield f"data: I apologize, but I encountered an error processing your question: {str(e)}\n\n"
+            print(f"Chat streaming error: {str(e)}")
+            yield f"data: I apologize, but I encountered an error processing your question. Please try again.\n\n"
             yield "data: [DONE]\n\n"
     
     return EventSourceResponse(generate_stream(), media_type="text/plain")

@@ -152,9 +152,9 @@ class RAGService:
             faiss.normalize_L2(query_embedding_normalized)
             
             # Search for similar chunks
-            k = min(k, self.index.ntotal)  # Ensure k doesn't exceed available vectors
-            if k > 0:
-                scores, indices = self.index.search(query_embedding_normalized, k)
+            search_k = min(k, self.index.ntotal)  # Ensure k doesn't exceed available vectors
+            if search_k > 0:
+                scores, indices = self.index.search(query_embedding_normalized, search_k)
             else:
                 scores, indices = np.array([[]]), np.array([[]])
             

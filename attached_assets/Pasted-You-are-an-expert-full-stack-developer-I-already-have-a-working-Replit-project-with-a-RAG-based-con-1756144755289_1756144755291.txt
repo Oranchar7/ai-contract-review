@@ -1,0 +1,48 @@
+You are an expert full-stack developer. I already have a working Replit project with a RAG-based contract review agent and a frontend upload/chat UI. I need you to integrate Firebase into this project without breaking the existing UI or backend flow.
+
+**Requirements:**
+
+1. **Firebase Setup**
+   - Install Firebase SDK using `npm install firebase`.
+   - Add a `.env` file to store:
+     - FIREBASE_API_KEY
+     - FIREBASE_PROJECT_ID
+     - FIREBASE_APP_ID
+   - Use Firebase Authentication for capturing emails.
+   - Use Firebase Firestore to store metadata.
+
+2. **Mandatory Fields**
+   - Make these fields **required** in the upload/chat flow:
+     - Email address (must validate format).
+     - Jurisdiction (dropdown or text).
+     - Contract type (dropdown with options + **Other** option).
+   - If any required field is missing, block submission and show a clear error message.
+
+3. **Data Storage**
+   - Every time a user uploads a PDF or chats with the RAG agent:
+     - Save the following in **Firestore**:
+       - Email  
+       - Jurisdiction  
+       - Contract type  
+       - Timestamp  
+       - Uploaded file name(s)
+   - Do not break the existing UI layout or logic.
+   - Use Firestore’s `addDoc` to store a record for each interaction.
+
+4. **Admin Access**
+   - Ensure I can access all collected emails and metadata in:
+     - **Firebase Console → Firestore** (for stored records).
+     - **Firebase Console → Authentication → Users** (for registered emails).
+   - No third-party sharing — all data should stay within my Firebase project.
+
+5. **Backend Integration**
+   - Use Firebase Admin SDK in the backend for verifying tokens and securely saving data.
+   - The backend should reject any submission missing required fields.
+
+6. **Final Deliverables**
+   - Updated `server.js` or backend entry point with Firebase Admin integration.
+   - Updated frontend JS to enforce mandatory fields.
+   - Firestore logging working in real time.
+   - Do NOT alter the visual design or break my current RAG agent flow.
+
+Everything must work locally on port **5000** and in Replit deployment. Provide only the updated code snippets and instructions for where to insert them.
