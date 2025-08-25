@@ -339,12 +339,23 @@ async def chat_simple(
         greeting_words = ['hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening', 'greetings']
         is_greeting = any(word in query.lower() for word in greeting_words)
         
+        # Consistent system message for all responses
+        system_message = """You are a legal contract assistant. Always respond in consistent Markdown format:
+
+- Use **bold** for important terms, headings, or field labels.
+- Use *italics* only for emphasis, not headings.
+- Use numbered lists for step-by-step instructions.
+- Do not mix HTML tags with Markdown.
+- Ensure uniform spacing, line breaks, and no random bolding.
+- Avoid inline code formatting unless showing actual code snippets.
+- If providing examples, maintain the same Markdown structure throughout the response.
+
+Return your output strictly in Markdown. Any tables, lists, or headings must follow standard Markdown syntax."""
+
         if is_greeting:
-            system_message = "You are a professional AI contract review assistant. Provide a clear, structured welcome message that introduces our contract analysis service. Be professional, concise, and helpful. Explain what you can do and ask how you can help today."
-            user_message = f"User said: '{query}'. Please provide a professional welcome message for our AI Contract Review service."
+            user_message = f"User said: '{query}'. Please provide a professional welcome message for our AI Contract Review service using proper Markdown formatting."
         else:
-            system_message = "You are a professional contract attorney providing legal guidance. Be structured, clear, and professional. Provide practical advice about contracts and legal terms. Always be helpful and organized in your responses."
-            user_message = f"Please help with this contract question: {query}. Jurisdiction: {jurisdiction or 'Not specified'}. Contract type: {contract_type or 'Not specified'}."
+            user_message = f"Please help with this contract question: {query}. Jurisdiction: {jurisdiction or 'Not specified'}. Contract type: {contract_type or 'Not specified'}. Use proper Markdown formatting in your response."
         
         # Use OpenAI directly with GPT-4o mini and temperature 0.4
         from openai import OpenAI
