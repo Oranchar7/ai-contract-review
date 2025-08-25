@@ -612,6 +612,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script>
     const analyzeForm = document.getElementById('analyzeForm');
     const contractFile = document.getElementById('contractFile');
@@ -913,8 +914,8 @@
       messageDiv.className = `message ${sender}`;
       
       if (sender === 'assistant') {
-        // Format the assistant message with better structure
-        const formattedMessage = formatAssistantMessage(message);
+        // Parse Markdown for assistant responses
+        const formattedMessage = marked.parse(message);
         messageDiv.innerHTML = `<strong>AI Assistant:</strong><br>${formattedMessage}`;
       } else {
         messageDiv.innerHTML = `<strong>You:</strong> ${message}`;
@@ -924,36 +925,7 @@
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 
-    function formatAssistantMessage(message) {
-      // Structure the message for better readability
-      let formatted = message;
-      
-      // Add line breaks for better readability
-      formatted = formatted.replace(/\n/g, '<br>');
-      
-      // Format numbered lists (normal weight for numbers, bold for content)
-      formatted = formatted.replace(/(\d+\.\s)(.+?)(?=<br>|$)/g, '<br>$1<strong>$2</strong>');
-      
-      // Format bullet points (normal weight for bullets, bold for content)  
-      formatted = formatted.replace(/([•\-\*]\s)(.+?)(?=<br>|$)/g, '<br>&nbsp;&nbsp;$1<strong>$2</strong>');
-      
-      // Format headers with ### (normal weight for headers)
-      formatted = formatted.replace(/###\s(.+?):/g, '<br>$1:');
-      
-      // Format sections that start with capital letters and colon (normal weight for headers)
-      formatted = formatted.replace(/([A-Z][^:]*?):/g, '$1:');
-      
-      // Format bold text with ** (keep original bold formatting)
-      formatted = formatted.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-      
-      // Add spacing between major sections
-      formatted = formatted.replace(/<br><strong>(\d+\.)/g, '<br><br><strong>$1');
-      
-      // Clean up multiple consecutive breaks
-      formatted = formatted.replace(/<br><br><br>/g, '<br><br>');
-      
-      return formatted;
-    }
+    // Removed formatAssistantMessage - now using marked.parse for Markdown rendering
 
     function displayAnalysisReport(analysis) {
       const riskScore = analysis.risk_score || analysis.overall_risk_score || 0;
