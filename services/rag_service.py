@@ -93,7 +93,9 @@ class RAGService:
                 
             # Normalize embeddings for cosine similarity
             # Ensure embeddings are contiguous for FAISS
-            embeddings_normalized = np.ascontiguousarray(embeddings.copy())
+            embeddings_normalized = embeddings.copy().astype(np.float32)
+            if embeddings_normalized.ndim == 1:
+                embeddings_normalized = embeddings_normalized.reshape(1, -1)
             faiss.normalize_L2(embeddings_normalized)
             
             # Store chunks and metadata
@@ -106,7 +108,8 @@ class RAGService:
             } for i in range(len(chunks))])
             
             # Add to FAISS index
-            self.index.add(embeddings_normalized)
+            if embeddings_normalized.shape[0] > 0:
+                self.index.add(embeddings_normalized)
             
             return {
                 "status": "success",
@@ -131,11 +134,17 @@ class RAGService:
             # Generate query embedding
             query_embedding = await self._get_embeddings([query])
             # Ensure query embedding is contiguous for FAISS
-            query_embedding_normalized = np.ascontiguousarray(query_embedding.copy())
+            query_embedding_normalized = query_embedding.copy().astype(np.float32)
+            if query_embedding_normalized.ndim == 1:
+                query_embedding_normalized = query_embedding_normalized.reshape(1, -1)
             faiss.normalize_L2(query_embedding_normalized)
             
             # Search for similar chunks
-            scores, indices = self.index.search(query_embedding_normalized, k)
+            k = min(k, self.index.ntotal)  # Ensure k doesn't exceed available vectors
+            if k > 0:
+                scores, indices = self.index.search(query_embedding_normalized, k)
+            else:
+                scores, indices = np.array([[]]), np.array([[]])
             
             # Return relevant chunks with scores
             relevant_chunks = []

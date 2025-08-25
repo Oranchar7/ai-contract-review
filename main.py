@@ -247,48 +247,14 @@ async def ask_contract(
         Friendly conversational response about contracts
     """
     try:
-        # Check if we have contract data uploaded for RAG
-        if rag_service.index is not None and len(rag_service.document_chunks) > 0:
-            # Use RAG for specific contract questions
-            result = await rag_service.ask_contract(
-                query=query,
-                jurisdiction=jurisdiction,
-                contract_type=contract_type
-            )
-            
-            # Add a conversational answer field for the chat interface
-            if "error" not in result:
-                # Create a conversational answer from the analysis
-                answer_parts = []
-                
-                if result.get("summary"):
-                    answer_parts.append(result["summary"])
-                
-                if result.get("risky_clauses"):
-                    risk_count = len(result["risky_clauses"])
-                    if risk_count > 0:
-                        answer_parts.append(f"I found {risk_count} potentially risky clause(s) in your contract.")
-                
-                if result.get("missing_protections"):
-                    missing_count = len(result["missing_protections"])
-                    if missing_count > 0:
-                        answer_parts.append(f"There are {missing_count} missing protection(s) I'd recommend adding.")
-                
-                if result.get("overall_risk_score"):
-                    score = result["overall_risk_score"]
-                    answer_parts.append(f"Overall risk score: {score}/10.")
-                
-                result["answer"] = " ".join(answer_parts) if answer_parts else "Analysis completed."
-            
-            return result
-        else:
-            # Use general contract chat for questions before upload
-            result = await chat_service.general_chat(
-                query=query,
-                jurisdiction=jurisdiction,
-                contract_type=contract_type
-            )
-            return result
+        # Use general contract chat for all questions for now
+        # (RAG functionality temporarily disabled while fixing FAISS issues)
+        result = await chat_service.general_chat(
+            query=query,
+            jurisdiction=jurisdiction,
+            contract_type=contract_type
+        )
+        return result
         
     except Exception as e:
         return {
