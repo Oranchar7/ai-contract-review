@@ -381,7 +381,7 @@ Please provide a helpful, friendly response based on the contract content above.
                         if chunk.choices[0].delta.content is not None:
                             content = chunk.choices[0].delta.content
                             full_response += content
-                            yield f"data: {content}\n\n"
+                            yield content
                     
                     # Store chat history in Firebase
                     try:
@@ -397,7 +397,7 @@ Please provide a helpful, friendly response based on the contract content above.
                     except Exception as db_error:
                         print(f"Database storage error: {db_error}")
                     
-                    yield "data: [DONE]\n\n"
+                    yield "[DONE]"
                     return
             
             # Check if this is a greeting or simple question
@@ -421,7 +421,7 @@ Please provide a helpful, friendly response based on the contract content above.
                     if chunk.choices[0].delta.content is not None:
                         content = chunk.choices[0].delta.content
                         full_response += content
-                        yield f"data: {content}\n\n"
+                        yield content
             else:
                 # Handle contract-specific questions
                 stream = rag_service.openai_client.chat.completions.create(
@@ -439,7 +439,7 @@ Please provide a helpful, friendly response based on the contract content above.
                     if chunk.choices[0].delta.content is not None:
                         content = chunk.choices[0].delta.content
                         full_response += content
-                        yield f"data: {content}\n\n"
+                        yield content
             
             # Store chat history in Firebase
             try:
@@ -455,14 +455,14 @@ Please provide a helpful, friendly response based on the contract content above.
             except Exception as db_error:
                 print(f"Database storage error: {db_error}")
             
-            yield "data: [DONE]\n\n"
+            yield "[DONE]"
             
         except Exception as e:
             print(f"Chat streaming error: {str(e)}")
-            yield f"data: I apologize, but I encountered an error processing your question. Please try again.\n\n"
-            yield "data: [DONE]\n\n"
+            yield "I apologize, but I encountered an error processing your question. Please try again."
+            yield "[DONE]"
     
-    return EventSourceResponse(generate_stream(), media_type="text/plain")
+    return EventSourceResponse(generate_stream(), media_type="text/event-stream")
 
 @app.post("/ask_contract")
 async def ask_contract(
