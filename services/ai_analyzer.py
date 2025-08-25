@@ -12,9 +12,9 @@ class AIAnalyzer:
         self.openai_client = OpenAI(
             api_key=os.environ.get("OPENAI_API_KEY")
         )
-        # the newest OpenAI model is "gpt-5" which was released August 7, 2025.
-        # do not change this unless explicitly requested by the user
-        self.model = "gpt-5"
+        # Using GPT-4o mini for reliable analysis with proper API support
+        # GPT-5 has limited API parameter support causing failures
+        self.model = "gpt-4o-mini"
     
     async def analyze_contract(
         self, 

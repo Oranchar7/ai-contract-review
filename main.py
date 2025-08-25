@@ -109,11 +109,22 @@ async def analyze_contract(
                 )
             
             # Analyze contract with AI
-            analysis_result = await ai_analyzer.analyze_contract(
-                extracted_text, 
-                jurisdiction=jurisdiction,
-                contract_type=contract_type
-            )
+            try:
+                analysis_result = await ai_analyzer.analyze_contract(
+                    extracted_text, 
+                    jurisdiction=jurisdiction,
+                    contract_type=contract_type
+                )
+            except Exception as ai_error:
+                print(f"AI Analysis Error: {str(ai_error)}")
+                return {
+                    "error": f"Analysis failed: {str(ai_error)}",
+                    "risk_score": 5,
+                    "summary": "Unable to complete analysis due to technical issue",
+                    "risky_clauses": [],
+                    "missing_protections": [],
+                    "detailed_analysis": "Analysis service temporarily unavailable"
+                }
             
             # Store analysis in Firebase
             document_id = await firebase_client.store_analysis(

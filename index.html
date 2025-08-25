@@ -457,20 +457,20 @@
       // Add line breaks for better readability
       formatted = formatted.replace(/\n/g, '<br>');
       
-      // Format numbered lists
-      formatted = formatted.replace(/(\d+\.\s)/g, '<br><strong>$1</strong>');
+      // Format numbered lists (normal weight for numbers, bold for content)
+      formatted = formatted.replace(/(\d+\.\s)(.+?)(?=<br>|$)/g, '<br>$1<strong>$2</strong>');
       
-      // Format bullet points
-      formatted = formatted.replace(/([•\-\*]\s)/g, '<br>&nbsp;&nbsp;$1');
+      // Format bullet points (normal weight for bullets, bold for content)  
+      formatted = formatted.replace(/([•\-\*]\s)(.+?)(?=<br>|$)/g, '<br>&nbsp;&nbsp;$1<strong>$2</strong>');
       
-      // Format headers with ###
-      formatted = formatted.replace(/###\s(.+?):/g, '<br><strong>$1:</strong>');
+      // Format headers with ### (normal weight for headers)
+      formatted = formatted.replace(/###\s(.+?):/g, '<br>$1:');
       
-      // Format bold text with **
+      // Format sections that start with capital letters and colon (normal weight for headers)
+      formatted = formatted.replace(/([A-Z][^:]*?):/g, '$1:');
+      
+      // Format bold text with ** (keep original bold formatting)
       formatted = formatted.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-      
-      // Format sections that start with capital letters and colon
-      formatted = formatted.replace(/([A-Z][^:]*?):/g, '<strong>$1:</strong>');
       
       // Add spacing between major sections
       formatted = formatted.replace(/<br><strong>(\d+\.)/g, '<br><br><strong>$1');

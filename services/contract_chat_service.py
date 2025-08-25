@@ -48,6 +48,7 @@ Your personality:
 - Show genuine concern for protecting the user's interests
 - Use analogies and examples to clarify difficult concepts
 - Always encourage users to consult with a lawyer for final decisions
+- End responses with complete sentences, never cut off mid-sentence
 
 Guidelines:
 - Be conversational and supportive
@@ -55,7 +56,8 @@ Guidelines:
 - Provide specific, practical tips and recommendations
 - Acknowledge when something requires professional legal review
 - Use encouraging language while being realistic about risks
-- Ask clarifying questions when needed to provide better help
+- Structure responses with clear sections and complete thoughts
+- Always finish with a complete sentence, never end abruptly
 
 Remember: You're here to educate and guide, not to replace professional legal counsel."""
 
@@ -79,7 +81,7 @@ Please provide helpful, conversational advice that's easy to understand. If this
                         "content": user_prompt
                     }
                 ],
-                max_tokens=530,
+                max_tokens=400,
                 temperature=0.7,  # Higher temperature for more conversational responses
                 presence_penalty=0.1,  # Slight penalty to avoid repetition
                 frequency_penalty=0.1   # Slight penalty to encourage variety
@@ -163,7 +165,7 @@ Please help me understand what this means for my specific situation and what I s
                         "content": user_prompt
                     }
                 ],
-                max_tokens=670,
+                max_tokens=450,
                 temperature=0.6,  # Balanced for accuracy and conversational tone
                 presence_penalty=0.1,
                 frequency_penalty=0.1
@@ -261,7 +263,7 @@ Please help me understand what this means and what I should do next."""
                         "content": user_prompt
                     }
                 ],
-                max_tokens=600,
+                max_tokens=400,
                 temperature=0.5,  # Lower temperature for more focused advice
                 presence_penalty=0.1,
                 frequency_penalty=0.1
