@@ -399,6 +399,43 @@
         transform: translateY(-5px);
       }
     }
+    
+    /* Clean Markdown formatting */
+    .markdown-content h1,
+    .markdown-content h2,
+    .markdown-content h3 {
+      font-weight: 600;
+      margin: 1rem 0 0.5rem 0;
+      color: var(--primary-color);
+    }
+    
+    .markdown-content h1 { font-size: 1.3rem; }
+    .markdown-content h2 { font-size: 1.2rem; }
+    .markdown-content h3 { font-size: 1.1rem; }
+    
+    .markdown-content p {
+      margin: 0.5rem 0;
+    }
+    
+    .markdown-content strong {
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .markdown-content em {
+      font-style: italic;
+      color: #666;
+    }
+    
+    .markdown-content ul,
+    .markdown-content ol {
+      margin: 0.5rem 0;
+      padding-left: 1.5rem;
+    }
+    
+    .markdown-content li {
+      margin: 0.25rem 0;
+    }
   </style>
 </head>
 <body>
@@ -959,15 +996,25 @@
       messageDiv.className = `message ${sender}`;
       
       if (sender === 'assistant') {
-        // Parse Markdown for assistant responses
-        const formattedMessage = marked.parse(message);
-        messageDiv.innerHTML = `<strong>AI Assistant:</strong><br>${formattedMessage}`;
+        // Clean and parse Markdown for assistant responses
+        const cleanedMessage = cleanMarkdown(message);
+        const formattedMessage = marked.parse(cleanedMessage);
+        messageDiv.innerHTML = `<strong>AI Assistant:</strong><br><div class="markdown-content">${formattedMessage}</div>`;
       } else {
         messageDiv.innerHTML = `<strong>You:</strong> ${message}`;
       }
       
       chatContainer.appendChild(messageDiv);
       chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+    
+    function cleanMarkdown(text) {
+      // Clean up any irregular formatting before parsing
+      return text
+        .replace(/\*\*\*(.+?)\*\*\*/g, '**$1**') // Convert triple stars to double
+        .replace(/\*\*([^*]+)\*\*(?!\w)/g, '**$1**') // Ensure proper bold formatting
+        .replace(/\n\s*\n/g, '\n\n') // Clean up spacing
+        .trim();
     }
 
     // Removed formatAssistantMessage - now using marked.parse for Markdown rendering
