@@ -1,2 +1,32 @@
+modules = ["python-3.11"]
 [agent]
 expertMode = true
+integrations = ["python_openai==1.0.0", "flask_stripe==1.0.0", "firebase_barebones_flask==1.0.0"]
+
+[nix]
+channel = "stable-25_05"
+packages = ["libxcrypt"]
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "FastAPI Server"
+
+[[workflows.workflow]]
+name = "FastAPI Server"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "uv add fastapi uvicorn python-multipart jinja2 PyPDF2 python-docx firebase-admin requests && python main.py"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
