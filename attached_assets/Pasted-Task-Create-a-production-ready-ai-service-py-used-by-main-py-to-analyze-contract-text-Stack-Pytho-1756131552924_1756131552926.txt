@@ -1,0 +1,99 @@
+Task: Create a production-ready ai_service.py used by main.py to analyze contract text.
+Stack: Python, LangChain. Primary model: Groq Llama-3 (via GROQ_API_KEY). Fallback: OpenAI GPT-4/4-mini (via OPENAI_API_KEY).
+
+Requirements
+
+Public functions
+
+analyze_contract(contract_text: str, *, jurisdiction: str | None = None, contract_type: str | None = None, max_chars: int = 180000) -> dict
+
+safe_json(text: str) -> dict (utility to coerce/repair model output into valid JSON)
+
+Output JSON schema (validate with Pydantic)
+
+{
+  "risky_clauses": [{"clause": "...","why": "...","severity": "low|medium|high"}],
+  "missing_protections": [{"protection": "...","why": "...","suggested_language": "..."}],
+  "overall_risk_score": 0,
+  "summary": "",
+  "notes": []
+}
+
+
+Score is 0–10 (10 = highest risk).
+
+Prompting
+
+Deterministic (temperature 0), concise, return JSON only (no prose), include instructions to never include markdown.
+
+Accept optional jurisdiction and contract_type to guide checks (e.g., “US-NY”, “MSA”, “NDA”, “SaaS ToS”).
+
+Long-text strategy
+
+If contract_text > max_chars, chunk ~6–8k chars with clean boundary splits (e.g., on section headings).
+
+Map-reduce: analyze chunks → merge intermediate JSONs → final pass that deduplicates and recalculates overall_risk_score.
+
+Model routing
+
+If GROQ_API_KEY present → use Groq Llama-3 70B (or best available) via LangChain chat wrapper.
+
+Else if OPENAI_API_KEY present → use gpt-4o-mini or gpt-4 if available.
+
+Raise a clear error if neither key exists.
+
+Reliability
+
+Retry with exponential backoff on transient errors (HTTP 429/5xx) up to 3 attempts.
+
+Enforce a 45s timeout per call.
+
+Sanitize outputs: strip code fences, fix trailing commas, ensure required keys exist, coerce types.
+
+Security & Safety
+
+No PII logging. Never log contract text.
+
+Truncate inputs to max_chars.
+
+Dependencies
+
+Use: langchain, pydantic, tenacity (for retries).
+
+If missing, add to requirements.txt.
+
+Acceptance criteria
+
+Importable from main.py as from ai_service import analyze_contract.
+
+Returns valid JSON per schema for both small and very long contracts.
+
+Works with either Groq or OpenAI; deterministic, repeatable results.
+
+Implementation details (write the full code)
+
+Define a Pydantic model RiskReport, and a helper merge_reports(list[RiskReport]) -> RiskReport.
+
+Build a system prompt that lists common risky areas (indemnity, limitation of liability, termination, auto-renewal, unilateral changes, IP ownership, data protection, governing law/venue, assignment, non-compete/non-solicit, payment terms, SLAs) and common missing protections (mutual indemnity, cap on liability, cure periods, data breach notice, audit rights, clear IP grant, subcontractor controls, insurance requirements).
+
+Use a JSON-only response instruction and LangChain’s StructuredOutputParser or manual JSON enforcement with safe_json.
+
+For chunking: simple header-aware splitter (split on \n\n and headings like \nSection, \nClause, \n##), then group to target size.
+
+Compute overall_risk_score as a weighted aggregation: base on count and severity (low=2, medium=5, high=8), normalized to 0–10.
+
+Include a small unit test in tests/test_ai_service.py that feeds a toy NDA clause and asserts keys exist and score is in range 0–10.
+
+Also add (or update) in requirements.txt if needed
+langchain
+groq
+openai
+pydantic
+tenacity
+
+
+Deliverables:
+
+ai_service.py with the functions above, ready to use.
+
+tests/test_ai_service.py with one passing test (use a dummy text and mock the LLM call if keys aren’t set).
