@@ -224,8 +224,8 @@ async def upload_contract(
     email: str = Form(..., description="Email is required for user identification"),
     jurisdiction: str = Form(..., description="Jurisdiction is required (e.g., 'US-NY', 'CA-ON')"),
     contract_type: str = Form(..., description="Contract type is required (e.g., 'NDA', 'MSA', 'Other')"),
-    other_contract_type: str = Form(None, description="Specify contract type if 'Other' is selected"),
-    custom_jurisdiction: str = Form(None, description="Specify custom jurisdiction if 'Other' is selected"),
+    customContractType: str = Form(None, description="Specify contract type if 'Other' is selected"),
+    customJurisdiction: str = Form(None, description="Specify custom jurisdiction if 'Other' is selected"),
     user = Depends(get_current_user)
 ):
     """
@@ -294,8 +294,8 @@ async def upload_contract(
                 email=user_email,
                 jurisdiction=jurisdiction,
                 contract_type=contract_type,
-                other_contract_type=other_contract_type,
-                custom_jurisdiction=custom_jurisdiction,
+                customContractType=customContractType,
+                customJurisdiction=customJurisdiction,
                 filename=filename
             )
             

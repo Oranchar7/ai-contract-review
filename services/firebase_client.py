@@ -259,8 +259,8 @@ class FirebaseClient:
         email: str,
         jurisdiction: str,
         contract_type: str,
-        other_contract_type: Optional[str] = None,
-        custom_jurisdiction: Optional[str] = None,
+        customContractType: Optional[str] = None,
+        customJurisdiction: Optional[str] = None,
         filename: Optional[str] = None
     ) -> str:
         """Store contract form submission in secure 'contracts' collection"""
@@ -276,13 +276,13 @@ class FirebaseClient:
                 'timestamp': datetime.now(timezone.utc)
             }
             
-            # Add otherContractType if "Other" was selected
-            if contract_type == "Other" and other_contract_type:
-                contract_data['otherContractType'] = other_contract_type
+            # Add customContractType if "Other" was selected
+            if contract_type == "Other" and customContractType:
+                contract_data['customContractType'] = customContractType
             
             # Add customJurisdiction if "Other" was selected for jurisdiction
-            if jurisdiction == "Other" and custom_jurisdiction:
-                contract_data['customJurisdiction'] = custom_jurisdiction
+            if jurisdiction == "Other" and customJurisdiction:
+                contract_data['customJurisdiction'] = customJurisdiction
             
             # Add filename if provided (for uploads)
             if filename:

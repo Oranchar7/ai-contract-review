@@ -342,7 +342,6 @@
                       <option value="MSA">Master Service Agreement</option>
                       <option value="SaaS">SaaS Terms of Service</option>
                       <option value="Employment">Employment Agreement</option>
-                      <option value="Other">Other</option>
                       <option value="Consulting">Consulting Agreement</option>
                       <option value="License">License Agreement</option>
                       <option value="Purchase">Purchase Agreement</option>
@@ -359,7 +358,7 @@
               <div class="row" id="otherContractTypeRow" style="display: none;">
                 <div class="col-12">
                   <div class="mb-3">
-                    <label for="otherContractType" class="form-label">Specify Contract Type</label>
+                    <label for="otherContractType" class="form-label">Enter custom contract type</label>
                     <input type="text" class="form-control" id="otherContractType" 
                            placeholder="Please specify the contract type">
                   </div>
@@ -467,12 +466,12 @@
       
       // Add custom jurisdiction if specified
       if (jurisdiction.value === 'Other') {
-        formData.append('custom_jurisdiction', document.getElementById('customJurisdiction').value.trim());
+        formData.append('customJurisdiction', document.getElementById('customJurisdiction').value.trim());
       }
       
       // Add other contract type if specified
       if (contractType.value === 'Other') {
-        formData.append('other_contract_type', document.getElementById('otherContractType').value.trim());
+        formData.append('customContractType', document.getElementById('otherContractType').value.trim());
       }
 
       showStatus('Analyzing your contract... This may take a few minutes.', 'loading');
