@@ -6,39 +6,178 @@
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; }
     h1 { text-align: center; }
-    #chat { border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: scroll; margin-bottom: 10px; }
+    .mode-btn { padding: 10px 20px; margin: 5px; border: none; background: #f0f0f0; cursor: pointer; }
+    .mode-btn.active { background: #007bff; color: white; }
+    #chat { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll; margin-bottom: 10px; }
     .message { margin: 5px 0; }
     .user { color: blue; }
     .agent { color: green; }
-    #uploadForm, #chatForm { margin-bottom: 20px; }
+    #uploadForm, #chatForm, #analyzeForm { margin-bottom: 20px; }
     input, button, select { margin-top: 5px; }
+    #analysisReport { border: 1px solid #ddd; padding: 15px; margin-top: 15px; background: #f9f9f9; }
+    .risk-item, .protection-item { margin: 10px 0; padding: 10px; border-left: 4px solid #007bff; background: white; }
+    .risk-high { border-left-color: #dc3545; }
+    .risk-medium { border-left-color: #ffc107; }
+    .risk-low { border-left-color: #28a745; }
   </style>
 </head>
 <body>
   <h1>Contract RAG Analyzer</h1>
 
-  <!-- Upload Contract -->
-  <form id="uploadForm">
-    <label>Upload Contract (PDF/DOCX):</label><br>
-    <input type="file" id="fileInput" accept=".pdf,.docx" required><br>
-    <label>Jurisdiction:</label><br>
-    <input type="text" id="jurisdiction" placeholder="US-NY"><br>
-    <label>Contract Type:</label><br>
-    <input type="text" id="contractType" placeholder="NDA, MSA, SaaS TOS"><br>
-    <button type="submit">Upload Contract</button>
-  </form>
+  <!-- Analysis Mode Toggle -->
+  <div style="margin-bottom: 20px; text-align: center;">
+    <button id="analyzeMode" class="mode-btn active">Analyze & Report</button>
+    <button id="ragMode" class="mode-btn">Chat with Contract</button>
+  </div>
 
-  <div id="uploadStatus"></div>
+  <!-- Traditional Analysis Form -->
+  <div id="analyzeSection">
+    <form id="analyzeForm">
+      <label>Upload Contract for Analysis (PDF/DOCX):</label><br>
+      <input type="file" id="analyzeFileInput" accept=".pdf,.docx" required><br>
+      <label>Jurisdiction:</label><br>
+      <input type="text" id="analyzeJurisdiction" placeholder="US-NY"><br>
+      <label>Contract Type:</label><br>
+      <input type="text" id="analyzeContractType" placeholder="NDA, MSA, SaaS TOS"><br>
+      <label>Email (optional):</label><br>
+      <input type="email" id="analyzeEmail" placeholder="your@email.com"><br>
+      <button type="submit">Analyze Contract</button>
+    </form>
+    <div id="analyzeStatus"></div>
+    <div id="analysisReport"></div>
+  </div>
 
-  <!-- Chat -->
-  <div id="chat"></div>
+  <!-- RAG Upload Form -->
+  <div id="ragSection" style="display: none;">
+    <form id="uploadForm">
+      <label>Upload Contract for Chat (PDF/DOCX):</label><br>
+      <input type="file" id="fileInput" accept=".pdf,.docx" required><br>
+      <label>Jurisdiction:</label><br>
+      <input type="text" id="jurisdiction" placeholder="US-NY"><br>
+      <label>Contract Type:</label><br>
+      <input type="text" id="contractType" placeholder="NDA, MSA, SaaS TOS"><br>
+      <button type="submit">Upload for Chat</button>
+    </form>
+    <div id="uploadStatus"></div>
 
-  <form id="chatForm">
-    <input type="text" id="userQuery" placeholder="Ask a question about the contract..." style="width:80%" required>
-    <button type="submit">Send</button>
-  </form>
+    <!-- Chat -->
+    <div id="chat"></div>
+    <form id="chatForm">
+      <input type="text" id="userQuery" placeholder="Ask a question about the contract..." style="width:80%" required>
+      <button type="submit">Send</button>
+    </form>
+  </div>
 
   <script>
+    // Mode switching
+    const analyzeMode = document.getElementById("analyzeMode");
+    const ragMode = document.getElementById("ragMode");
+    const analyzeSection = document.getElementById("analyzeSection");
+    const ragSection = document.getElementById("ragSection");
+
+    analyzeMode.addEventListener("click", () => {
+      analyzeMode.classList.add("active");
+      ragMode.classList.remove("active");
+      analyzeSection.style.display = "block";
+      ragSection.style.display = "none";
+    });
+
+    ragMode.addEventListener("click", () => {
+      ragMode.classList.add("active");
+      analyzeMode.classList.remove("active");
+      analyzeSection.style.display = "none";
+      ragSection.style.display = "block";
+    });
+
+    // Traditional Analysis
+    const analyzeForm = document.getElementById("analyzeForm");
+    const analyzeFileInput = document.getElementById("analyzeFileInput");
+    const analyzeJurisdiction = document.getElementById("analyzeJurisdiction");
+    const analyzeContractType = document.getElementById("analyzeContractType");
+    const analyzeEmail = document.getElementById("analyzeEmail");
+    const analyzeStatus = document.getElementById("analyzeStatus");
+    const analysisReport = document.getElementById("analysisReport");
+
+    analyzeForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const file = analyzeFileInput.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("jurisdiction", analyzeJurisdiction.value);
+      formData.append("contract_type", analyzeContractType.value);
+      if (analyzeEmail.value) formData.append("email", analyzeEmail.value);
+
+      analyzeStatus.textContent = "Analyzing contract...";
+      analysisReport.innerHTML = "";
+
+      try {
+        const res = await fetch("/analyze", {
+          method: "POST",
+          body: formData
+        });
+        const data = await res.json();
+        
+        if (data.error) {
+          analyzeStatus.innerHTML = `<strong style="color: red;">Error:</strong> ${data.error}`;
+          return;
+        }
+
+        analyzeStatus.innerHTML = `<strong style="color: green;">Analysis Complete!</strong>`;
+        displayAnalysisReport(data);
+      } catch (err) {
+        console.error(err);
+        analyzeStatus.innerHTML = `<strong style="color: red;">Analysis failed.</strong>`;
+      }
+    });
+
+    function displayAnalysisReport(analysis) {
+      let html = `
+        <h3>Contract Analysis Report</h3>
+        <div style="margin: 10px 0;">
+          <strong>Risk Score: ${analysis.risk_score || analysis.overall_risk_score}/10</strong>
+        </div>
+        <div style="margin: 10px 0;">
+          <strong>Summary:</strong> ${analysis.summary}
+        </div>
+      `;
+
+      if (analysis.risky_clauses && analysis.risky_clauses.length > 0) {
+        html += `<h4>Risky Clauses (${analysis.risky_clauses.length})</h4>`;
+        analysis.risky_clauses.forEach(clause => {
+          html += `
+            <div class="risk-item risk-${clause.risk_level || 'medium'}">
+              <strong>${clause.clause_type}</strong><br>
+              ${clause.description}<br>
+              <em>Recommendation: ${clause.recommendation}</em>
+            </div>
+          `;
+        });
+      }
+
+      if (analysis.missing_protections && analysis.missing_protections.length > 0) {
+        html += `<h4>Missing Protections (${analysis.missing_protections.length})</h4>`;
+        analysis.missing_protections.forEach(protection => {
+          html += `
+            <div class="protection-item">
+              <strong>${protection.protection_type}</strong><br>
+              ${protection.description}<br>
+              <em>Importance: ${protection.importance}</em><br>
+              <small>Suggested: ${protection.suggested_clause}</small>
+            </div>
+          `;
+        });
+      }
+
+      if (analysis.detailed_analysis) {
+        html += `<h4>Detailed Analysis</h4><p>${analysis.detailed_analysis}</p>`;
+      }
+
+      analysisReport.innerHTML = html;
+    }
+
+    // RAG functionality
     const uploadForm = document.getElementById("uploadForm");
     const fileInput = document.getElementById("fileInput");
     const jurisdictionInput = document.getElementById("jurisdiction");
