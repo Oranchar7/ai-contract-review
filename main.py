@@ -1,7 +1,7 @@
 import os
 import tempfile
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Dict, Any
 from fastapi import FastAPI, File, UploadFile, Form, Request, HTTPException, Depends, Header
 from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
@@ -18,6 +18,7 @@ from services.firebase_client import FirebaseClient
 from services.notification_service import NotificationService
 from services.pinecone_rag_service import PineconeRAGService
 from services.contract_chat_service import ContractChatService
+from services.telegram_service import TelegramService
 from models.contract_analysis import ContractAnalysisResponse
 from utils.validators import validate_file_type
 
@@ -51,6 +52,7 @@ firebase_client = FirebaseClient()
 notification_service = NotificationService()
 rag_service = PineconeRAGService()
 chat_service = ContractChatService()
+telegram_service = TelegramService()
 
 # Security
 security = HTTPBearer(auto_error=False)
@@ -415,6 +417,158 @@ Return your output strictly in Markdown. Any tables, lists, or headings must fol
     except Exception as e:
         print(f"Chat error: {str(e)}")
         return {"response": "I apologize, but I encountered an error. Please try again."}
+
+@app.post("/telegram_webhook")
+async def telegram_webhook(request: Request):
+    """Telegram webhook endpoint to receive and process messages"""
+    try:
+        if not telegram_service.is_available():
+            return {"status": "error", "message": "Telegram service not available"}
+        
+        # Parse incoming Telegram update
+        telegram_update = await request.json()
+        print(f"Received Telegram update: {telegram_update}")
+        
+        # Extract message data
+        message_data = telegram_service.extract_message_data(telegram_update)
+        if not message_data:
+            return {"status": "ok", "message": "No processable message found"}
+        
+        chat_id = message_data.get("chat_id")
+        user_query = message_data.get("text", "").strip()
+        
+        if not chat_id or not user_query:
+            return {"status": "ok", "message": "Invalid message data"}
+        
+        print(f"Processing query from chat {chat_id}: {user_query}")
+        
+        # Process the query through RAG system with test mode fallback
+        response_text = await process_telegram_query(user_query, message_data)
+        
+        # Send response back to Telegram
+        send_result = await telegram_service.send_message(chat_id, response_text)
+        
+        if send_result.get("success"):
+            print(f"Response sent successfully to chat {chat_id}")
+            return {"status": "ok", "message": "Response sent"}
+        else:
+            print(f"Failed to send response: {send_result.get('error')}")
+            return {"status": "error", "message": "Failed to send response"}
+            
+    except Exception as e:
+        print(f"Telegram webhook error: {str(e)}")
+        return {"status": "error", "message": str(e)}
+
+async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> str:
+    """Process a query through RAG system with test mode fallback"""
+    try:
+        query_lower = query.lower().strip()
+        
+        # Check for dummy responses first (test mode)
+        dummy_responses = telegram_service.get_dummy_responses()
+        
+        if query_lower in dummy_responses:
+            return dummy_responses[query_lower]
+        
+        # Check for common greeting patterns
+        greetings = ["hello", "hi", "hey", "start", "/start"]
+        if any(greeting in query_lower for greeting in greetings):
+            return dummy_responses["hello"]
+        
+        # Check for help patterns
+        help_patterns = ["help", "/help", "what can you do", "commands"]
+        if any(pattern in query_lower for pattern in help_patterns):
+            return dummy_responses["help"]
+        
+        # Try RAG system if available, otherwise use chat service
+        try:
+            if rag_service.is_available():
+                # Use RAG service for document-based queries
+                rag_result = await rag_service.ask_contract(
+                    query,
+                    jurisdiction=message_data.get("jurisdiction"),
+                    contract_type=message_data.get("contract_type")
+                )
+                return telegram_service.format_rag_response(rag_result, query)
+            else:
+                # Fallback to general chat service
+                chat_result = await chat_service.general_chat(
+                    query,
+                    jurisdiction=message_data.get("jurisdiction"),
+                    contract_type=message_data.get("contract_type")
+                )
+                
+                if chat_result.get("answer"):
+                    return f"🤖 *AI Assistant*:\n\n{chat_result['answer']}"
+                else:
+                    return dummy_responses["default"]
+                    
+        except Exception as e:
+            print(f"RAG/Chat service error: {str(e)}")
+            return f"🤖 I understand you're asking about: *{query}*\n\nI'm currently operating in test mode. Once document ingestion is complete, I'll provide detailed analysis based on your uploaded contracts!\n\n💡 Try typing 'help' or 'test' to see what I can do."
+        
+    except Exception as e:
+        print(f"Query processing error: {str(e)}")
+        return f"❌ *Error processing your query*: {str(e)}\n\n💡 Try typing 'help' for available commands."
+
+@app.get("/telegram_status")
+async def telegram_status():
+    """Get Telegram bot status and webhook information"""
+    try:
+        if not telegram_service.is_available():
+            return {
+                "status": "unavailable",
+                "error": "TELEGRAM_BOT_TOKEN not configured",
+                "webhook_url": None
+            }
+        
+        # Get webhook info
+        webhook_info = await telegram_service.get_webhook_info()
+        
+        return {
+            "status": "available",
+            "service_ready": True,
+            "webhook_info": webhook_info.get("webhook_info", {}),
+            "test_mode": True,
+            "rag_available": rag_service.is_available() if hasattr(rag_service, 'is_available') else False
+        }
+        
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
+            "webhook_url": None
+        }
+
+@app.post("/set_telegram_webhook")
+async def set_telegram_webhook(webhook_url: str = Form(...)):
+    """Set the Telegram webhook URL"""
+    try:
+        if not telegram_service.is_available():
+            return {
+                "status": "error",
+                "message": "Telegram service not available. Check TELEGRAM_BOT_TOKEN."
+            }
+        
+        result = await telegram_service.set_webhook(webhook_url)
+        
+        if result.get("success"):
+            return {
+                "status": "success",
+                "message": f"Webhook set to {webhook_url}",
+                "webhook_url": webhook_url
+            }
+        else:
+            return {
+                "status": "error", 
+                "message": result.get("error", "Failed to set webhook")
+            }
+            
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": str(e)
+        }
 
 @app.get("/test-vector")
 async def test_vector_storage():
