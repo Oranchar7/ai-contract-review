@@ -1,0 +1,45 @@
+🚀 RENDER DEPLOYMENT - READY TO GO!
+=========================================
+
+All files prepared and environment variables available!
+Follow these 4 simple steps:
+
+STEP 1: Create Render Account & Service (2 minutes)
+--------------------------------------------------
+1. Go to render.com and sign up/login
+2. Click "New +" → "Web Service" 
+3. Choose "Build and deploy from a Git repository"
+4. Connect this repository OR upload files directly
+
+STEP 2: Configure Service (1 minute)
+------------------------------------
+- Name: ai-contract-review
+- Environment: Python 3
+- Build Command: pip install -r requirements.txt  
+- Start Command: uvicorn main:app --host 0.0.0.0 --port $PORT
+- Plan: Free
+
+STEP 3: Set Environment Variables (2 minutes)
+---------------------------------------------
+Copy these EXACT values into Render's Environment Variables section:
+
+OPENAI_API_KEY = [Your OpenAI key - available in current environment]
+TELEGRAM_BOT_TOKEN = [Your Telegram bot token - available in current environment]
+PINECONE_API_KEY = [Your Pinecone key - available in current environment] 
+FIREBASE_PROJECT_ID = [Your Firebase project ID - available in current environment]
+FIREBASE_APP_ID = [Your Firebase app ID - available in current environment]
+FIREBASE_API_KEY = [Your Firebase API key - available in current environment]
+
+STEP 4: Deploy & Update Webhook (1 minute)
+-------------------------------------------
+1. Click "Create Web Service" - deployment starts automatically
+2. Wait for build to complete (~3-5 minutes)
+3. Note your new URL: https://your-app-name.onrender.com
+4. Update Telegram webhook with YOUR_URL:
+
+curl -X POST "https://api.telegram.org/bot[YOUR_TOKEN]/setWebhook" \
+     -d '{"url": "https://your-app-name.onrender.com/telegram_webhook"}'
+
+🎯 RESULT: 24/7 production RAG system with permanent URL!
+
+Need help? All your environment variables are ready in this Replit workspace.
