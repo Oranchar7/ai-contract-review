@@ -1,0 +1,115 @@
+# Local Setup Guide for AI Contract Review System
+
+## Required Environment Variables
+
+Create a .env file with these variables:
+
+```
+# OpenAI Configuration
+OPENAI_API_KEY=your_openai_api_key_here
+
+# Telegram Bot
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token_here
+
+# Pinecone Vector Database
+PINECONE_API_KEY=your_pinecone_api_key_here
+
+# Firebase Configuration
+FIREBASE_API_KEY=your_firebase_api_key_here
+FIREBASE_PROJECT_ID=your_firebase_project_id_here
+FIREBASE_APP_ID=your_firebase_app_id_here
+
+# ngrok Token (your own account)
+NGROK_AUTHTOKEN=your_ngrok_authtoken_here
+
+# Optional: n8n webhook for notifications
+N8N_WEBHOOK_URL=your_n8n_webhook_url_here
+```
+
+## Dependencies to Install
+
+```bash
+pip install fastapi uvicorn python-dotenv aiohttp
+pip install openai pinecone-client firebase-admin google-cloud-firestore
+pip install pypdf2 python-docx jinja2 python-multipart
+pip install pyngrok tiktoken sse-starlette
+pip install pydantic requests
+```
+
+## Project Structure
+
+Your local folder should have:
+```
+project/
+├── main.py                      # FastAPI server
+├── services/
+│   ├── ai_analyzer.py           # OpenAI integration
+│   ├── contract_chat_service.py # Chat functionality
+│   ├── file_processor.py       # PDF/DOCX processing
+│   ├── firebase_client.py      # Firebase integration
+│   ├── notification_service.py # Email notifications
+│   ├── pinecone_rag_service.py # Vector database
+│   └── telegram_service.py     # Telegram bot
+├── models/
+│   └── contract_analysis.py    # Data models
+├── static/                     # CSS/JS files
+├── templates/
+│   └── index.html              # Web interface
+└── .env                        # Environment variables
+```
+
+## Running Locally
+
+1. **Start the FastAPI server:**
+```bash
+python main.py
+```
+Server runs on http://localhost:5000
+
+2. **Start ngrok tunnel (separate terminal):**
+```bash
+ngrok http 5000
+```
+Copy the https URL (e.g., https://abc123.ngrok-free.app)
+
+3. **Set Telegram webhook:**
+```bash
+curl -X POST "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook" \
+     -H "Content-Type: application/json" \
+     -d '{"url": "https://abc123.ngrok-free.app/telegram_webhook"}'
+```
+
+## Key Features Available
+
+✅ Web interface for contract uploads at http://localhost:5000
+✅ Telegram bot with generating response messages
+✅ Pinecone RAG system for document analysis
+✅ OpenAI GPT-5 integration for AI analysis
+✅ Firebase data persistence
+✅ PDF/DOCX file processing
+✅ Email notifications via n8n
+✅ Legal dictionary and chat functionality
+
+## Test Your Bot
+
+Send these messages to your Telegram bot:
+- "hello" - Welcome message
+- "help" - Available commands  
+- "What is an NDA?" - Legal question
+- "test" - Sample contract analysis
+
+## Important Notes
+
+- Your ngrok account will provide stable tunnels
+- All processing happens locally on your machine
+- Data is stored in your own Firebase/Pinecone accounts
+- The system automatically shows "generating response..." messages while processing
+- Upload contracts via web interface to populate the RAG system
+
+## Troubleshooting
+
+If webhook fails:
+1. Check ngrok tunnel is active
+2. Verify TELEGRAM_BOT_TOKEN is correct
+3. Ensure webhook URL ends with /telegram_webhook
+4. Check server logs for incoming requests
