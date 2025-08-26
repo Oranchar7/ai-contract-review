@@ -16,7 +16,7 @@ class PineconeRAGService:
         self.openai_client = OpenAI(
             api_key=os.environ.get("OPENAI_API_KEY")
         )
-        self.embedding_model = "text-embedding-3-small"
+        self.embedding_model = "text-embedding-3-large"
         self.chat_model = "gpt-4o-mini"
         self.tokenizer = tiktoken.get_encoding("cl100k_base")
         self.chunk_size = 800  # tokens per chunk as specified
@@ -26,7 +26,7 @@ class PineconeRAGService:
         self.pinecone_client = None
         self.index = None
         self.index_name = "contracts-rag"  # As specified
-        self.dimension = 1536  # text-embedding-3-small dimension
+        self.dimension = 3072  # text-embedding-3-large dimension
         
         # Initialize connection
         self._initialize_pinecone()
@@ -82,8 +82,13 @@ class PineconeRAGService:
     
     def _generate_chunk_hash(self, text: str, filename: str) -> str:
         """Generate unique hash for chunk deduplication"""
-        content = f"{filename}:{text}".encode('utf-8')
+        content = f"{filename}:{text.strip()}".encode('utf-8')
         return hashlib.sha256(content).hexdigest()
+    
+    def _generate_doc_id(self, filename: str, upload_time: str) -> str:
+        """Generate unique document ID"""
+        content = f"{filename}:{upload_time}".encode('utf-8')
+        return f"doc_{hashlib.sha256(content).hexdigest()[:12]}"
     
     def _chunk_document(self, text: str, filename: str) -> List[Dict[str, Any]]:
         """Chunk document by tokens with metadata"""
@@ -126,13 +131,44 @@ class PineconeRAGService:
         except Exception as e:
             raise Exception(f"Failed to generate embeddings: {str(e)}")
     
-    async def _check_existing_chunks(self, chunk_hashes: List[str]) -> List[str]:
-        """Check which chunks already exist in Pinecone"""
+    async def _similarity_deduplication_check(self, new_embeddings: np.ndarray, threshold: float = 0.97) -> List[int]:
+        """Advanced similarity-based deduplication using cosine similarity > 0.97"""
         if not self.index:
             return []
         
         try:
-            # Query Pinecone for existing hashes
+            duplicate_indices = []
+            
+            # Check each new embedding against existing ones
+            for i, embedding in enumerate(new_embeddings):
+                # Query Pinecone for similar vectors
+                search_results = self.index.query(
+                    vector=embedding.tolist(),
+                    top_k=3,  # Check top 3 most similar
+                    include_metadata=False,
+                    include_values=False
+                )
+                
+                # Check if any result exceeds similarity threshold
+                matches = getattr(search_results, 'matches', [])
+                for match in matches:
+                    if match.score > threshold:
+                        print(f"Duplicate detected: similarity {match.score:.4f} > {threshold}")
+                        duplicate_indices.append(i)
+                        break
+            
+            return duplicate_indices
+            
+        except Exception as e:
+            print(f"Error in similarity deduplication: {str(e)}")
+            return []
+    
+    async def _check_existing_chunks(self, chunk_hashes: List[str]) -> List[str]:
+        """Check which chunks already exist in Pinecone by hash"""
+        if not self.index:
+            return []
+        
+        try:
             existing_hashes = []
             for chunk_hash in chunk_hashes:
                 try:
@@ -140,7 +176,6 @@ class PineconeRAGService:
                     if result.vectors and chunk_hash in result.vectors:
                         existing_hashes.append(chunk_hash)
                 except:
-                    # If fetch fails, assume chunk doesn't exist
                     continue
             
             return existing_hashes
@@ -189,21 +224,43 @@ class PineconeRAGService:
             chunk_texts = [chunk["text"] for chunk in new_chunks]
             embeddings = await self._get_embeddings(chunk_texts)
             
-            # Prepare vectors for Pinecone
+            # Advanced similarity-based deduplication
+            duplicate_indices = await self._similarity_deduplication_check(embeddings, threshold=0.97)
+            final_chunks = [chunk for i, chunk in enumerate(new_chunks) if i not in duplicate_indices]
+            final_embeddings = np.array([emb for i, emb in enumerate(embeddings) if i not in duplicate_indices])
+            
+            if len(final_chunks) == 0:
+                return {
+                    "status": "success",
+                    "filename": filename,
+                    "chunks_created": 0,
+                    "chunks_skipped": len(chunks),
+                    "message": "All chunks were duplicates - no new vectors added",
+                    "total_tokens": sum(chunk["token_count"] for chunk in chunks)
+                }
+            
+            # Prepare vectors for Pinecone with enhanced metadata
             upload_time = datetime.now().isoformat()
+            doc_id = self._generate_doc_id(filename, upload_time)
             vectors = []
             
-            for i, (chunk, embedding) in enumerate(zip(new_chunks, embeddings)):
+            for i, (chunk, embedding) in enumerate(zip(final_chunks, final_embeddings)):
                 vector_id = chunk["chunk_hash"]
+                chunk_id = f"chunk_{i+1:03d}"
+                
+                # Enhanced metadata structure as specified
                 metadata = {
+                    "doc_id": doc_id,
+                    "chunk_id": chunk_id,
                     "filename": filename,
-                    "text": chunk["text"],
+                    "text": chunk["text"][:1000],  # Pinecone metadata limit
                     "chunk_index": chunk["chunk_index"],
                     "token_count": chunk["token_count"],
-                    "upload_date": upload_time,
-                    "email": email or "",
-                    "jurisdiction": jurisdiction or "",
-                    "contract_type": contract_type or ""
+                    "jurisdiction": jurisdiction or "unspecified",
+                    "contract_type": contract_type or "unspecified",
+                    "uploaded_by": email or "anonymous",
+                    "source_url": "",  # Can be populated if available
+                    "upload_date": upload_time
                 }
                 
                 vectors.append({
@@ -221,10 +278,13 @@ class PineconeRAGService:
             return {
                 "status": "success",
                 "filename": filename,
-                "chunks_created": len(new_chunks),
-                "chunks_skipped": len(existing_hashes),
-                "total_tokens": sum(chunk["token_count"] for chunk in new_chunks),
-                "index_name": self.index_name
+                "doc_id": doc_id,
+                "chunks_created": len(final_chunks),
+                "chunks_skipped_hash": len(existing_hashes),
+                "chunks_skipped_similarity": len(duplicate_indices),
+                "total_tokens": sum(chunk["token_count"] for chunk in final_chunks),
+                "index_name": self.index_name,
+                "embedding_model": self.embedding_model
             }
             
         except Exception as e:
@@ -250,18 +310,20 @@ class PineconeRAGService:
                 include_values=False
             )
             
-            # Format results
+            # Format results with enhanced metadata
             relevant_chunks = []
             matches = getattr(search_results, 'matches', [])
             for match in matches:
                 chunk_data = {
                     "text": match.metadata.get("text", ""),
+                    "doc_id": match.metadata.get("doc_id", ""),
+                    "chunk_id": match.metadata.get("chunk_id", ""),
                     "filename": match.metadata.get("filename", ""),
                     "chunk_index": match.metadata.get("chunk_index", 0),
                     "token_count": match.metadata.get("token_count", 0),
                     "relevance_score": float(match.score),
                     "upload_date": match.metadata.get("upload_date", ""),
-                    "email": match.metadata.get("email", ""),
+                    "uploaded_by": match.metadata.get("uploaded_by", ""),
                     "jurisdiction": match.metadata.get("jurisdiction", ""),
                     "contract_type": match.metadata.get("contract_type", "")
                 }
@@ -296,15 +358,11 @@ class PineconeRAGService:
             # Retrieve relevant chunks from Pinecone
             relevant_chunks = await self._retrieve_relevant_chunks(query, k=5)
             
+            # Check if relevant chunks found - implement explicit messaging requirement
             if not relevant_chunks:
-                return {
-                    "error": "No contract documents uploaded or no relevant information found",
-                    "risky_clauses": [],
-                    "missing_protections": [],
-                    "overall_risk_score": 0,
-                    "summary": "No contract information available for analysis",
-                    "notes": ["Please upload a contract document first"]
-                }
+                # Fallback to global best practices when no local chunks found
+                global_practices_response = await self._get_global_best_practices_response(query, jurisdiction, contract_type)
+                return global_practices_response
             
             # Build context from retrieved chunks
             context = "\n\n".join([
@@ -342,7 +400,7 @@ class PineconeRAGService:
             analysis_data = json.loads(content)
             
             # Convert to expected format
-            return self._format_analysis_response(analysis_data, relevant_chunks)
+            return self._format_analysis_response_with_citations(analysis_data, relevant_chunks)
             
         except json.JSONDecodeError as e:
             return {
@@ -419,6 +477,8 @@ class PineconeRAGService:
         
         {f"Consider {jurisdiction} jurisdiction requirements." if jurisdiction else ""}
         {f"Apply {contract_type} contract-specific analysis." if contract_type else ""}
+        
+        IMPORTANT: Your response must cite sources using the format [Source: doc_id, chunk_id] for each fact or recommendation you provide based on the retrieved context.
         """
     
     def _format_analysis_response(self, analysis_data: Dict[str, Any], chunks: List[Dict[str, Any]]) -> Dict[str, Any]:
@@ -432,6 +492,121 @@ class PineconeRAGService:
             "retrieved_chunks": len(chunks),
             "source_documents": list(set(chunk["filename"] for chunk in chunks)),
             "storage_type": "pinecone_persistent"
+        }
+    
+    async def _get_global_best_practices_response(
+        self, 
+        query: str, 
+        jurisdiction: Optional[str] = None, 
+        contract_type: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """Fallback to global best practices when no relevant chunks found"""
+        try:
+            context_info = ""
+            if jurisdiction:
+                context_info += f"\nJURISDICTION: {jurisdiction}"
+            if contract_type:
+                context_info += f"\nCONTRACT TYPE: {contract_type}"
+            
+            fallback_prompt = f"""
+            I couldn't find enough information in the uploaded documents to answer this accurately.
+            
+            USER QUESTION: {query}{context_info}
+            
+            Since no relevant contract documents were found in the database, please provide general best practices and guidance for this question based on standard contract law principles.
+            
+            Please respond in JSON format:
+            {{
+                "risky_clauses": [],
+                "missing_protections": [
+                    {{
+                        "protection": "<type of protection>",
+                        "why": "<explanation>",
+                        "suggested_language": "<standard clause language>"
+                    }}
+                ],
+                "overall_risk_score": <1-10>,
+                "summary": "I couldn't find enough information in the uploaded documents to answer this accurately. Based on general contract best practices: <your guidance>",
+                "notes": [
+                    "This response is based on general contract law principles since no relevant documents were found in your uploads",
+                    "<additional general guidance>"
+                ]
+            }}
+            """
+            
+            # Call OpenAI with global best practices prompt
+            response = await asyncio.to_thread(
+                self.openai_client.chat.completions.create,
+                model=self.chat_model,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "You are an expert contract attorney providing general guidance when specific contract documents are not available."
+                    },
+                    {
+                        "role": "user",
+                        "content": fallback_prompt
+                    }
+                ],
+                response_format={"type": "json_object"},
+                max_tokens=2000,
+                temperature=0.3
+            )
+            
+            content = response.choices[0].message.content
+            if not content:
+                raise Exception("AI response was empty")
+            
+            analysis_data = json.loads(content)
+            
+            return {
+                "risky_clauses": analysis_data.get("risky_clauses", []),
+                "missing_protections": analysis_data.get("missing_protections", []),
+                "overall_risk_score": min(10, max(0, analysis_data.get("overall_risk_score", 0))),
+                "summary": analysis_data.get("summary", "I couldn't find enough information in the uploaded documents to answer this accurately."),
+                "notes": analysis_data.get("notes", ["This response is based on general best practices since no relevant documents were found"]),
+                "retrieved_chunks": 0,
+                "source_documents": [],
+                "storage_type": "global_fallback",
+                "fallback_used": True
+            }
+            
+        except Exception as e:
+            return {
+                "error": "I couldn't find enough information in the uploaded documents to answer this accurately.",
+                "risky_clauses": [],
+                "missing_protections": [],
+                "overall_risk_score": 0,
+                "summary": "I couldn't find enough information in the uploaded documents to answer this accurately. Please upload relevant contract documents first.",
+                "notes": ["No relevant documents found in database", "Please upload contract documents to get specific analysis"],
+                "retrieved_chunks": 0,
+                "source_documents": [],
+                "storage_type": "fallback_error"
+            }
+    
+    def _format_analysis_response_with_citations(self, analysis_data: Dict[str, Any], chunks: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """Format analysis response with proper source citations"""
+        # Add citations to summary and notes
+        sources_info = []
+        for chunk in chunks:
+            if chunk.get("doc_id") and chunk.get("chunk_id"):
+                sources_info.append(f"[Source: {chunk['doc_id']}, {chunk['chunk_id']}]")
+        
+        summary = analysis_data.get("summary", "")
+        if sources_info and summary:
+            summary += f"\n\nSources: {', '.join(sources_info[:3])}"  # Limit to top 3 sources
+        
+        return {
+            "risky_clauses": analysis_data.get("risky_clauses", []),
+            "missing_protections": analysis_data.get("missing_protections", []),
+            "overall_risk_score": min(10, max(0, analysis_data.get("overall_risk_score", 0))),
+            "summary": summary,
+            "notes": analysis_data.get("notes", []),
+            "retrieved_chunks": len(chunks),
+            "source_documents": list(set(chunk["filename"] for chunk in chunks)),
+            "source_citations": sources_info,
+            "doc_ids_referenced": list(set(chunk.get("doc_id", "") for chunk in chunks if chunk.get("doc_id"))),
+            "storage_type": "pinecone_persistent_with_citations"
         }
     
     def get_index_stats(self) -> Dict[str, Any]:

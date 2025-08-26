@@ -1,0 +1,78 @@
+Objective:
+ Configure a RAG (Retrieval-Augmented Generation) system in Replit using Pinecone for vector storage to ensure:
+Persistent storage of embeddings and document metadata across restarts.
+
+
+No duplication of documents or embeddings in Pinecone.
+
+
+Minimized hallucinations by grounding answers only in indexed documents.
+
+
+Accurate contract review using uploaded documents and global best practices.
+
+
+Requirements:
+Use Pinecone Starter Plan API key (already stored in Replit Secrets).
+
+
+Create and initialize a single Pinecone index for all contract embeddings.
+
+
+Automatically deduplicate chunks based on a hash of the content before inserting.
+
+
+Store these fields in Pinecone metadata for each chunk:
+
+
+doc_id → Unique ID for the source document.
+
+
+chunk_id → Sequential ID for the chunk.
+
+
+jurisdiction → Country/region if specified.
+
+
+contract_type → NDA, MSA, lease, etc.
+
+
+source_url or uploaded_by if available.
+
+
+Ensure embeddings use OpenAI’s text-embedding-3-large model for better context quality.
+
+
+On retrieval, fetch only top N (e.g. 5) most relevant chunks and pass them into the model.
+
+
+Responses must stay within retrieved context and must cite source doc_id and chunk_id.
+
+
+If no relevant information is found, the response should explicitly say:
+ "I couldn’t find enough information in the uploaded documents to answer this accurately."
+
+
+Configure a deduplication guard:
+
+
+Before inserting, compare new embeddings with existing embeddings using cosine similarity (>0.97 = duplicate → skip insert).
+
+
+Include a fallback to global best practices documents when no local matching chunks are found.
+
+
+Testing Checklist:
+✅ Upload multiple documents of the same type and confirm no duplicate embeddings are created.
+
+
+✅ Restart the app in Replit → confirm embeddings persist.
+
+
+✅ Query an unseen contract → confirm RAG retrieves closest matches only.
+
+
+✅ Validate the assistant avoids hallucinations and cites sources.
+
+
+✅ Test with documents from different jurisdictions → ensure responses indicate applicable regions.
