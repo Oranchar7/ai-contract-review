@@ -16,7 +16,7 @@ class PineconeRAGService:
         self.openai_client = OpenAI(
             api_key=os.environ.get("OPENAI_API_KEY")
         )
-        self.embedding_model = "text-embedding-3-large"
+        self.embedding_model = "text-embedding-3-small"
         self.chat_model = "gpt-4o-mini"
         self.tokenizer = tiktoken.get_encoding("cl100k_base")
         self.chunk_size = 800  # tokens per chunk as specified
@@ -26,7 +26,7 @@ class PineconeRAGService:
         self.pinecone_client = None
         self.index = None
         self.index_name = "contracts-rag"  # As specified
-        self.dimension = 3072  # text-embedding-3-large dimension
+        self.dimension = 1536  # text-embedding-3-small dimension
         
         # Initialize connection
         self._initialize_pinecone()
@@ -356,7 +356,7 @@ class PineconeRAGService:
                 }
             
             # Retrieve relevant chunks from Pinecone
-            relevant_chunks = await self._retrieve_relevant_chunks(query, k=5)
+            relevant_chunks = await self._retrieve_relevant_chunks(query, k=7)
             
             # Check if relevant chunks found - implement explicit messaging requirement
             if not relevant_chunks:
