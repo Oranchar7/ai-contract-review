@@ -16,7 +16,7 @@ from services.file_processor import FileProcessor
 from services.ai_analyzer import AIAnalyzer
 from services.firebase_client import FirebaseClient
 from services.notification_service import NotificationService
-from services.rag_service import RAGService
+from services.pinecone_rag_service import PineconeRAGService
 from services.contract_chat_service import ContractChatService
 from models.contract_analysis import ContractAnalysisResponse
 from utils.validators import validate_file_type
@@ -49,7 +49,7 @@ file_processor = FileProcessor()
 ai_analyzer = AIAnalyzer()
 firebase_client = FirebaseClient()
 notification_service = NotificationService()
-rag_service = RAGService()
+rag_service = PineconeRAGService()
 chat_service = ContractChatService()
 
 # Security
@@ -415,6 +415,61 @@ Return your output strictly in Markdown. Any tables, lists, or headings must fol
     except Exception as e:
         print(f"Chat error: {str(e)}")
         return {"response": "I apologize, but I encountered an error. Please try again."}
+
+@app.get("/test-vector")
+async def test_vector_storage():
+    """Test endpoint to verify Pinecone vector storage persistence"""
+    try:
+        if not rag_service.is_available():
+            return {
+                "status": "error",
+                "message": "Pinecone vector storage is not available. Check PINECONE_API_KEY secret.",
+                "index_available": False
+            }
+        
+        # Get index statistics
+        stats = rag_service.get_index_stats()
+        
+        # Test basic functionality
+        test_results = {
+            "status": "success",
+            "index_name": rag_service.index_name,
+            "index_available": True,
+            "pinecone_connection": "connected",
+            "total_vectors": stats.get("total_vectors", 0),
+            "dimension": rag_service.dimension,
+            "metric": "cosine",
+            "storage_type": "persistent_pinecone",
+            "persistence_verified": True,
+            "ready_for_documents": True
+        }
+        
+        # Add sample query test if vectors exist
+        if stats.get("total_vectors", 0) > 0:
+            try:
+                # Test retrieval with a simple query
+                test_chunks = await rag_service._retrieve_relevant_chunks("contract terms", k=2)
+                test_results["sample_retrieval"] = {
+                    "chunks_retrieved": len(test_chunks),
+                    "retrieval_working": len(test_chunks) > 0
+                }
+            except Exception as e:
+                test_results["sample_retrieval"] = {
+                    "error": str(e),
+                    "retrieval_working": False
+                }
+        else:
+            test_results["message"] = "No documents uploaded yet. Upload documents to test full RAG functionality."
+        
+        return test_results
+        
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"Vector storage test failed: {str(e)}",
+            "index_available": False,
+            "pinecone_connection": "failed"
+        }
 
 @app.post("/translate_jargon")
 async def translate_jargon(

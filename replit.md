@@ -50,14 +50,20 @@ The application follows a service-oriented architecture with clear separation of
 # External Dependencies
 
 ## AI/ML Services
-- **OpenAI API**: GPT-5 model for contract analysis and risk assessment
-- **Model Configuration**: Temperature set to 0.3 for consistent, focused responses
+- **OpenAI API**: GPT-4o mini for contract chat (temperature 0.4), GPT-5 for analysis
+- **Model Configuration**: Temperature set to 0.4 for chat, 0.3 for analysis responses
 - **Structured Outputs**: JSON response format for reliable data parsing
+- **Embeddings**: text-embedding-3-small for cost-effective vector embeddings
 
 ## Database & Storage
 - **Firebase Firestore**: NoSQL document database for storing analysis results and user data
 - **Firebase Admin SDK**: Server-side integration for secure database operations
 - **Google Cloud Authentication**: Supports both service account keys and default credentials
+- **Pinecone Vector Database**: Persistent vector storage for RAG functionality
+  - Index: contracts-rag (cosine similarity, 1536 dimensions)
+  - Chunk Strategy: 800 tokens with 100 token overlap
+  - Deduplication: SHA256 hash-based to prevent duplicate chunks
+  - Metadata: filename, contract type, jurisdiction, upload date, user email
 
 ## File Processing Libraries
 - **PyPDF2**: PDF text extraction and processing
