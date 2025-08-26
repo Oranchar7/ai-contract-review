@@ -442,11 +442,14 @@ async def telegram_webhook(request: Request):
         
         print(f"Processing query from chat {chat_id}: {user_query}")
         
+        # Send generating response message first
+        await telegram_service.send_generating_response(chat_id, user_query)
+        
         # Process the query through RAG system with test mode fallback
         response_text = await process_telegram_query(user_query, message_data)
         
-        # Send response back to Telegram
-        send_result = await telegram_service.send_message(chat_id, response_text)
+        # Send response back to Telegram with progress indication
+        send_result = await telegram_service.send_response_with_progress(chat_id, user_query, response_text)
         
         if send_result.get("success"):
             print(f"Response sent successfully to chat {chat_id}")

@@ -24,6 +24,30 @@ class TelegramService:
             self.available = True
             logger.info("Telegram service initialized successfully")
     
+    async def send_typing_action(self, chat_id: int) -> Dict[str, Any]:
+        """Send typing indicator to show bot is processing"""
+        if not self.available:
+            return {"success": False, "error": "Telegram service not available"}
+        
+        try:
+            url = f"{self.base_url}/sendChatAction"
+            payload = {
+                "chat_id": chat_id,
+                "action": "typing"
+            }
+            
+            async with aiohttp.ClientSession() as session:
+                async with session.post(url, json=payload) as response:
+                    result = await response.json()
+                    
+                    if response.status == 200 and result.get("ok"):
+                        return {"success": True}
+                    else:
+                        return {"success": False, "error": result.get("description", "Unknown error")}
+                        
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+    
     async def send_message(self, chat_id: int, text: str, parse_mode: str = "Markdown") -> Dict[str, Any]:
         """Send a message to a Telegram chat"""
         if not self.available:
@@ -51,6 +75,35 @@ class TelegramService:
                         
         except Exception as e:
             logger.error(f"Exception sending Telegram message: {str(e)}")
+            return {"success": False, "error": str(e)}
+    
+    async def edit_message(self, chat_id: int, message_id: int, text: str, parse_mode: str = "Markdown") -> Dict[str, Any]:
+        """Edit an existing message"""
+        if not self.available:
+            return {"success": False, "error": "Telegram service not available"}
+        
+        try:
+            url = f"{self.base_url}/editMessageText"
+            payload = {
+                "chat_id": chat_id,
+                "message_id": message_id,
+                "text": text[:4096],
+                "parse_mode": parse_mode
+            }
+            
+            async with aiohttp.ClientSession() as session:
+                async with session.post(url, json=payload) as response:
+                    result = await response.json()
+                    
+                    if response.status == 200 and result.get("ok"):
+                        return {"success": True}
+                    else:
+                        error_msg = result.get("description", "Unknown error")
+                        logger.error(f"Failed to edit message: {error_msg}")
+                        return {"success": False, "error": error_msg}
+                        
+        except Exception as e:
+            logger.error(f"Exception editing message: {str(e)}")
             return {"success": False, "error": str(e)}
     
     async def set_webhook(self, webhook_url: str) -> Dict[str, Any]:
@@ -210,6 +263,52 @@ This is a test response showing how contract analysis would work. Key areas iden
             
             "default": "🤖 I understand you're asking about contracts. While I'm ready to help, I'm currently operating in test mode. Once document ingestion is complete, I'll be able to provide detailed analysis based on your uploaded contracts!\n\n💡 Try typing 'help' to see what I can do!"
         }
+    
+    async def send_generating_response(self, chat_id: int, user_query: str) -> Dict[str, Any]:
+        """Send typing indicator and a 'generating response' message"""
+        # Send typing indicator first
+        await self.send_typing_action(chat_id)
+        
+        # Send generating message
+        generating_text = f"🤔 *Analyzing your question...*\n\n"
+        
+        # Add context based on query type
+        if any(term in user_query.lower() for term in ['contract', 'nda', 'agreement', 'clause']):
+            generating_text += "💼 Reviewing contract knowledge and legal precedents..."
+        elif any(term in user_query.lower() for term in ['risk', 'analyze', 'review']):
+            generating_text += "⚖️ Conducting risk assessment and analysis..."
+        else:
+            generating_text += "📚 Consulting legal knowledge base..."
+        
+        generating_text += "\n\n⏳ *This may take a few moments*"
+        
+        result = await self.send_message(chat_id, generating_text)
+        return result
+    
+    async def send_response_with_progress(self, chat_id: int, user_query: str, response_text: str) -> Dict[str, Any]:
+        """Send a generating message first, then replace it with the actual response"""
+        # Send generating message
+        generating_result = await self.send_generating_response(chat_id, user_query)
+        
+        if not generating_result.get("success"):
+            # If generating message failed, just send the response normally
+            return await self.send_message(chat_id, response_text)
+        
+        # Wait a moment for better UX
+        await asyncio.sleep(1.5)
+        
+        # Edit the generating message with the actual response
+        message_id = generating_result.get("message_id")
+        if message_id:
+            edit_result = await self.edit_message(chat_id, message_id, response_text)
+            if edit_result.get("success"):
+                return {"success": True, "method": "edited"}
+            else:
+                # If edit failed, send new message
+                return await self.send_message(chat_id, response_text)
+        else:
+            # If no message_id, send new message
+            return await self.send_message(chat_id, response_text)
     
     def is_available(self) -> bool:
         """Check if Telegram service is available"""
