@@ -449,14 +449,16 @@ async def telegram_webhook(request: Request):
         response_text = await process_telegram_query(user_query, message_data)
         
         # Send response back to Telegram with progress indication
+        print(f"DEBUG: About to send response: {response_text[:100]}...")
         send_result = await telegram_service.send_response_with_progress(chat_id, user_query, response_text)
+        print(f"DEBUG: Send result: {send_result}")
         
         if send_result.get("success"):
             print(f"Response sent successfully to chat {chat_id}")
             return {"status": "ok", "message": "Response sent"}
         else:
             print(f"Failed to send response: {send_result.get('error')}")
-            return {"status": "error", "message": "Failed to send response"}
+            return {"status": "error", "message": f"Failed to send response: {send_result.get('error')}"}
             
     except Exception as e:
         print(f"Telegram webhook error: {str(e)}")

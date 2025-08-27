@@ -55,10 +55,11 @@ class TelegramService:
         
         try:
             url = f"{self.base_url}/sendMessage"
+            # Try without markdown first to avoid parsing issues
             payload = {
                 "chat_id": chat_id,
                 "text": text[:4096],  # Telegram message limit
-                "parse_mode": parse_mode
+                "parse_mode": None  # Disable markdown to avoid parse errors
             }
             
             async with aiohttp.ClientSession() as session:
