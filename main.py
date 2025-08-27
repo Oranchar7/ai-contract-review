@@ -548,10 +548,32 @@ async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> st
         query_lower = query.lower().strip()
         chat_id = message_data.get("chat_id", 0)
         
-        # FIRST: Handle basic greetings and commands (highest priority)
+        # FIRST: Check if this is a legal question - handle immediately  
+        legal_keywords = ["sla", "contract", "agreement", "nda", "msa", "legal", "clause", "terms", "constructing", "analyze", "review"]
+        is_legal_question = any(keyword in query_lower for keyword in legal_keywords)
+        
+        if is_legal_question:
+            # Handle legal questions directly with chat service
+            try:
+                chat_result = await chat_service.general_chat(
+                    query,
+                    jurisdiction=None,
+                    contract_type=None,
+                    force_natural_response=True
+                )
+                
+                if chat_result.get("answer"):
+                    response = chat_result['answer']
+                    telegram_service.add_to_conversation_history(chat_id, "user", query)
+                    telegram_service.add_to_conversation_history(chat_id, "assistant", response)
+                    return response
+            except Exception as e:
+                print(f"Legal question error: {e}")
+        
+        # Handle basic greetings and commands
         dummy_responses = telegram_service.get_dummy_responses()
         
-        # Check exact matches first
+        # Check exact matches
         if query_lower in dummy_responses:
             response = dummy_responses[query_lower]
             telegram_service.add_to_conversation_history(chat_id, "user", query)
@@ -566,7 +588,11 @@ async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> st
             telegram_service.add_to_conversation_history(chat_id, "assistant", response)
             return response
         
-        # Handle conversational queries naturally (greetings, farewells, introductions, etc.)
+        # Check if this is actually a legal/contract question first
+        legal_keywords = ["sla", "contract", "agreement", "nda", "msa", "legal", "clause", "terms", "constructing", "analyze", "review"]
+        is_legal_question = any(keyword in query_lower for keyword in legal_keywords)
+        
+        # Handle conversational queries naturally (but NOT if it's a legal question)
         conversational_patterns = [
             # Basic greetings (exact match)
             "hi", "hello", "hey", "hi there", "hello there", "hey there", "hi!", "hello!", "hey!",
@@ -581,18 +607,10 @@ async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> st
             
             # Introductions
             "i am", "my name is", "i'm", "call me", "this is", "nice to meet you",
-            "pleased to meet", "good to meet",
-            
-            # Casual conversation starters
-            "what do you think", "tell me about yourself", "what can you tell me",
-            "how's your day", "how was your", "what have you been up to",
-            
-            # Weather and casual topics
-            "weather", "how is the weather", "what's the weather", "nice day",
-            "beautiful day", "hot today", "cold today", "sunny", "rainy"
+            "pleased to meet", "good to meet"
         ]
         pattern_matched = any(pattern in query_lower for pattern in conversational_patterns)
-        if pattern_matched:
+        if pattern_matched and not is_legal_question:
             print(f"DEBUG: Matched conversational pattern for '{query}'")
             # Let the AI respond naturally to conversational queries
             try:

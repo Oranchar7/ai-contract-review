@@ -157,6 +157,16 @@
       "role": "assistant",
       "content": "\ud83d\udc4b Hi there! I'm so glad you reached out! \n\n\u2728 I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.\n\n\ud83e\udd1d I'd love to help you with:\n\u2022 Making sense of contracts and agreements\n\u2022 Breaking down confusing legal terms into plain English  \n\u2022 Reviewing documents and spotting important details\n\u2022 Answering any contract questions you might have\n\n\ud83d\udcad Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!\n\n\ud83c\udf1f What's on your mind today?\n\n\u2696\ufe0f *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review.",
       "timestamp": "2025-08-27T16:17:43.037526"
+    },
+    {
+      "role": "user",
+      "content": "can you help me constructing my SLA",
+      "timestamp": "2025-08-27T17:43:35.195426"
+    },
+    {
+      "role": "assistant",
+      "content": "Of course! What specific parts of the SLA do you need help with? Like the scope, responsibilities, or maybe the metrics?",
+      "timestamp": "2025-08-27T17:43:35.199589"
     }
   ],
   "8311809336": [
@@ -211,6 +221,26 @@
       "role": "assistant",
       "content": "Hi! I'm Lexi, I help with legal stuff. What can I do for you?\n\n\ud83d\udcc4 **Upload contract documents** for detailed analysis and risk assessment!",
       "timestamp": "2025-08-27T17:40:31.578977"
+    },
+    {
+      "role": "user",
+      "content": "can you help me constructing my SLA",
+      "timestamp": "2025-08-27T17:41:54.157633"
+    },
+    {
+      "role": "assistant",
+      "content": "\ud83d\udd0d Available Commands:\n\n\u2022 Ask me about contract terms\n\u2022 Request contract analysis\n\u2022 Ask legal questions\n\u2022 Type 'test' for a sample analysis\n\n\ud83d\udca1 Tip: I work best when you upload contract documents first!\n\nDisclaimer: Not legal advice, general review \u2014 consult an attorney for your specific situation.",
+      "timestamp": "2025-08-27T17:41:54.160138"
+    },
+    {
+      "role": "user",
+      "content": "can you help me constructing my SLA",
+      "timestamp": "2025-08-27T17:42:39.428909"
+    },
+    {
+      "role": "assistant",
+      "content": "\ud83d\udd0d Available Commands:\n\n\u2022 Ask me about contract terms\n\u2022 Request contract analysis\n\u2022 Ask legal questions\n\u2022 Type 'test' for a sample analysis\n\n\ud83d\udca1 Tip: I work best when you upload contract documents first!\n\nDisclaimer: Not legal advice, general review \u2014 consult an attorney for your specific situation.",
+      "timestamp": "2025-08-27T17:42:39.431756"
     }
   ]
 }
