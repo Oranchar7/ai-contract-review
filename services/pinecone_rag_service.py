@@ -509,29 +509,31 @@ class PineconeRAGService:
                 context_info += f"\nCONTRACT TYPE: {contract_type}"
             
             fallback_prompt = f"""
-            I couldn't find enough information in the uploaded documents to answer this accurately.
+            No contract documents have been uploaded to the system yet.
             
             USER QUESTION: {query}{context_info}
             
-            Since no relevant contract documents were found in the database, please provide general best practices and guidance for this question based on standard contract law principles.
+            Please provide helpful general guidance about this question based on standard contract law principles and best practices. Start by acknowledging that no documents are uploaded, then answer their question with useful information, and end with friendly instructions.
             
             Please respond in JSON format:
             {{
                 "risky_clauses": [],
-                "missing_protections": [
-                    {{
-                        "protection": "<type of protection>",
-                        "why": "<explanation>",
-                        "suggested_language": "<standard clause language>"
-                    }}
-                ],
-                "overall_risk_score": <1-10>,
-                "summary": "I couldn't find enough information in the uploaded documents to answer this accurately. Based on general contract best practices: <your guidance>",
+                "missing_protections": [],
+                "overall_risk_score": 0,
+                "summary": "No documents uploaded yet. [Then provide helpful general answer to their question about contracts/legal matters]",
                 "notes": [
-                    "This response is based on general contract law principles since no relevant documents were found in your uploads",
-                    "<additional general guidance>"
+                    "💡 To get specific analysis of your contracts:",
+                    "• Upload your contract documents through the web interface",
+                    "• Ask questions about specific clauses in your uploaded documents", 
+                    "• Get personalized risk assessments and recommendations",
+                    "• I can help you understand any contract terms once you upload your documents!"
                 ]
             }}
+            
+            Structure your response to:
+            1. Acknowledge no documents uploaded
+            2. Answer their question with general contract guidance 
+            3. Provide friendly instructions for getting personalized help
             """
             
             # Call OpenAI with global best practices prompt
@@ -541,7 +543,7 @@ class PineconeRAGService:
                 messages=[
                     {
                         "role": "system",
-                        "content": "You are an expert contract attorney providing general guidance when specific contract documents are not available."
+                        "content": "You are a friendly contract attorney. When no documents are uploaded, acknowledge this warmly, provide helpful general guidance about the user's question, then give encouraging instructions about uploading documents for personalized help."
                     },
                     {
                         "role": "user",
@@ -563,7 +565,7 @@ class PineconeRAGService:
                 "risky_clauses": analysis_data.get("risky_clauses", []),
                 "missing_protections": analysis_data.get("missing_protections", []),
                 "overall_risk_score": min(10, max(0, analysis_data.get("overall_risk_score", 0))),
-                "summary": analysis_data.get("summary", "I couldn't find enough information in the uploaded documents to answer this accurately."),
+                "summary": analysis_data.get("summary", "No documents uploaded yet. I'd be happy to help with general contract guidance, and once you upload documents, I can provide specific analysis!"),
                 "notes": analysis_data.get("notes", ["This response is based on general best practices since no relevant documents were found"]),
                 "retrieved_chunks": 0,
                 "source_documents": [],
@@ -573,12 +575,17 @@ class PineconeRAGService:
             
         except Exception as e:
             return {
-                "error": "I couldn't find enough information in the uploaded documents to answer this accurately.",
                 "risky_clauses": [],
                 "missing_protections": [],
                 "overall_risk_score": 0,
-                "summary": "I couldn't find enough information in the uploaded documents to answer this accurately. Please upload relevant contract documents first.",
-                "notes": ["No relevant documents found in database", "Please upload contract documents to get specific analysis"],
+                "summary": "No documents uploaded yet. I'd be happy to help with general contract guidance! For specific analysis of your contracts, please upload your documents first.",
+                "notes": [
+                    "💡 To get specific analysis of your contracts:",
+                    "• Upload your contract documents through the web interface",
+                    "• Ask questions about specific clauses in your uploaded documents", 
+                    "• Get personalized risk assessments and recommendations",
+                    "• I can help you understand any contract terms once you upload your documents!"
+                ],
                 "retrieved_chunks": 0,
                 "source_documents": [],
                 "storage_type": "fallback_error"
