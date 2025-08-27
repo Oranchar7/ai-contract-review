@@ -230,13 +230,13 @@ Is there anything contract or legal-related I can assist you with today?"""
                 return rag_result.get("purpose_statement", "🤖 Hi there! I'm your AI Contract Review Assistant, and I specialize in helping with legal documents and contract-related questions. Is there anything contract or legal-related I can help you with today?")
             
             if rag_result.get("error"):
-                return f"❌ *Error*: {rag_result['error']}"
+                return f"❌ Error: {rag_result['error']}"
             
             # Handle different response formats
             if "response" in rag_result:
                 # Simple chat response
-                response = rag_result["response"]
-                return f"🤖 *AI Assistant*:\n\n{response}"
+                response = rag_result["response"].replace("*", "").replace("**", "")
+                return f"💡 AI Legal Assistant\n\n{response}"
             
             elif "summary" in rag_result:
                 # RAG analysis response
@@ -244,10 +244,13 @@ Is there anything contract or legal-related I can assist you with today?"""
                 retrieved_chunks = rag_result.get("retrieved_chunks", 0)
                 notes = rag_result.get("notes", [])
                 
+                # Clean up the summary text
+                summary = summary.replace("*", "").replace("**", "")
+                
                 # Check if this is a "no documents" response
                 if retrieved_chunks == 0 and "No documents uploaded" in summary:
                     # Format for no documents case
-                    formatted_response = f"📄 *No documents uploaded yet*\n\n"
+                    formatted_response = f"💡 AI Legal Assistant\n\n"
                     
                     # Extract the main answer from summary (remove the "No documents uploaded yet." part)
                     main_answer = summary.replace("No documents uploaded yet.", "").strip()
@@ -255,44 +258,47 @@ Is there anything contract or legal-related I can assist you with today?"""
                         formatted_response += f"{main_answer}\n\n"
                     
                     # Add friendly instructions from notes
-                    if notes:
-                        formatted_response += "*💡 To get specific analysis:*\n"
+                    if notes and len(notes) > 0:
+                        formatted_response += "📋 To get specific analysis:\n"
                         for note in notes:
-                            if note.startswith("•"):
-                                formatted_response += f"{note}\n"
-                            else:
-                                formatted_response += f"• {note}\n"
+                            clean_note = note.replace("*", "").replace("**", "").replace("💡", "").strip()
+                            # Skip redundant instruction notes
+                            if clean_note and not clean_note.startswith("To get specific analysis") and not "To get specific analysis" in clean_note:
+                                if clean_note.startswith("•"):
+                                    formatted_response += f"{clean_note}\n"
+                                elif clean_note.startswith("Upload"):
+                                    formatted_response += f"• {clean_note}\n"
                     
                     return formatted_response
                 
                 # Regular analysis with documents
                 else:
                     risk_score = rag_result.get("overall_risk_score", 0)
-                    formatted_response = f"📋 *Contract Analysis*\n\n"
+                    formatted_response = f"📋 Contract Analysis\n\n"
                     
                     if risk_score > 0:
                         risk_emoji = "🔴" if risk_score >= 7 else "🟡" if risk_score >= 4 else "🟢"
-                        formatted_response += f"{risk_emoji} *Risk Score*: {risk_score}/10\n\n"
+                        formatted_response += f"{risk_emoji} Risk Score: {risk_score}/10\n\n"
                     
-                    formatted_response += f"*Analysis*:\n{summary}"
+                    formatted_response += f"Analysis:\n{summary}"
                     
                     if retrieved_chunks > 0:
-                        formatted_response += f"\n\n📄 *Sources*: {retrieved_chunks} document sections analyzed"
+                        formatted_response += f"\n\n📄 Sources: {retrieved_chunks} document sections analyzed"
                     
                     # Add citations if available
                     citations = rag_result.get("source_citations", [])
                     if citations:
-                        formatted_response += f"\n\n🔗 *References*: {', '.join(citations[:3])}"
+                        formatted_response += f"\n\n🔗 References: {', '.join(citations[:3])}"
                     
                     return formatted_response
             
             else:
                 # Fallback for unexpected format
-                return f"🤖 *Response*:\n\n{str(rag_result)}"
+                return f"🤖 Response:\n\n{str(rag_result)}"
                 
         except Exception as e:
             logger.error(f"Error formatting RAG response: {str(e)}")
-            return f"❌ *Error formatting response*: {str(e)}"
+            return f"❌ Error formatting response: {str(e)}"
     
     def get_dummy_responses(self) -> Dict[str, str]:
         """Get predefined dummy responses for testing"""
