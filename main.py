@@ -573,42 +573,45 @@ async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> st
         query_lower = query.lower().strip()
         chat_id = message_data.get("chat_id", 0)
         
+        # FIRST: Handle basic greetings and commands (highest priority)
+        dummy_responses = telegram_service.get_dummy_responses()
+        
+        # Check exact matches first
+        if query_lower in dummy_responses:
+            response = dummy_responses[query_lower]
+            telegram_service.add_to_conversation_history(chat_id, "user", query)
+            telegram_service.add_to_conversation_history(chat_id, "assistant", response)
+            return response
+        
+        # Check for common greeting patterns
+        greetings = ["hello", "hi", "hey", "start", "/start"]
+        if any(greeting == query_lower for greeting in greetings):  # Exact match
+            response = dummy_responses["hello"]
+            telegram_service.add_to_conversation_history(chat_id, "user", query)
+            telegram_service.add_to_conversation_history(chat_id, "assistant", response)
+            return response
+        
+        # Check for help patterns
+        help_patterns = ["help", "/help", "what can you do", "commands"]
+        if any(pattern in query_lower for pattern in help_patterns):
+            response = dummy_responses["help"]
+            telegram_service.add_to_conversation_history(chat_id, "user", query)
+            telegram_service.add_to_conversation_history(chat_id, "assistant", response)
+            return response
+        
         # Add user message to conversation history
         telegram_service.add_to_conversation_history(chat_id, "user", query)
         
-        # Get conversation context for better understanding
+        # Get conversation context for follow-up detection
         conversation_context = telegram_service.get_conversation_context(chat_id)
         
-        # Check if this could be a follow-up question based on conversation context
+        # Check if this could be a follow-up question
         is_followup = False
-        if conversation_context and len(query.split()) < 10:  # Short queries are likely follow-ups
+        if conversation_context and len(query.split()) < 10:
             context_lower = conversation_context.lower()
             contract_words = ["contract", "agreement", "legal", "sla", "msa", "nda", "clause", "terms", "service level"]
-            # If recent conversation mentions contracts, treat as follow-up
             if any(word in context_lower for word in contract_words):
                 is_followup = True
-        
-        # Check for dummy responses first (test mode) - but skip if it's a follow-up
-        dummy_responses = telegram_service.get_dummy_responses()
-        
-        if query_lower in dummy_responses and not is_followup:
-            response = dummy_responses[query_lower]
-            telegram_service.add_to_conversation_history(chat_id, "assistant", response)
-            return response
-        
-        # Check for common greeting patterns - but skip if it's a follow-up
-        greetings = ["hello", "hi", "hey", "start", "/start"]
-        if any(greeting in query_lower for greeting in greetings) and not is_followup:
-            response = dummy_responses["hello"]
-            telegram_service.add_to_conversation_history(chat_id, "assistant", response)
-            return response
-        
-        # Check for help patterns - but skip if it's a follow-up
-        help_patterns = ["help", "/help", "what can you do", "commands"]
-        if any(pattern in query_lower for pattern in help_patterns) and not is_followup:
-            response = dummy_responses["help"]
-            telegram_service.add_to_conversation_history(chat_id, "assistant", response)
-            return response
         
         # IMMEDIATE FILTER: Check if query is definitely NOT contract-related
         query_words = query_lower.split()
