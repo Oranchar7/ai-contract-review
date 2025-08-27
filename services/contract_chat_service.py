@@ -93,7 +93,8 @@ Is there anything contract or legal-related I can help you with today?
         self, 
         query: str, 
         jurisdiction: Optional[str] = None,
-        contract_type: Optional[str] = None
+        contract_type: Optional[str] = None,
+        force_natural_response: bool = False
     ) -> Dict[str, Any]:
         """
         Handle general contract questions before upload or general legal guidance
@@ -107,29 +108,19 @@ Is there anything contract or legal-related I can help you with today?
             Conversational response with legal guidance
         """
         try:
-            # STRICT FILTER: Check for non-contract topics first
-            query_lower = query.lower().strip()
-            non_contract_indicators = [
-                "weather", "joke", "recipe", "cook", "food", "movie", "music", "game", 
-                "sports", "news", "time", "date", "math", "calculate", "translate",
-                "directions", "travel", "shopping", "restaurant", "hotel", "flight"
-            ]
-            
-            # Check if it's definitely NOT contract-related
-            if any(indicator in query_lower for indicator in non_contract_indicators) and not self._is_contract_related_query(query):
-                return {
-                    "answer": self._get_friendly_purpose_statement(),
-                    "type": "purpose_statement",
-                    "model_used": "filtering"
-                }
-            
-            # Also check with contract relevance function
-            if not self._is_contract_related_query(query):
-                return {
-                    "answer": self._get_friendly_purpose_statement(),
-                    "type": "purpose_statement",
-                    "model_used": "filtering"
-                }
+            # Simplified approach: Let GPT-4o mini handle conversation naturally
+            # Only filter out obvious non-legal queries when NOT forced to be natural
+            if not force_natural_response:
+                query_lower = query.lower().strip()
+                
+                # Only block clearly unrelated topics (much simpler filter)
+                obvious_non_legal = ["weather forecast", "recipe for", "movie review", "sports score", "music lyrics"]
+                if any(phrase in query_lower for phrase in obvious_non_legal):
+                    return {
+                        "answer": self._get_friendly_purpose_statement(),
+                        "type": "purpose_statement",
+                        "model_used": "filtering"
+                    }
             # Build conversational context
             context_info = ""
             if jurisdiction:
@@ -137,34 +128,32 @@ Is there anything contract or legal-related I can help you with today?
             if contract_type:
                 context_info += f" Since you're working with a {contract_type} contract, I'll focus on relevant aspects."
             
-            # Create friendly, conversational system prompt
-            system_prompt = f"""You are a friendly, helpful legal contract assistant with extensive experience in contract law and risk assessment. You provide clear, practical advice in everyday language while maintaining professionalism.
+            # Simplified system prompt: GPT-4o mini with legal expertise
+            system_prompt = f"""You are GPT-4o mini with specialized expertise in legal and contract matters. You maintain all your natural conversational abilities while being particularly knowledgeable about legal topics.
 
 Your personality:
-- Warm and approachable, like a trusted legal advisor friend
-- Explain complex legal concepts in simple terms
-- Provide practical, actionable advice
-- Show genuine concern for protecting the user's interests
-- Use analogies and examples to clarify difficult concepts
-- Always encourage users to consult with a lawyer for final decisions
-- End responses with complete sentences, never cut off mid-sentence
+- Natural, warm, and conversational like GPT-4o mini
+- Engage naturally in any conversation topic
+- When legal or contract topics arise, provide expert guidance
+- Explain complex legal concepts in simple, relatable terms
+- Be helpful, supportive, and genuinely caring
 
 Guidelines:
-- Be conversational and supportive
-- Break down complex legal jargon into plain English
-- Provide specific, practical tips and recommendations
-- Acknowledge when something requires professional legal review
-- Use encouraging language while being realistic about risks
-- Structure responses with clear sections and complete thoughts
-- Always finish with a complete sentence, never end abruptly
+- Respond naturally and conversationally to any topic
+- When discussing legal matters, share your specialized knowledge
+- Be personable and engaging like talking to a knowledgeable friend
+- Don't force legal topics into unrelated conversations
+- For legal advice, always encourage consulting with a lawyer for final decisions
+- Maintain your natural GPT-4o mini conversational style
 
-Remember: You're here to educate and guide, not to replace professional legal counsel."""
+Remember: You're GPT-4o mini with legal specialization, not a rigid legal-only assistant."""
 
-            user_prompt = f"""I have a question about contracts and would appreciate your friendly guidance: {query}
+            # Simplified user prompt: let GPT-4o mini respond naturally
+            user_prompt = f"""{query}
 
 {context_info}
 
-Please provide helpful, conversational advice that's easy to understand. If this relates to specific contract terms or risks, help me understand what to look out for and why it matters."""
+Please respond naturally and conversationally. If this relates to legal or contract matters, feel free to share your specialized knowledge, but maintain your natural conversational style."""
 
             # Call OpenAI API with conversational settings
             response = await asyncio.to_thread(
@@ -190,12 +179,20 @@ Please provide helpful, conversational advice that's easy to understand. If this
             if not content:
                 content = "I apologize, but I'm having trouble processing your question right now. Could you try rephrasing it?"
             
-            # Always add detailed analysis section for contract responses
-            formatted_content = f"📝 *No documents uploaded yet*\n\n💡 {content}\n\n"
-            formatted_content += "📋 For detailed analysis:\n"
-            formatted_content += "• Upload contract documents\n"
-            formatted_content += "• Ask specific legal questions"
-            formatted_content += "\n\n⚖️ *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review."
+            # Format response: only add formal structure for contract-specific topics
+            if force_natural_response or not self._is_contract_related_query(query):
+                # For natural conversation, just add disclaimer when discussing legal topics
+                if any(word in content.lower() for word in ["legal", "contract", "law", "agreement", "clause"]):
+                    formatted_content = f"{content}\n\n⚖️ *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review."
+                else:
+                    formatted_content = content
+            else:
+                # For contract-specific queries, add document upload guidance
+                formatted_content = f"📝 *No documents uploaded yet*\n\n💡 {content}\n\n"
+                formatted_content += "📋 For detailed analysis:\n"
+                formatted_content += "• Upload contract documents\n"
+                formatted_content += "• Ask specific legal questions"
+                formatted_content += "\n\n⚖️ *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review."
             
             return {
                 "answer": formatted_content,

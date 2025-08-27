@@ -588,6 +588,33 @@ async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> st
             telegram_service.add_to_conversation_history(chat_id, "assistant", response)
             return response
         
+        # Handle conversational queries naturally (how are you, what's up, etc.)
+        conversational_patterns = ["how are you", "how's it going", "what's up", "how are things", "what are you up to", "good morning", "good afternoon", "good evening"]
+        if any(pattern in query_lower for pattern in conversational_patterns):
+            # Let the AI respond naturally to conversational queries
+            try:
+                # Get conversation context for natural responses
+                temp_context = telegram_service.get_conversation_context(chat_id)
+                context_query = query
+                if temp_context:
+                    context_query = f"Previous conversation:\n{temp_context}\n\nCurrent question: {query}"
+                
+                chat_result = await chat_service.general_chat(
+                    context_query,
+                    jurisdiction=message_data.get("jurisdiction"),
+                    contract_type=message_data.get("contract_type"),
+                    force_natural_response=True  # New parameter for natural responses
+                )
+                
+                if chat_result.get("answer"):
+                    response = chat_result['answer']
+                    telegram_service.add_to_conversation_history(chat_id, "user", query)
+                    telegram_service.add_to_conversation_history(chat_id, "assistant", response)
+                    return response
+            except Exception as e:
+                print(f"Natural response error: {e}")
+                pass  # Fall through to normal processing
+        
         # Check for help patterns
         help_patterns = ["help", "/help", "what can you do", "commands"]
         if any(pattern in query_lower for pattern in help_patterns):
@@ -599,7 +626,7 @@ async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> st
         # Add user message to conversation history
         telegram_service.add_to_conversation_history(chat_id, "user", query)
         
-        # Get conversation context for follow-up detection
+        # Get conversation context for follow-up detection  
         conversation_context = telegram_service.get_conversation_context(chat_id)
         
         # Check if this could be a follow-up question
