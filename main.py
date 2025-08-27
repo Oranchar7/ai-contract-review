@@ -462,8 +462,78 @@ async def telegram_webhook(request: Request):
         print(f"Telegram webhook error: {str(e)}")
         return {"status": "error", "message": str(e)}
 
+def is_contract_related_query(query: str) -> bool:
+    """Check if a query is related to contracts, legal matters, or document analysis"""
+    query_lower = query.lower().strip()
+    
+    # Contract-related keywords
+    contract_keywords = [
+        # Direct contract terms
+        "contract", "agreement", "nda", "clause", "terms", "conditions", "legal",
+        "liability", "indemnity", "termination", "breach", "compliance", "negotiate",
+        
+        # Legal concepts
+        "law", "legal", "attorney", "lawyer", "court", "litigation", "dispute",
+        "jurisdiction", "governing", "statute", "regulation", "rights", "obligations",
+        
+        # Business/contract actions
+        "sign", "execute", "amend", "modify", "review", "analyze", "risk", "audit",
+        "due diligence", "merger", "acquisition", "partnership", "vendor", "supplier",
+        
+        # Document types
+        "employment", "lease", "rental", "purchase", "sale", "service", "licensing",
+        "confidentiality", "non-disclosure", "intellectual property", "copyright",
+        "trademark", "patent", "warranty", "guarantee", "insurance", "policy",
+        
+        # Financial/commercial terms
+        "payment", "invoice", "penalty", "damages", "compensation", "fee", "price",
+        "cost", "budget", "financial", "commercial", "business", "corporate",
+        
+        # Risk and analysis terms
+        "risky", "dangerous", "problematic", "unfair", "unreasonable", "standard",
+        "market", "industry", "benchmark", "best practice", "recommendation"
+    ]
+    
+    # Common command patterns that should be treated as contract-related
+    command_patterns = ["help", "/help", "start", "/start", "hello", "hi", "hey", "test", "what can you do", "commands"]
+    
+    # Check if query contains contract keywords
+    if any(keyword in query_lower for keyword in contract_keywords):
+        return True
+    
+    # Check if it's a help/command pattern (always allow these)
+    if any(pattern in query_lower for pattern in command_patterns):
+        return True
+    
+    # Check for questions about the service itself
+    service_patterns = ["what do you do", "what can you help", "how do you work", "what is this"]
+    if any(pattern in query_lower for pattern in service_patterns):
+        return True
+    
+    return False
+
+def get_friendly_purpose_statement() -> str:
+    """Return a friendly statement about the bot's purpose for irrelevant queries"""
+    return """🤖 *Hi there!*
+
+I'm your AI Contract Review Assistant, and I specialize in helping with legal documents and contract-related questions.
+
+📋 *What I can help you with:*
+• Analyze contracts and agreements
+• Explain legal terms and clauses
+• Identify risks in documents
+• Answer contract-related questions
+• Provide legal guidance and recommendations
+
+💡 *To get started:*
+• Ask me about contract terms or legal concepts
+• Upload a contract document for analysis
+• Type 'help' to see all available commands
+
+*Is there anything contract or legal-related I can help you with today?*"""
+
 async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> str:
-    """Process a query through RAG system with test mode fallback"""
+    """Process a query through RAG system with relevance checking and test mode fallback"""
     try:
         query_lower = query.lower().strip()
         
@@ -482,6 +552,10 @@ async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> st
         help_patterns = ["help", "/help", "what can you do", "commands"]
         if any(pattern in query_lower for pattern in help_patterns):
             return dummy_responses["help"]
+        
+        # Check if query is contract-related
+        if not is_contract_related_query(query):
+            return get_friendly_purpose_statement()
         
         # Try RAG system if available, otherwise use chat service
         try:
