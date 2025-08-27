@@ -200,7 +200,14 @@ class TelegramService:
         try:
             # EMERGENCY FILTER: Check user query directly for non-contract topics
             query_lower = user_query.lower().strip()
-            if any(word in query_lower for word in ["weather", "joke", "recipe", "cook", "food", "movie", "music", "game", "sports", "news"]):
+            non_contract_words = ["weather", "joke", "recipe", "cook", "food", "movie", "music", "game", "sports", "news"]
+            contract_words = ["contract", "agreement", "legal", "sla", "msa", "nda", "clause", "terms", "service level"]
+            
+            # Only block if contains non-contract words AND no contract words
+            has_non_contract = any(word in query_lower for word in non_contract_words)
+            has_contract = any(word in query_lower for word in contract_words)
+            
+            if has_non_contract and not has_contract:
                 return """🤖 Hi there!
 
 I'm your AI Contract Review Assistant, specialized in legal document analysis and contract guidance.
