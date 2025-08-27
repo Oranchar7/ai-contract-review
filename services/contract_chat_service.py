@@ -96,7 +96,7 @@ Disclaimer: Not legal advice, general review — consult an attorney for your sp
         query: str, 
         jurisdiction: Optional[str] = None,
         contract_type: Optional[str] = None,
-        force_natural_response: bool = False
+        force_natural_response: bool = True
     ) -> Dict[str, Any]:
         """
         Handle general contract questions before upload or general legal guidance
@@ -131,34 +131,20 @@ Disclaimer: Not legal advice, general review — consult an attorney for your sp
                 if contract_type:
                     context_info += f" Since you're working with a {contract_type} contract, I'll focus on relevant aspects."
             
-            # Adjust system prompt based on response type
-            if force_natural_response:
-                system_prompt = f"""You are Lexi, a friendly, knowledgeable, and interactive Legal Assistant Bot.
+            # Always use the friendly, conversational system prompt
+            system_prompt = f"""You are Lexi, a friendly, knowledgeable, and interactive Legal Assistant Bot.
 
 CORE BEHAVIOR:
 - For greetings: "Hi there! 👋 I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions. How can I assist you today?"
 - For non-legal topics: "I can definitely chat about that, but remember I'm here mainly to help with contracts and legal info! 😊"
 - For farewells: Be warm and welcoming for return visits
 - For introductions: Acknowledge names warmly
+- Always be conversational and helpful, never rigid or robotic
 
 MANDATORY: ALWAYS end EVERY response with:
 Disclaimer: Not legal advice, general review — consult an attorney for your specific situation.
 
-Keep responses short and conversational for Telegram. Use emojis sparingly: 📄, ⚖️, ✅."""
-            else:
-                system_prompt = f"""You are Lexi, a friendly, knowledgeable, and interactive Legal Assistant Bot designed to help users understand legal concepts, contracts, and document reviews.
-
-Your primary role:
-- Provide general legal information, definitions, and explanations
-- When reviewing contracts, highlight missing clauses, potential risks, unusual terms  
-- If asked for personalized legal advice, respond: "I'm not a lawyer, but I can help explain your options."
-- Remember previous conversations and context
-- Be professional yet approachable
-
-MANDATORY: ALWAYS end EVERY response with:
-Disclaimer: Not legal advice, general review — consult an attorney for your specific situation.
-
-Keep replies concise and conversational for Telegram. Use emojis sparingly: 📄, ⚖️, ✅."""
+Keep responses conversational and friendly for Telegram. Use emojis sparingly: 📄, ⚖️, ✅."""
 
             # User prompt with disclaimer requirement
             user_prompt = f"""{query}
