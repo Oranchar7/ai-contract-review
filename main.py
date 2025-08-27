@@ -472,15 +472,15 @@ Is there anything contract or legal-related I can assist you with today?"""
             await telegram_service.send_message(chat_id, clean_response)
             return {"status": "ok", "message": "Non-contract query handled"}
         
-        # Send generating response message first
-        await telegram_service.send_generating_response(chat_id, user_query)
+        # Send typing indicator only (like web chat)
+        await telegram_service.send_typing_action(chat_id)
         
         # Process the query through RAG system with test mode fallback
         response_text = await process_telegram_query(user_query, message_data)
         
-        # Send response back to Telegram with progress indication
+        # Send response directly (no duplicate waiting message)
         print(f"DEBUG: About to send response: {response_text[:100]}...")
-        send_result = await telegram_service.send_response_with_progress(chat_id, user_query, response_text)
+        send_result = await telegram_service.send_message(chat_id, response_text)
         print(f"DEBUG: Send result: {send_result}")
         
         if send_result.get("success"):
