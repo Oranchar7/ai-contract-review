@@ -76,36 +76,6 @@
   "12345": [
     {
       "role": "user",
-      "content": "weather",
-      "timestamp": "2025-08-27T16:37:00.165751"
-    },
-    {
-      "role": "assistant",
-      "content": "I can definitely chat about that, but remember I'm here mainly to help with contracts and legal info! \ud83d\ude0a If you have any legal questions or need assistance with a document, feel free to ask!\n\n**Disclaimer:** *This service offers general information, not legal advice; consult a qualified attorney for specific guidance.*\n\n**Disclaimer:** *This service offers general information, not legal advice; consult a qualified attorney for specific guidance.*",
-      "timestamp": "2025-08-27T16:37:00.166745"
-    },
-    {
-      "role": "user",
-      "content": "hello",
-      "timestamp": "2025-08-27T16:40:46.022180"
-    },
-    {
-      "role": "assistant",
-      "content": "Hi there! \ud83d\udc4b I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions. How can I assist you today?\n\n**Disclaimer:** *This service offers general information, not legal advice; consult a qualified attorney for specific guidance.*",
-      "timestamp": "2025-08-27T16:40:46.024446"
-    },
-    {
-      "role": "user",
-      "content": "weather",
-      "timestamp": "2025-08-27T16:40:47.507597"
-    },
-    {
-      "role": "assistant",
-      "content": "I can definitely chat about that, but remember I'm here mainly to help with contracts and legal info! \ud83d\ude0a If you have any legal questions or need assistance with a document, feel free to ask!\n\n**Disclaimer:** *This service offers general information, not legal advice; consult a qualified attorney for specific guidance.*\n\n**Disclaimer:** *This service offers general information, not legal advice; consult a qualified attorney for specific guidance.*",
-      "timestamp": "2025-08-27T16:40:47.508790"
-    },
-    {
-      "role": "user",
       "content": "hello",
       "timestamp": "2025-08-27T16:41:06.084646"
     },
@@ -123,6 +93,36 @@
       "role": "assistant",
       "content": "I can definitely chat about that, but remember I'm here mainly to help with contracts and legal info! \ud83d\ude0a If you have any legal questions or need assistance with a document, feel free to ask!\n\n**Disclaimer:** *This service provides legal insights for informational purposes only; consult a qualified attorney for advice on your situation.*\n\n**Disclaimer:** *This service provides legal insights for informational purposes only; consult a qualified attorney for advice on your situation.*",
       "timestamp": "2025-08-27T16:41:08.804287"
+    },
+    {
+      "role": "user",
+      "content": "hello",
+      "timestamp": "2025-08-27T16:44:27.850803"
+    },
+    {
+      "role": "assistant",
+      "content": "Hi there! \ud83d\udc4b I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions. How can I assist you today?\n\n**Disclaimer:** *This service provides legal insights for informational purposes only; consult a qualified attorney for advice on your situation.*",
+      "timestamp": "2025-08-27T16:44:27.851741"
+    },
+    {
+      "role": "user",
+      "content": "weather",
+      "timestamp": "2025-08-27T16:44:29.560911"
+    },
+    {
+      "role": "assistant",
+      "content": "I can definitely chat about that, but remember I'm here mainly to help with contracts and legal info! \ud83d\ude0a If you have any legal questions or need assistance with a document, feel free to ask!\n\n**Disclaimer:** *This service provides legal insights for informational purposes only; consult a qualified attorney for advice on your situation.*\n\n**Disclaimer:** *This service provides legal insights for informational purposes only; consult a qualified attorney for advice on your situation.*",
+      "timestamp": "2025-08-27T16:44:29.567066"
+    },
+    {
+      "role": "user",
+      "content": "what is an NDA",
+      "timestamp": "2025-08-27T16:44:29.580463"
+    },
+    {
+      "role": "assistant",
+      "content": "\ud83d\udcdd *No documents uploaded yet*\n\n\ud83d\udca1 An NDA, or Non-Disclosure Agreement, is a legal contract that establishes a confidential relationship between parties. It is commonly used to protect sensitive information from being disclosed to third parties. NDAs can be unilateral (one party discloses information) or mutual (both parties share information). Key elements typically include definitions of confidential information, obligations of the receiving party, the duration of confidentiality, and any exclusions from confidentiality. It's important to ensure that the NDA is clear and enforceable to protect your interests.\n\n\ud83d\udccb For detailed analysis:\n\u2022 Upload contract documents\n\u2022 Ask specific legal questions\n\n**Disclaimer:** *This service provides legal insights for informational purposes only; consult a qualified attorney for advice on your situation.*",
+      "timestamp": "2025-08-27T16:44:37.446884"
     }
   ],
   "789": [
@@ -147,6 +147,28 @@
       "role": "assistant",
       "content": "\ud83d\udc4b Hi there! I'm so glad you reached out! \n\n\u2728 I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.\n\n\ud83e\udd1d I'd love to help you with:\n\u2022 Making sense of contracts and agreements\n\u2022 Breaking down confusing legal terms into plain English  \n\u2022 Reviewing documents and spotting important details\n\u2022 Answering any contract questions you might have\n\n\ud83d\udcad Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!\n\n\ud83c\udf1f What's on your mind today?\n\n\u2696\ufe0f *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review.",
       "timestamp": "2025-08-27T16:17:43.037526"
+    }
+  ],
+  "8311809336": [
+    {
+      "role": "user",
+      "content": "Goodbye",
+      "timestamp": "2025-08-27T16:44:25.570967"
+    },
+    {
+      "role": "assistant",
+      "content": "Hi there! \ud83d\udc4b I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions. How can I assist you today? \n\n**Disclaimer:** *This service provides legal insights for informational purposes only; consult a qualified attorney for advice on your situation.*\n\n**Disclaimer:** *This service provides legal insights for informational purposes only; consult a qualified attorney for advice on your situation.*",
+      "timestamp": "2025-08-27T16:44:25.572560"
+    },
+    {
+      "role": "user",
+      "content": "Hello",
+      "timestamp": "2025-08-27T16:44:26.879744"
+    },
+    {
+      "role": "assistant",
+      "content": "Hi there! \ud83d\udc4b I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions. How can I assist you today?\n\n**Disclaimer:** *This service provides legal insights for informational purposes only; consult a qualified attorney for advice on your situation.*",
+      "timestamp": "2025-08-27T16:44:26.903913"
     }
   ]
 }
