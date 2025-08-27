@@ -76,46 +76,6 @@
   "12345": [
     {
       "role": "user",
-      "content": "what is an NDA",
-      "timestamp": "2025-08-27T16:44:29.580463"
-    },
-    {
-      "role": "assistant",
-      "content": "\ud83d\udcdd *No documents uploaded yet*\n\n\ud83d\udca1 An NDA, or Non-Disclosure Agreement, is a legal contract that establishes a confidential relationship between parties. It is commonly used to protect sensitive information from being disclosed to third parties. NDAs can be unilateral (one party discloses information) or mutual (both parties share information). Key elements typically include definitions of confidential information, obligations of the receiving party, the duration of confidentiality, and any exclusions from confidentiality. It's important to ensure that the NDA is clear and enforceable to protect your interests.\n\n\ud83d\udccb For detailed analysis:\n\u2022 Upload contract documents\n\u2022 Ask specific legal questions\n\n**Disclaimer:** *This service provides legal insights for informational purposes only; consult a qualified attorney for advice on your situation.*",
-      "timestamp": "2025-08-27T16:44:37.446884"
-    },
-    {
-      "role": "user",
-      "content": "hello",
-      "timestamp": "2025-08-27T16:55:16.038010"
-    },
-    {
-      "role": "assistant",
-      "content": "Hi there! \ud83d\udc4b I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions. How can I assist you today?\n\n**Disclaimer:** *This service provides legal insights for informational purposes only; consult a qualified attorney for advice on your situation.*",
-      "timestamp": "2025-08-27T16:55:16.039897"
-    },
-    {
-      "role": "user",
-      "content": "hello",
-      "timestamp": "2025-08-27T16:55:52.210533"
-    },
-    {
-      "role": "assistant",
-      "content": "Hi there! \ud83d\udc4b I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions. How can I assist you today?\n\n**Disclaimer:** *This service provides legal insights for informational purposes only; consult a qualified attorney for advice on your situation.*",
-      "timestamp": "2025-08-27T16:55:52.212161"
-    },
-    {
-      "role": "user",
-      "content": "hello",
-      "timestamp": "2025-08-27T16:56:21.083182"
-    },
-    {
-      "role": "assistant",
-      "content": "Hi there! \ud83d\udc4b I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions. How can I assist you today?\n\n\u26a0\ufe0f Not legal advice, general review \u2014 consult a lawyer for your specific situation.",
-      "timestamp": "2025-08-27T16:56:21.084712"
-    },
-    {
-      "role": "user",
       "content": "weather",
       "timestamp": "2025-08-27T16:56:23.075543"
     },
@@ -123,6 +83,46 @@
       "role": "assistant",
       "content": "I can definitely chat about that, but remember I'm here mainly to help with contracts and legal info! \ud83d\ude0a How's the weather treating you today?\n\n\u26a0\ufe0f Not legal advice, general review \u2014 consult a lawyer for your specific situation.\n\n\u26a0\ufe0f Not legal advice, general review \u2014 consult a lawyer for your specific situation.",
       "timestamp": "2025-08-27T16:56:23.077803"
+    },
+    {
+      "role": "user",
+      "content": "hello",
+      "timestamp": "2025-08-27T16:57:23.386103"
+    },
+    {
+      "role": "assistant",
+      "content": "Hi there! \ud83d\udc4b I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions. How can I assist you today?\n\n\u26a0\ufe0f Not legal advice, general review \u2014 consult a lawyer for your specific situation.",
+      "timestamp": "2025-08-27T16:57:23.387727"
+    },
+    {
+      "role": "user",
+      "content": "help",
+      "timestamp": "2025-08-27T16:57:23.482857"
+    },
+    {
+      "role": "assistant",
+      "content": "\ud83d\udd0d Available Commands:\n\n\u2022 Ask me about contract terms\n\u2022 Request contract analysis\n\u2022 Ask legal questions\n\u2022 Type 'test' for a sample analysis\n\n\ud83d\udca1 Tip: I work best when you upload contract documents first!\n\n\u26a0\ufe0f Not legal advice, general review \u2014 consult a lawyer for your specific situation.",
+      "timestamp": "2025-08-27T16:57:23.491748"
+    },
+    {
+      "role": "user",
+      "content": "hello",
+      "timestamp": "2025-08-27T16:57:55.222714"
+    },
+    {
+      "role": "assistant",
+      "content": "Hi there! \ud83d\udc4b I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions.\n\n\ud83d\udcc4 **Upload your contract documents** for detailed analysis and risk assessment!\n\nI can also answer general legal questions. How can I assist you today?\n\n\u26a0\ufe0f Not legal advice, general review \u2014 consult a lawyer for your specific situation.",
+      "timestamp": "2025-08-27T16:57:55.225694"
+    },
+    {
+      "role": "user",
+      "content": "what is an NDA",
+      "timestamp": "2025-08-27T16:57:55.318220"
+    },
+    {
+      "role": "assistant",
+      "content": "\ud83d\udcdd *No documents uploaded yet*\n\n\ud83d\udca1 An NDA, or Non-Disclosure Agreement, is a legal contract designed to protect confidential information shared between parties. It establishes a confidential relationship and outlines the obligations of the parties involved regarding the handling of sensitive information. NDAs are commonly used in business settings to safeguard trade secrets, proprietary information, and other confidential data. Typically, an NDA will specify what information is considered confidential, the duration of the confidentiality obligation, and any exclusions (such as information that is publicly available).\n\n\ud83d\udccb For detailed analysis:\n\u2022 Upload contract documents\n\u2022 Ask specific legal questions\n\n\u26a0\ufe0f Not legal advice, general review \u2014 consult a lawyer for your specific situation.",
+      "timestamp": "2025-08-27T16:58:00.147797"
     }
   ],
   "789": [

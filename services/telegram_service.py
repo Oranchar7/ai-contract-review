@@ -446,7 +446,7 @@ class TelegramService:
     def get_dummy_responses(self) -> Dict[str, str]:
         """Get predefined dummy responses for testing"""
         return {
-            "hello": "Hi there! 👋 I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions. How can I assist you today?\n\n⚠️ Not legal advice, general review — consult a lawyer for your specific situation.",
+            "hello": "Hi there! 👋 I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions.\n\n📄 **Upload your contract documents** for detailed analysis and risk assessment!\n\nI can also answer general legal questions. How can I assist you today?\n\n⚠️ Not legal advice, general review — consult a lawyer for your specific situation.",
             
             "help": "🔍 Available Commands:\n\n• Ask me about contract terms\n• Request contract analysis\n• Ask legal questions\n• Type 'test' for a sample analysis\n\n💡 Tip: I work best when you upload contract documents first!\n\n⚠️ Not legal advice, general review — consult a lawyer for your specific situation.",
             

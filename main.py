@@ -536,7 +536,11 @@ def is_contract_related_query(query: str) -> bool:
 
 def get_friendly_purpose_statement() -> str:
     """Return a friendly statement about the bot's purpose for irrelevant queries"""
-    return """Hi there! 👋 I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions. How can I assist you today?
+    return """Hi there! 👋 I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions.
+
+📄 **Upload your contract documents** for detailed analysis and risk assessment!
+
+I can also answer general legal questions. How can I assist you today?
 
 ⚠️ Not legal advice, general review — consult a lawyer for your specific situation."""
 

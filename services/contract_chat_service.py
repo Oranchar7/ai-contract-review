@@ -85,7 +85,9 @@ I'm your AI Contract Review Assistant, and I specialize in helping with legal do
 • Upload a contract document for analysis
 • Type 'help' to see all available commands
 
-Is there anything contract or legal-related I can help you with today?
+📄 **Upload your contract documents** for detailed analysis and risk assessment!
+
+I can also answer general legal questions. How can I assist you today?
 
 ⚠️ Not legal advice, general review — consult a lawyer for your specific situation."""
 
