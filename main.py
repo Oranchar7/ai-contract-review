@@ -607,7 +607,11 @@ async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> st
             
             # Casual conversation starters
             "what do you think", "tell me about yourself", "what can you tell me",
-            "how's your day", "how was your", "what have you been up to"
+            "how's your day", "how was your", "what have you been up to",
+            
+            # Weather and casual topics
+            "weather", "how is the weather", "what's the weather", "nice day",
+            "beautiful day", "hot today", "cold today", "sunny", "rainy"
         ]
         if any(pattern in query_lower for pattern in conversational_patterns):
             print(f"DEBUG: Matched conversational pattern: {query}")
