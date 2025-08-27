@@ -169,6 +169,16 @@
       "role": "assistant",
       "content": "Hi there! \ud83d\udc4b I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions. How can I assist you today?\n\n**Disclaimer:** *This service provides legal insights for informational purposes only; consult a qualified attorney for advice on your situation.*",
       "timestamp": "2025-08-27T16:44:26.903913"
+    },
+    {
+      "role": "user",
+      "content": "Hello",
+      "timestamp": "2025-08-27T16:50:14.318433"
+    },
+    {
+      "role": "assistant",
+      "content": "Hi there! \ud83d\udc4b I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions. How can I assist you today?\n\n**Disclaimer:** *This service provides legal insights for informational purposes only; consult a qualified attorney for advice on your situation.*",
+      "timestamp": "2025-08-27T16:50:14.330742"
     }
   ]
 }
