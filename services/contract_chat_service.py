@@ -89,7 +89,22 @@ Is there anything contract or legal-related I can help you with today?"""
             Conversational response with legal guidance
         """
         try:
-            # First check if query is contract-related
+            # STRICT FILTER: Check for non-contract topics first
+            query_lower = query.lower().strip()
+            non_contract_indicators = [
+                "weather", "joke", "recipe", "cook", "food", "movie", "music", "game", 
+                "sports", "news", "time", "date", "math", "calculate", "translate",
+                "directions", "travel", "shopping", "restaurant", "hotel", "flight"
+            ]
+            
+            if any(indicator in query_lower for indicator in non_contract_indicators):
+                return {
+                    "answer": self._get_friendly_purpose_statement(),
+                    "type": "purpose_statement",
+                    "model_used": "filtering"
+                }
+            
+            # Also check with contract relevance function
             if not self._is_contract_related_query(query):
                 return {
                     "answer": self._get_friendly_purpose_statement(),

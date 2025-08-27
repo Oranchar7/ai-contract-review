@@ -553,12 +553,20 @@ async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> st
         if any(pattern in query_lower for pattern in help_patterns):
             return dummy_responses["help"]
         
-        # Check if query is contract-related
-        if not is_contract_related_query(query):
-            print(f"DEBUG: Query '{query}' is NOT contract-related, returning purpose statement")
+        # IMMEDIATE FILTER: Check if query is definitely NOT contract-related
+        query_words = query_lower.split()
+        non_contract_indicators = [
+            "weather", "joke", "recipe", "cook", "food", "movie", "music", "game", 
+            "sports", "news", "time", "date", "math", "calculate", "translate",
+            "directions", "travel", "shopping", "restaurant", "hotel", "flight"
+        ]
+        
+        if any(indicator in query_lower for indicator in non_contract_indicators):
             return get_friendly_purpose_statement()
         
-        print(f"DEBUG: Query '{query}' IS contract-related, proceeding to services")
+        # Also check with original function
+        if not is_contract_related_query(query):
+            return get_friendly_purpose_statement()
         
         # Try RAG system if available, otherwise use chat service
         try:
