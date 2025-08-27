@@ -442,15 +442,17 @@ async def telegram_webhook(request: Request):
         
         print(f"Processing query from chat {chat_id}: {user_query}")
         
+        # EMERGENCY OVERRIDE: Block non-contract queries immediately
+        user_query_lower = user_query.lower()
+        if "weather" in user_query_lower:
+            await telegram_service.send_message(chat_id, "Hi there! I'm your AI Contract Review Assistant, and I specialize in helping with legal documents and contract-related questions. Is there anything contract or legal-related I can help you with today?")
+            return {"status": "ok", "message": "Non-contract query blocked"}
+        
         # Send generating response message first
         await telegram_service.send_generating_response(chat_id, user_query)
         
-        # IMMEDIATE FIX: Check for weather/joke queries before ANY processing
-        if any(word in user_query.lower() for word in ["weather", "joke", "recipe", "cook", "food", "movie", "music", "game", "sports", "news"]):
-            response_text = "Hi there! I'm your AI Contract Review Assistant, and I specialize in helping with legal documents and contract-related questions. Is there anything contract or legal-related I can help you with today?"
-        else:
-            # Process the query through RAG system with test mode fallback
-            response_text = await process_telegram_query(user_query, message_data)
+        # Process the query through RAG system with test mode fallback
+        response_text = await process_telegram_query(user_query, message_data)
         
         # Send response back to Telegram with progress indication
         print(f"DEBUG: About to send response: {response_text[:100]}...")
