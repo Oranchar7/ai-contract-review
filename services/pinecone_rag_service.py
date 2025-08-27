@@ -345,6 +345,25 @@ class PineconeRAGService:
         Answer questions about uploaded contracts using Pinecone RAG
         """
         try:
+            # SAFETY FILTER: Block non-contract queries that should not reach RAG
+            query_lower = query.lower().strip()
+            non_contract_indicators = [
+                "weather", "joke", "recipe", "cook", "food", "movie", "music", "game", 
+                "sports", "news", "time", "date", "math", "calculate", "translate",
+                "directions", "travel", "shopping", "restaurant", "hotel", "flight"
+            ]
+            
+            if any(indicator in query_lower for indicator in non_contract_indicators):
+                return {
+                    "error": "FILTERED_NON_CONTRACT_QUERY",
+                    "query_type": "non_contract", 
+                    "purpose_statement": "Hi there! I'm your AI Contract Review Assistant, and I specialize in helping with legal documents and contract-related questions. Is there anything contract or legal-related I can help you with today?",
+                    "risky_clauses": [],
+                    "missing_protections": [],
+                    "overall_risk_score": 0,
+                    "summary": "Query filtered as non-contract related",
+                    "notes": ["This query appears to be outside my contract analysis expertise"]
+                }
             if not self.index:
                 return {
                     "error": "The knowledge database is temporarily unavailable. Please try again shortly.",

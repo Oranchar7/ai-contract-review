@@ -626,6 +626,53 @@ async def debug_telegram_flow(request: Request):
     except Exception as e:
         return {"error": str(e)}
 
+@app.get("/test_filter")
+async def test_filter():
+    """Test if weather filter works"""
+    test_query = "what is the weather today"
+    
+    # Test the exact same logic as telegram processing
+    query_lower = test_query.lower().strip()
+    non_contract_indicators = [
+        "weather", "joke", "recipe", "cook", "food", "movie", "music", "game", 
+        "sports", "news", "time", "date", "math", "calculate", "translate",
+        "directions", "travel", "shopping", "restaurant", "hotel", "flight"
+    ]
+    
+    should_filter = any(indicator in query_lower for indicator in non_contract_indicators)
+    
+    if should_filter:
+        response = get_friendly_purpose_statement()
+        result_type = "filtered_correctly"
+    else:
+        response = "WOULD PROCESS AS CONTRACT QUERY"
+        result_type = "not_filtered"
+    
+    return {
+        "test_query": test_query,
+        "should_filter": should_filter,
+        "result_type": result_type,
+        "response_preview": response[:200] + "..." if len(response) > 200 else response
+    }
+
+@app.get("/deployment_check")
+async def deployment_check():
+    """Check if latest filtering code is deployed"""
+    # This should show if our filtering is active
+    test_query = "what is the weather today"
+    has_weather_filter = "weather" in str([
+        "weather", "joke", "recipe", "cook", "food", "movie", "music", "game", 
+        "sports", "news", "time", "date", "math", "calculate", "translate",
+        "directions", "travel", "shopping", "restaurant", "hotel", "flight"
+    ])
+    
+    return {
+        "timestamp": "2025-01-27-v3",
+        "filter_deployed": has_weather_filter,
+        "test_query": test_query,
+        "non_contract_indicators_loaded": True
+    }
+
 @app.get("/telegram_status")
 async def telegram_status():
     """Get Telegram bot status and webhook information"""

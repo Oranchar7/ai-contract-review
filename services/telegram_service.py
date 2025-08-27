@@ -198,6 +198,10 @@ class TelegramService:
     def format_rag_response(self, rag_result: Dict[str, Any], user_query: str) -> str:
         """Format RAG response for Telegram display"""
         try:
+            # Check for filtered non-contract queries first
+            if rag_result.get("error") == "FILTERED_NON_CONTRACT_QUERY":
+                return rag_result.get("purpose_statement", "🤖 Hi there! I'm your AI Contract Review Assistant, and I specialize in helping with legal documents and contract-related questions. Is there anything contract or legal-related I can help you with today?")
+            
             if rag_result.get("error"):
                 return f"❌ *Error*: {rag_result['error']}"
             
