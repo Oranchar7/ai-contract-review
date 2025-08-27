@@ -558,10 +558,10 @@ async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> st
             telegram_service.add_to_conversation_history(chat_id, "assistant", response)
             return response
         
-        # Check for common greeting patterns
+        # Check for common greeting patterns - force exact dummy response
         greetings = ["hello", "hi", "hey", "start", "/start"]
         if any(greeting == query_lower for greeting in greetings):  # Exact match
-            response = dummy_responses["hello"]
+            response = "Hi! I'm Lexi, I help with legal stuff. What can I do for you?\n\n📄 **Upload contract documents** for detailed analysis and risk assessment!"
             telegram_service.add_to_conversation_history(chat_id, "user", query)
             telegram_service.add_to_conversation_history(chat_id, "assistant", response)
             return response
