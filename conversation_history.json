@@ -24,16 +24,6 @@
   "99999": [
     {
       "role": "user",
-      "content": "hello",
-      "timestamp": "2025-08-27T12:57:57.709500"
-    },
-    {
-      "role": "assistant",
-      "content": "\ud83d\udc4b Hi there! I'm so glad you reached out! \n\n\u2728 I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.\n\n\ud83e\udd1d I'd love to help you with:\n\u2022 Making sense of contracts and agreements\n\u2022 Breaking down confusing legal terms into plain English  \n\u2022 Reviewing documents and spotting important details\n\u2022 Answering any contract questions you might have\n\n\ud83d\udcad Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!\n\n\ud83c\udf1f What's on your mind today?",
-      "timestamp": "2025-08-27T12:57:57.709968"
-    },
-    {
-      "role": "user",
       "content": "hi",
       "timestamp": "2025-08-27T12:58:08.657872"
     },
@@ -71,6 +61,16 @@
       "role": "assistant",
       "content": "\ud83d\udc4b Hi there! I'm so glad you reached out! \n\n\u2728 I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.\n\n\ud83e\udd1d I'd love to help you with:\n\u2022 Making sense of contracts and agreements\n\u2022 Breaking down confusing legal terms into plain English  \n\u2022 Reviewing documents and spotting important details\n\u2022 Answering any contract questions you might have\n\n\ud83d\udcad Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!\n\n\ud83c\udf1f What's on your mind today?",
       "timestamp": "2025-08-27T12:58:12.177250"
+    },
+    {
+      "role": "user",
+      "content": "hello",
+      "timestamp": "2025-08-27T13:02:22.829982"
+    },
+    {
+      "role": "assistant",
+      "content": "\ud83d\udc4b Hi there! I'm so glad you reached out! \n\n\u2728 I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.\n\n\ud83e\udd1d I'd love to help you with:\n\u2022 Making sense of contracts and agreements\n\u2022 Breaking down confusing legal terms into plain English  \n\u2022 Reviewing documents and spotting important details\n\u2022 Answering any contract questions you might have\n\n\ud83d\udcad Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!\n\n\ud83c\udf1f What's on your mind today?",
+      "timestamp": "2025-08-27T13:02:22.830529"
     }
   ]
 }

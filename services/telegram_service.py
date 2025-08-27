@@ -338,26 +338,23 @@ class TelegramService:
             has_contract = any(word in query_lower for word in contract_words)
             
             if has_non_contract and not has_contract:
-                return """🤖 Hi there!
+                return """👋 Hi there! I'm so glad you reached out! 
 
-I'm your AI Contract Review Assistant, specialized in legal document analysis and contract guidance.
+✨ I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.
 
-📋 I can help you with:
-• Contract analysis and risk assessment
-• Legal terms and clause explanations
-• Document review and recommendations
-• Legal questions and guidance
+🤝 I'd love to help you with:
+• Making sense of contracts and agreements
+• Breaking down confusing legal terms into plain English  
+• Reviewing documents and spotting important details
+• Answering any contract questions you might have
 
-💡 To get started, you can:
-• Ask me about contract terms
-• Upload a document for analysis
-• Type 'help' for available commands
+💭 Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!
 
-Is there anything contract or legal-related I can assist you with today?"""
+🌟 What's on your mind today?"""
             
             # Check for filtered non-contract queries first
             if rag_result.get("error") == "FILTERED_NON_CONTRACT_QUERY":
-                return rag_result.get("purpose_statement", "🤖 Hi there! I'm your AI Contract Review Assistant, and I specialize in helping with legal documents and contract-related questions. Is there anything contract or legal-related I can help you with today?")
+                return rag_result.get("purpose_statement", "👋 Hi there! I'm so glad you reached out! ✨ I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you. 🌟 What's on your mind today?")
             
             if rag_result.get("error"):
                 return f"❌ Error: {rag_result['error']}"

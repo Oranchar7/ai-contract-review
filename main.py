@@ -452,22 +452,19 @@ async def telegram_webhook(request: Request):
         has_contract = any(word in user_query_lower for word in contract_words)
         
         if has_non_contract and not has_contract:
-            clean_response = """🤖 Hi there!
+            clean_response = """👋 Hi there! I'm so glad you reached out! 
 
-I'm your AI Contract Review Assistant, specialized in legal document analysis and contract guidance.
+✨ I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.
 
-📋 I can help you with:
-• Contract analysis and risk assessment
-• Legal terms and clause explanations
-• Document review and recommendations
-• Legal questions and guidance
+🤝 I'd love to help you with:
+• Making sense of contracts and agreements
+• Breaking down confusing legal terms into plain English  
+• Reviewing documents and spotting important details
+• Answering any contract questions you might have
 
-💡 To get started, you can:
-• Ask me about contract terms
-• Upload a document for analysis
-• Type 'help' for available commands
+💭 Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!
 
-Is there anything contract or legal-related I can assist you with today?"""
+🌟 What's on your mind today?"""
             
             await telegram_service.send_message(chat_id, clean_response)
             return {"status": "ok", "message": "Non-contract query handled"}
@@ -549,23 +546,19 @@ def is_contract_related_query(query: str) -> bool:
 
 def get_friendly_purpose_statement() -> str:
     """Return a friendly statement about the bot's purpose for irrelevant queries"""
-    return """🤖 *Hi there!*
+    return """👋 Hi there! I'm so glad you reached out! 
 
-I'm your AI Contract Review Assistant, and I specialize in helping with legal documents and contract-related questions.
+✨ I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.
 
-📋 *What I can help you with:*
-• Analyze contracts and agreements
-• Explain legal terms and clauses
-• Identify risks in documents
-• Answer contract-related questions
-• Provide legal guidance and recommendations
+🤝 I'd love to help you with:
+• Making sense of contracts and agreements
+• Breaking down confusing legal terms into plain English  
+• Reviewing documents and spotting important details
+• Answering any contract questions you might have
 
-💡 *To get started:*
-• Ask me about contract terms or legal concepts
-• Upload a contract document for analysis
-• Type 'help' to see all available commands
+💭 Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!
 
-*Is there anything contract or legal-related I can help you with today?*"""
+🌟 What's on your mind today?"""
 
 async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> str:
     """Process a query through RAG system with relevance checking and test mode fallback"""
