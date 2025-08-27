@@ -342,23 +342,13 @@ class TelegramService:
             has_contract = any(word in query_lower for word in contract_words)
             
             if has_non_contract and not has_contract:
-                return """👋 Hi there! I'm so glad you reached out! 
+                return """I can definitely chat about that, but remember I'm here mainly to help with contracts and legal info! 😊
 
-✨ I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.
-
-🤝 I'd love to help you with:
-• Making sense of contracts and agreements
-• Breaking down confusing legal terms into plain English  
-• Reviewing documents and spotting important details
-• Answering any contract questions you might have
-
-💭 Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!
-
-🌟 What's on your mind today?"""
+**Disclaimer:** *I am not a lawyer and this is not legal advice. Always consult a qualified attorney for specific legal matters.*"""
             
             # Check for filtered non-contract queries first
             if rag_result.get("error") == "FILTERED_NON_CONTRACT_QUERY":
-                return rag_result.get("purpose_statement", "👋 Hi there! I'm so glad you reached out! ✨ I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you. 🌟 What's on your mind today?")
+                return rag_result.get("purpose_statement", "Hi there! 👋 I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions. How can I assist you today?")
             
             if rag_result.get("error"):
                 return f"❌ Error: {rag_result['error']}"
@@ -456,7 +446,7 @@ class TelegramService:
     def get_dummy_responses(self) -> Dict[str, str]:
         """Get predefined dummy responses for testing"""
         return {
-            "hello": "👋 Hi there! I'm so glad you reached out! \n\n✨ I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.\n\n🤝 I'd love to help you with:\n• Making sense of contracts and agreements\n• Breaking down confusing legal terms into plain English  \n• Reviewing documents and spotting important details\n• Answering any contract questions you might have\n\n💭 Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!\n\n🌟 What's on your mind today?\n\n⚖️ *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review.",
+            "hello": "Hi there! 👋 I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions. How can I assist you today?\n\n**Disclaimer:** *I am not a lawyer and this is not legal advice. Always consult a qualified attorney for specific legal matters.*",
             
             "help": "🔍 Available Commands:\n\n• Ask me about contract terms\n• Request contract analysis\n• Ask legal questions\n• Type 'test' for a sample analysis\n\n💡 Tip: I work best when you upload contract documents first!\n\n⚖️ *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review.",
             

@@ -87,7 +87,7 @@ I'm your AI Contract Review Assistant, and I specialize in helping with legal do
 
 Is there anything contract or legal-related I can help you with today?
 
-⚖️ *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review."""
+**Disclaimer:** *I am not a lawyer and this is not legal advice. Always consult a qualified attorney for specific legal matters.*"""
 
     async def general_chat(
         self, 
@@ -131,37 +131,39 @@ Is there anything contract or legal-related I can help you with today?
             
             # Adjust system prompt based on response type
             if force_natural_response:
-                system_prompt = f"""You are Lexi, a friendly, knowledgeable, and interactive Legal Assistant Bot. 
+                system_prompt = f"""You are Lexi, a friendly, knowledgeable, and interactive Legal Assistant Bot.
 
-For greetings: "Hi there! 👋 I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions. How can I assist you today?"
+CORE BEHAVIOR:
+- For greetings: "Hi there! 👋 I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions. How can I assist you today?"
+- For non-legal topics: "I can definitely chat about that, but remember I'm here mainly to help with contracts and legal info! 😊"
+- For farewells: Be warm and welcoming for return visits
+- For introductions: Acknowledge names warmly
 
-For non-legal topics: Respond politely but redirect: "I can definitely chat about that, but remember I'm here mainly to help with contracts and legal info! 😊"
+MANDATORY: ALWAYS end EVERY response with:
+**Disclaimer:** *I am not a lawyer and this is not legal advice. Always consult a qualified attorney for specific legal matters.*
 
-For farewells: Be warm and welcoming for return visits
-
-ALWAYS end EVERY response with: **Disclaimer:** *I am not a lawyer and this is not legal advice. Always consult a qualified attorney for specific legal matters.*
-
-Keep responses concise and conversational for Telegram. Use emojis sparingly (📄, ⚖️, ✅)."""
+Keep responses short and conversational for Telegram. Use emojis sparingly: 📄, ⚖️, ✅."""
             else:
                 system_prompt = f"""You are Lexi, a friendly, knowledgeable, and interactive Legal Assistant Bot designed to help users understand legal concepts, contracts, and document reviews.
 
-Your behavior:
+Your primary role:
 - Provide general legal information, definitions, and explanations
-- When reviewing contracts, highlight missing clauses, potential risks, unusual terms
+- When reviewing contracts, highlight missing clauses, potential risks, unusual terms  
 - If asked for personalized legal advice, respond: "I'm not a lawyer, but I can help explain your options."
 - Remember previous conversations and context
 - Be professional yet approachable
 
-ALWAYS end EVERY response with: **Disclaimer:** *I am not a lawyer and this is not legal advice. Always consult a qualified attorney for specific legal matters.*
+MANDATORY: ALWAYS end EVERY response with:
+**Disclaimer:** *I am not a lawyer and this is not legal advice. Always consult a qualified attorney for specific legal matters.*
 
-Keep replies concise and conversational for Telegram. Use emojis sparingly (📄, ⚖️, ✅) and markdown formatting."""
+Keep replies concise and conversational for Telegram. Use emojis sparingly: 📄, ⚖️, ✅."""
 
-            # Simplified user prompt: let GPT-4o mini respond naturally
+            # User prompt with disclaimer requirement
             user_prompt = f"""{query}
 
 {context_info}
 
-Please respond naturally and conversationally. If this relates to legal or contract matters, feel free to share your specialized knowledge, but maintain your natural conversational style."""
+Respond as Lexi. IMPORTANT: Always end your response with the disclaimer exactly as specified in your instructions."""
 
             # Call OpenAI API with conversational settings
             response = await asyncio.to_thread(
@@ -191,7 +193,7 @@ Please respond naturally and conversationally. If this relates to legal or contr
             if force_natural_response or not self._is_contract_related_query(query):
                 # For natural conversation, just add disclaimer when discussing legal topics
                 if any(word in content.lower() for word in ["legal", "contract", "law", "agreement", "clause"]):
-                    formatted_content = f"{content}\n\n⚖️ *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review."
+                    formatted_content = f"{content}\n\n**Disclaimer:** *I am not a lawyer and this is not legal advice. Always consult a qualified attorney for specific legal matters.*"
                 else:
                     formatted_content = content
             else:
@@ -200,7 +202,7 @@ Please respond naturally and conversationally. If this relates to legal or contr
                 formatted_content += "📋 For detailed analysis:\n"
                 formatted_content += "• Upload contract documents\n"
                 formatted_content += "• Ask specific legal questions"
-                formatted_content += "\n\n⚖️ *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review."
+                formatted_content += "\n\n**Disclaimer:** *I am not a lawyer and this is not legal advice. Always consult a qualified attorney for specific legal matters.*"
             
             return {
                 "answer": formatted_content,
