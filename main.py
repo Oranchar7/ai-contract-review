@@ -555,7 +555,10 @@ async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> st
         
         # Check if query is contract-related
         if not is_contract_related_query(query):
+            print(f"DEBUG: Query '{query}' is NOT contract-related, returning purpose statement")
             return get_friendly_purpose_statement()
+        
+        print(f"DEBUG: Query '{query}' IS contract-related, proceeding to services")
         
         # Try RAG system if available, otherwise use chat service
         try:
@@ -588,6 +591,32 @@ async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> st
         print(f"Query processing error: {str(e)}")
         return f"❌ *Error processing your query*: {str(e)}\n\n💡 Try typing 'help' for available commands."
 
+
+@app.post("/debug_telegram_flow")
+async def debug_telegram_flow(request: Request):
+    """Debug what exact response is generated for a query"""
+    try:
+        data = await request.json()
+        query = data.get("query", "")
+        
+        # Simulate message data
+        message_data = {
+            "chat_id": 99999,
+            "user_id": 99999,
+            "jurisdiction": "unspecified",
+            "contract_type": "unspecified"
+        }
+        
+        # Call the exact same function as telegram webhook
+        response_text = await process_telegram_query(query, message_data)
+        
+        return {
+            "query": query,
+            "response_preview": response_text[:500] + "..." if len(response_text) > 500 else response_text,
+            "response_type": "friendly_purpose" if "Hi there!" in response_text else "contract_analysis"
+        }
+    except Exception as e:
+        return {"error": str(e)}
 
 @app.get("/telegram_status")
 async def telegram_status():
