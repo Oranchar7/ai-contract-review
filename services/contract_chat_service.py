@@ -178,7 +178,7 @@ Please provide helpful, conversational advice that's easy to understand. If this
                         "content": user_prompt
                     }
                 ],
-                max_tokens=1500,
+                max_tokens=3000,
                 temperature=0.4,  # Using requested temperature for focused, structured responses
                 presence_penalty=0.0,
                 frequency_penalty=0.0
@@ -262,7 +262,7 @@ Please help me understand what this means for my specific situation and what I s
                         "content": user_prompt
                     }
                 ],
-                max_tokens=450,
+                max_tokens=2500,
                 temperature=0.6,  # Balanced for accuracy and conversational tone
                 presence_penalty=0.1,
                 frequency_penalty=0.1
@@ -360,7 +360,7 @@ Please help me understand what this means and what I should do next."""
                         "content": user_prompt
                     }
                 ],
-                max_tokens=400,
+                max_tokens=2500,
                 temperature=0.5,  # Lower temperature for more focused advice
                 presence_penalty=0.1,
                 frequency_penalty=0.1

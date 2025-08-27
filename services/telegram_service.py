@@ -338,7 +338,7 @@ Is there anything contract or legal-related I can assist you with today?"""
             if "response" in rag_result:
                 # Simple chat response
                 response = rag_result["response"].replace("*", "").replace("**", "")
-                return f"💡 {response[:400]}..."
+                return f"💡 {response}"
             
             elif "summary" in rag_result:
                 # RAG analysis response
@@ -357,7 +357,7 @@ Is there anything contract or legal-related I can assist you with today?"""
                     # Format clean response with clear sections
                     if len(main_answer) > 200:
                         # For longer responses, break into sections
-                        formatted_response = f"💡 {main_answer[:200]}...\n\n"
+                        formatted_response = f"💡 {main_answer}\n\n"
                         formatted_response += "📋 For detailed analysis:\n"
                         formatted_response += "• Upload contract documents\n"
                         formatted_response += "• Ask specific legal questions"

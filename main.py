@@ -707,7 +707,7 @@ async def debug_telegram_flow(request: Request):
         
         return {
             "query": query,
-            "response_preview": response_text[:500] + "..." if len(response_text) > 500 else response_text,
+            "response_preview": response_text,
             "response_type": "friendly_purpose" if "Hi there!" in response_text else "contract_analysis"
         }
     except Exception as e:
@@ -739,7 +739,7 @@ async def test_filter():
         "test_query": test_query,
         "should_filter": should_filter,
         "result_type": result_type,
-        "response_preview": response[:200] + "..." if len(response) > 200 else response
+        "response_preview": response
     }
 
 @app.get("/deployment_check")
