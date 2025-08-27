@@ -76,26 +76,6 @@
   "12345": [
     {
       "role": "user",
-      "content": "bye",
-      "timestamp": "2025-08-27T16:28:36.358229"
-    },
-    {
-      "role": "assistant",
-      "content": "It was lovely chatting with you! If you have any legal questions in the future, don't hesitate to come back. Take care and have a fantastic day! \ud83d\ude0a \n\n**Disclaimer:** *I am not a lawyer and this is not legal advice. Always consult a qualified attorney for specific legal matters.*\n\n\u2696\ufe0f *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review.",
-      "timestamp": "2025-08-27T16:28:36.358786"
-    },
-    {
-      "role": "user",
-      "content": "hello",
-      "timestamp": "2025-08-27T16:30:06.886540"
-    },
-    {
-      "role": "assistant",
-      "content": "\ud83d\udc4b Hi there! I'm so glad you reached out! \n\n\u2728 I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.\n\n\ud83e\udd1d I'd love to help you with:\n\u2022 Making sense of contracts and agreements\n\u2022 Breaking down confusing legal terms into plain English  \n\u2022 Reviewing documents and spotting important details\n\u2022 Answering any contract questions you might have\n\n\ud83d\udcad Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!\n\n\ud83c\udf1f What's on your mind today?\n\n\u2696\ufe0f *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review.",
-      "timestamp": "2025-08-27T16:30:06.890127"
-    },
-    {
-      "role": "user",
       "content": "weather",
       "timestamp": "2025-08-27T16:30:08.695059"
     },
@@ -123,6 +103,26 @@
       "role": "assistant",
       "content": "\ud83d\udc4b Hi there! I'm so glad you reached out! \n\n\u2728 I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.\n\n\ud83e\udd1d I'd love to help you with:\n\u2022 Making sense of contracts and agreements\n\u2022 Breaking down confusing legal terms into plain English  \n\u2022 Reviewing documents and spotting important details\n\u2022 Answering any contract questions you might have\n\n\ud83d\udcad Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!\n\n\ud83c\udf1f What's on your mind today?\n\n\u2696\ufe0f *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review.",
       "timestamp": "2025-08-27T16:31:01.073809"
+    },
+    {
+      "role": "user",
+      "content": "hello",
+      "timestamp": "2025-08-27T16:36:58.058608"
+    },
+    {
+      "role": "assistant",
+      "content": "Hi there! \ud83d\udc4b I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions. How can I assist you today?\n\n**Disclaimer:** *This service offers general information, not legal advice; consult a qualified attorney for specific guidance.*",
+      "timestamp": "2025-08-27T16:36:58.059840"
+    },
+    {
+      "role": "user",
+      "content": "weather",
+      "timestamp": "2025-08-27T16:37:00.165751"
+    },
+    {
+      "role": "assistant",
+      "content": "I can definitely chat about that, but remember I'm here mainly to help with contracts and legal info! \ud83d\ude0a If you have any legal questions or need assistance with a document, feel free to ask!\n\n**Disclaimer:** *This service offers general information, not legal advice; consult a qualified attorney for specific guidance.*\n\n**Disclaimer:** *This service offers general information, not legal advice; consult a qualified attorney for specific guidance.*",
+      "timestamp": "2025-08-27T16:37:00.166745"
     }
   ],
   "789": [

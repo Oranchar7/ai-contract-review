@@ -187,7 +187,7 @@ class TelegramService:
     
     def get_legal_disclaimer(self) -> str:
         """Get standard legal disclaimer for all responses"""
-        return "\n\n⚖️ *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review."
+        return "\n\n**Disclaimer:** *This service offers general information, not legal advice; consult a qualified attorney for specific guidance.*"
     
     def load_conversations(self) -> Dict[int, list]:
         """Load conversation history from file"""
@@ -344,7 +344,7 @@ class TelegramService:
             if has_non_contract and not has_contract:
                 return """I can definitely chat about that, but remember I'm here mainly to help with contracts and legal info! 😊
 
-**Disclaimer:** *I am not a lawyer and this is not legal advice. Always consult a qualified attorney for specific legal matters.*"""
+**Disclaimer:** *This service offers general information, not legal advice; consult a qualified attorney for specific guidance.*"""
             
             # Check for filtered non-contract queries first
             if rag_result.get("error") == "FILTERED_NON_CONTRACT_QUERY":
@@ -446,9 +446,9 @@ class TelegramService:
     def get_dummy_responses(self) -> Dict[str, str]:
         """Get predefined dummy responses for testing"""
         return {
-            "hello": "Hi there! 👋 I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions. How can I assist you today?\n\n**Disclaimer:** *I am not a lawyer and this is not legal advice. Always consult a qualified attorney for specific legal matters.*",
+            "hello": "Hi there! 👋 I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions. How can I assist you today?\n\n**Disclaimer:** *This service offers general information, not legal advice; consult a qualified attorney for specific guidance.*",
             
-            "help": "🔍 Available Commands:\n\n• Ask me about contract terms\n• Request contract analysis\n• Ask legal questions\n• Type 'test' for a sample analysis\n\n💡 Tip: I work best when you upload contract documents first!\n\n⚖️ *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review.",
+            "help": "🔍 Available Commands:\n\n• Ask me about contract terms\n• Request contract analysis\n• Ask legal questions\n• Type 'test' for a sample analysis\n\n💡 Tip: I work best when you upload contract documents first!\n\n**Disclaimer:** *This service offers general information, not legal advice; consult a qualified attorney for specific guidance.*",
             
             "test": """📋 *Sample Contract Analysis*
             
@@ -465,9 +465,9 @@ This is a test response showing how contract analysis would work. Key areas iden
 
 🔗 *References*: [Source: doc_abc123, chunk_001], [Source: doc_abc123, chunk_002]
 
-⚖️ *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review.""",
+**Disclaimer:** *This service offers general information, not legal advice; consult a qualified attorney for specific guidance.*""",
             
-            "default": "🤖 I understand you're asking about contracts. While I'm ready to help, I'm currently operating in test mode. Once document ingestion is complete, I'll be able to provide detailed analysis based on your uploaded contracts!\n\n💡 Try typing 'help' to see what I can do!\n\n⚖️ *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review."
+            "default": "🤖 I understand you're asking about contracts. While I'm ready to help, I'm currently operating in test mode. Once document ingestion is complete, I'll be able to provide detailed analysis based on your uploaded contracts!\n\n💡 Try typing 'help' to see what I can do!\n\n**Disclaimer:** *This service offers general information, not legal advice; consult a qualified attorney for specific guidance.*"
         }
     
     async def send_generating_response(self, chat_id: int, user_query: str) -> Dict[str, Any]:

@@ -454,7 +454,7 @@ async def telegram_webhook(request: Request):
         if has_non_contract and not has_contract:
             clean_response = """I can definitely chat about that, but remember I'm here mainly to help with contracts and legal info! 😊
 
-**Disclaimer:** *I am not a lawyer and this is not legal advice. Always consult a qualified attorney for specific legal matters.*"""
+**Disclaimer:** *This service offers general information, not legal advice; consult a qualified attorney for specific guidance.*"""
             
             await telegram_service.send_message(chat_id, clean_response)
             return {"status": "ok", "message": "Non-contract query handled"}
@@ -538,7 +538,7 @@ def get_friendly_purpose_statement() -> str:
     """Return a friendly statement about the bot's purpose for irrelevant queries"""
     return """Hi there! 👋 I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions. How can I assist you today?
 
-**Disclaimer:** *I am not a lawyer and this is not legal advice. Always consult a qualified attorney for specific legal matters.*"""
+**Disclaimer:** *This service offers general information, not legal advice; consult a qualified attorney for specific guidance.*"""
 
 async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> str:
     """Process a query through RAG system with relevance checking and test mode fallback"""
