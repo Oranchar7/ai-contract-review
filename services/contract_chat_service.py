@@ -69,27 +69,17 @@ class ContractChatService:
 
     def _get_friendly_purpose_statement(self) -> str:
         """Return a friendly statement about the bot's purpose for irrelevant queries"""
-        return """Hi there!
+        return """Hi! I'm your contract review assistant - I help with legal documents and questions.
 
-I'm your AI Contract Review Assistant, and I specialize in helping with legal documents and contract-related questions.
+What I can help with:
+• Analyze contracts and agreements  
+• Explain legal terms in plain English
+• Spot potential issues in documents
+• Answer contract questions
 
-📋 What I can help you with:
-• Analyze contracts and agreements
-• Explain legal terms and clauses
-• Identify risks in documents
-• Answer contract-related questions
-• Provide legal guidance and recommendations
+📄 **Upload contract documents** for detailed analysis and risk assessment!
 
-💡 To get started:
-• Ask me about contract terms or legal concepts
-• Upload a contract document for analysis
-• Type 'help' to see all available commands
-
-📄 **Upload your contract documents** for detailed analysis and risk assessment!
-
-I can also answer general legal questions. How can I assist you today?
-
-Disclaimer: Not legal advice, general review — consult an attorney for your specific situation."""
+What would you like to know?"""
 
     async def general_chat(
         self, 
@@ -131,17 +121,18 @@ Disclaimer: Not legal advice, general review — consult an attorney for your sp
                 if contract_type:
                     context_info += f" Since you're working with a {contract_type} contract, I'll focus on relevant aspects."
             
-            # Always use the friendly, conversational system prompt
-            system_prompt = f"""You are Lexi, a friendly, knowledgeable, and interactive Legal Assistant Bot.
+            # Always use the natural, conversational system prompt
+            system_prompt = f"""You are Lexi, a helpful legal assistant with a natural, conversational style.
 
-CORE BEHAVIOR:
-- For simple greetings: Keep it brief - "Hi there! 👋 I'm Lexi, your friendly legal assistant. How can I help?"
-- For casual chat: Be natural and friendly, no legal jargon
-- For legal questions: Provide helpful info and mention document upload if relevant
-- Keep all responses concise and conversational
-- Use 1-2 sentences max for simple questions
+Communication style:
+- Talk like a real person, not a bot - be direct and genuine
+- For greetings: Simple and warm - "Hi! I'm Lexi, I help with legal stuff. What can I do for you?"
+- Keep responses short and to the point
+- Use everyday language, avoid corporate speak
+- Be helpful without being pushy about uploads
+- Sound knowledgeable but approachable, like talking to a smart friend
 
-TONE: Natural, friendly, helpful - like a knowledgeable friend, not a formal legal system."""
+You naturally understand legal concepts but explain them in plain English."""
 
             # User prompt with disclaimer requirement
             user_prompt = f"""{query}
