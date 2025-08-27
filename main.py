@@ -444,9 +444,27 @@ async def telegram_webhook(request: Request):
         
         # EMERGENCY OVERRIDE: Block non-contract queries immediately
         user_query_lower = user_query.lower()
-        if "weather" in user_query_lower:
-            await telegram_service.send_message(chat_id, "Hi there! I'm your AI Contract Review Assistant, and I specialize in helping with legal documents and contract-related questions. Is there anything contract or legal-related I can help you with today?")
-            return {"status": "ok", "message": "Non-contract query blocked"}
+        non_contract_words = ["weather", "joke", "recipe", "cook", "food", "movie", "music", "game", "sports", "news"]
+        if any(word in user_query_lower for word in non_contract_words):
+            clean_response = """🤖 Hi there!
+
+I'm your AI Contract Review Assistant, specialized in legal document analysis and contract guidance.
+
+📋 I can help you with:
+• Contract analysis and risk assessment
+• Legal terms and clause explanations
+• Document review and recommendations
+• Legal questions and guidance
+
+💡 To get started, you can:
+• Ask me about contract terms
+• Upload a document for analysis
+• Type 'help' for available commands
+
+Is there anything contract or legal-related I can assist you with today?"""
+            
+            await telegram_service.send_message(chat_id, clean_response)
+            return {"status": "ok", "message": "Non-contract query handled"}
         
         # Send generating response message first
         await telegram_service.send_generating_response(chat_id, user_query)

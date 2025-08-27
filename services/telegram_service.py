@@ -201,7 +201,22 @@ class TelegramService:
             # EMERGENCY FILTER: Check user query directly for non-contract topics
             query_lower = user_query.lower().strip()
             if any(word in query_lower for word in ["weather", "joke", "recipe", "cook", "food", "movie", "music", "game", "sports", "news"]):
-                return "Hi there! I'm your AI Contract Review Assistant, and I specialize in helping with legal documents and contract-related questions. Is there anything contract or legal-related I can help you with today?"
+                return """🤖 Hi there!
+
+I'm your AI Contract Review Assistant, specialized in legal document analysis and contract guidance.
+
+📋 I can help you with:
+• Contract analysis and risk assessment
+• Legal terms and clause explanations
+• Document review and recommendations
+• Legal questions and guidance
+
+💡 To get started, you can:
+• Ask me about contract terms
+• Upload a document for analysis
+• Type 'help' for available commands
+
+Is there anything contract or legal-related I can assist you with today?"""
             
             # Check for filtered non-contract queries first
             if rag_result.get("error") == "FILTERED_NON_CONTRACT_QUERY":
@@ -303,7 +318,7 @@ This is a test response showing how contract analysis would work. Key areas iden
         await self.send_typing_action(chat_id)
         
         # Send generating message
-        generating_text = f"🤔 *Analyzing your question...*\n\n"
+        generating_text = "🤔 Analyzing your question...\n\n"
         
         # Add context based on query type
         if any(term in user_query.lower() for term in ['contract', 'nda', 'agreement', 'clause']):
@@ -313,7 +328,7 @@ This is a test response showing how contract analysis would work. Key areas iden
         else:
             generating_text += "📚 Consulting legal knowledge base..."
         
-        generating_text += "\n\n⏳ *This may take a few moments*"
+        generating_text += "\n\n⏳ This may take a few moments"
         
         result = await self.send_message(chat_id, generating_text.replace("*", ""))  # Remove markdown
         return result
