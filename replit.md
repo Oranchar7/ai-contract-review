@@ -86,4 +86,10 @@ All external services are configured via environment variables:
 - n8n webhook URLs for notifications
 - Base URL configuration for different deployment environments
 
+## Deployment Configuration
+- **Production URL**: https://ai-contract-review.onrender.com
+- **Telegram Webhook**: https://ai-contract-review.onrender.com/telegram_webhook  
+- **Deployment Platform**: Render (stable 24/7 connection)
+- **Render Configuration**: render.yaml file configured for automatic deployment
+
 The architecture prioritizes simplicity, reliability, and clear separation of concerns while maintaining the flexibility to disable optional features (Firebase storage, notifications) without breaking core functionality.
