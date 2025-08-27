@@ -353,7 +353,11 @@ class PineconeRAGService:
                 "directions", "travel", "shopping", "restaurant", "hotel", "flight"
             ]
             
-            if any(indicator in query_lower for indicator in non_contract_indicators):
+            # Only block if definitely non-contract (no contract keywords present)
+            contract_keywords = ["contract", "agreement", "legal", "sla", "msa", "nda", "clause", "terms", "service level"]
+            is_contract_query = any(keyword in query_lower for keyword in contract_keywords)
+            
+            if any(indicator in query_lower for indicator in non_contract_indicators) and not is_contract_query:
                 return {
                     "error": "FILTERED_NON_CONTRACT_QUERY",
                     "query_type": "non_contract", 

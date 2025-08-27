@@ -113,7 +113,8 @@ Is there anything contract or legal-related I can help you with today?"""
                 "directions", "travel", "shopping", "restaurant", "hotel", "flight"
             ]
             
-            if any(indicator in query_lower for indicator in non_contract_indicators):
+            # Check if it's definitely NOT contract-related
+            if any(indicator in query_lower for indicator in non_contract_indicators) and not self._is_contract_related_query(query):
                 return {
                     "answer": self._get_friendly_purpose_statement(),
                     "type": "purpose_statement",
