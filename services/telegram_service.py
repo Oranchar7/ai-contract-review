@@ -78,7 +78,7 @@ class TelegramService:
             logger.error(f"Exception sending Telegram message: {str(e)}")
             return {"success": False, "error": str(e)}
     
-    async def edit_message(self, chat_id: int, message_id: int, text: str, parse_mode: str = "Markdown") -> Dict[str, Any]:
+    async def edit_message(self, chat_id: int, message_id: int, text: str, parse_mode: str = None) -> Dict[str, Any]:
         """Edit an existing message"""
         if not self.available:
             return {"success": False, "error": "Telegram service not available"}
@@ -88,8 +88,7 @@ class TelegramService:
             payload = {
                 "chat_id": chat_id,
                 "message_id": message_id,
-                "text": text[:4096],
-                "parse_mode": parse_mode
+                "text": text[:4096]
             }
             
             async with aiohttp.ClientSession() as session:
@@ -316,7 +315,7 @@ This is a test response showing how contract analysis would work. Key areas iden
         
         generating_text += "\n\n⏳ *This may take a few moments*"
         
-        result = await self.send_message(chat_id, generating_text)
+        result = await self.send_message(chat_id, generating_text.replace("*", ""))  # Remove markdown
         return result
     
     async def send_response_with_progress(self, chat_id: int, user_query: str, response_text: str) -> Dict[str, Any]:
