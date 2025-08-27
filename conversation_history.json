@@ -76,53 +76,53 @@
   "12345": [
     {
       "role": "user",
-      "content": "hello",
-      "timestamp": "2025-08-27T16:21:07.172057"
+      "content": "what is the weather like",
+      "timestamp": "2025-08-27T16:22:41.536045"
     },
     {
       "role": "assistant",
-      "content": "\ud83d\udc4b Hi there! I'm so glad you reached out! \n\n\u2728 I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.\n\n\ud83e\udd1d I'd love to help you with:\n\u2022 Making sense of contracts and agreements\n\u2022 Breaking down confusing legal terms into plain English  \n\u2022 Reviewing documents and spotting important details\n\u2022 Answering any contract questions you might have\n\n\ud83d\udcad Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!\n\n\ud83c\udf1f What's on your mind today?\n\n\u2696\ufe0f *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review.",
-      "timestamp": "2025-08-27T16:21:07.173935"
+      "content": "Oh, I can't check the weather directly, but I can help you figure out how to find it! You could check a weather app or a website for the latest updates. What\u2019s the weather usually like where you are?",
+      "timestamp": "2025-08-27T16:22:41.536766"
     },
     {
       "role": "user",
-      "content": "goodbye",
-      "timestamp": "2025-08-27T16:21:08.201175"
+      "content": "I am reviewing an employment contract",
+      "timestamp": "2025-08-27T16:22:45.171526"
     },
     {
       "role": "assistant",
-      "content": "Hey! It sounds like you're heading out again. Wishing you a wonderful day ahead! If you ever want to chat, I\u2019ll be right here. \ud83d\ude0a",
-      "timestamp": "2025-08-27T16:21:08.202470"
+      "content": "That's great! Reviewing an employment contract is super important. Are there any specific parts you're curious about or need help understanding?\n\n\u2696\ufe0f *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review.",
+      "timestamp": "2025-08-27T16:22:45.177073"
     },
     {
       "role": "user",
-      "content": "I am Sarah",
-      "timestamp": "2025-08-27T16:21:08.899412"
+      "content": "what about the termination clause in that contract",
+      "timestamp": "2025-08-27T16:22:45.232628"
     },
     {
       "role": "assistant",
-      "content": "Hey Sarah! It\u2019s great to meet you! How\u2019s your day going? \ud83d\ude0a",
-      "timestamp": "2025-08-27T16:21:08.913868"
-    },
-    {
-      "role": "user",
-      "content": "hi",
-      "timestamp": "2025-08-27T16:21:38.416201"
-    },
-    {
-      "role": "assistant",
-      "content": "\ud83d\udc4b Hi there! I'm so glad you reached out! \n\n\u2728 I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.\n\n\ud83e\udd1d I'd love to help you with:\n\u2022 Making sense of contracts and agreements\n\u2022 Breaking down confusing legal terms into plain English  \n\u2022 Reviewing documents and spotting important details\n\u2022 Answering any contract questions you might have\n\n\ud83d\udcad Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!\n\n\ud83c\udf1f What's on your mind today?\n\n\u2696\ufe0f *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review.",
-      "timestamp": "2025-08-27T16:21:38.419254"
+      "content": "\ud83d\udcdd *No documents uploaded yet*\n\n\ud83d\udca1 When reviewing a termination clause in an employment contract, it's important to consider how it outlines the conditions under which either party can terminate the agreement. Look for details on notice periods, acceptable reasons for termination, and any severance provisions. A well-drafted termination clause should also clarify the process for termination and any obligations that continue post-termination, such as confidentiality or non-compete agreements.\n\n\ud83d\udccb For detailed analysis:\n\u2022 Upload contract documents\n\u2022 Ask specific legal questions\n\n\u2696\ufe0f *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review.",
+      "timestamp": "2025-08-27T16:22:51.332566"
     },
     {
       "role": "user",
       "content": "hello",
-      "timestamp": "2025-08-27T16:21:38.520068"
+      "timestamp": "2025-08-27T16:23:25.548303"
     },
     {
       "role": "assistant",
       "content": "\ud83d\udc4b Hi there! I'm so glad you reached out! \n\n\u2728 I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.\n\n\ud83e\udd1d I'd love to help you with:\n\u2022 Making sense of contracts and agreements\n\u2022 Breaking down confusing legal terms into plain English  \n\u2022 Reviewing documents and spotting important details\n\u2022 Answering any contract questions you might have\n\n\ud83d\udcad Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!\n\n\ud83c\udf1f What's on your mind today?\n\n\u2696\ufe0f *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review.",
-      "timestamp": "2025-08-27T16:21:38.521472"
+      "timestamp": "2025-08-27T16:23:25.549548"
+    },
+    {
+      "role": "user",
+      "content": "how is the weather",
+      "timestamp": "2025-08-27T16:23:27.847626"
+    },
+    {
+      "role": "assistant",
+      "content": "Hey! The weather has been pretty nice lately, hasn\u2019t it? Depending on where you are, it might be sunny or a bit chilly. What\u2019s it like in your area?",
+      "timestamp": "2025-08-27T16:23:27.848139"
     }
   ],
   "789": [
