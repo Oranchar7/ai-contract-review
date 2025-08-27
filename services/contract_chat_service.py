@@ -121,15 +121,27 @@ Is there anything contract or legal-related I can help you with today?
                         "type": "purpose_statement",
                         "model_used": "filtering"
                     }
-            # Build conversational context
+            # Build conversational context (skip legal context for natural responses)
             context_info = ""
-            if jurisdiction:
-                context_info += f" I understand you're dealing with {jurisdiction} jurisdiction."
-            if contract_type:
-                context_info += f" Since you're working with a {contract_type} contract, I'll focus on relevant aspects."
+            if not force_natural_response:
+                if jurisdiction:
+                    context_info += f" I understand you're dealing with {jurisdiction} jurisdiction."
+                if contract_type:
+                    context_info += f" Since you're working with a {contract_type} contract, I'll focus on relevant aspects."
             
-            # Simplified system prompt: GPT-4o mini with legal expertise
-            system_prompt = f"""You are GPT-4o mini with specialized expertise in legal and contract matters. You maintain all your natural conversational abilities while being particularly knowledgeable about legal topics.
+            # Adjust system prompt based on response type
+            if force_natural_response:
+                system_prompt = f"""You are GPT-4o mini. Respond naturally and conversationally to this user interaction. Be friendly, helpful, and human-like in your responses. 
+
+Focus on:
+- Responding appropriately to greetings, farewells, introductions, and casual conversation
+- Being warm, personable, and engaging
+- NOT bringing up legal topics, contracts, or legal advice unless specifically asked
+- Keeping responses natural and conversational
+
+Remember: This is casual conversation, so respond like the natural GPT-4o mini would to any social interaction."""
+            else:
+                system_prompt = f"""You are GPT-4o mini with specialized expertise in legal and contract matters. You maintain all your natural conversational abilities while being particularly knowledgeable about legal topics.
 
 Your personality:
 - Natural, warm, and conversational like GPT-4o mini

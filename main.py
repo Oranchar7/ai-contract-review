@@ -588,9 +588,29 @@ async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> st
             telegram_service.add_to_conversation_history(chat_id, "assistant", response)
             return response
         
-        # Handle conversational queries naturally (how are you, what's up, etc.)
-        conversational_patterns = ["how are you", "how's it going", "what's up", "how are things", "what are you up to", "good morning", "good afternoon", "good evening"]
+        # Handle conversational queries naturally (greetings, farewells, introductions, etc.)
+        conversational_patterns = [
+            # Basic greetings
+            "hi", "hello", "hey", "hi there", "hello there", "hey there",
+            
+            # Greetings and social interactions
+            "how are you", "how's it going", "what's up", "how are things", "what are you up to", 
+            "good morning", "good afternoon", "good evening", "nice to meet",
+            
+            # Farewells
+            "goodbye", "bye", "see you later", "take care", "see you", "talk to you later", 
+            "have a good day", "have a nice day", "until next time", "catch you later",
+            
+            # Introductions
+            "i am", "my name is", "i'm", "call me", "this is", "nice to meet you",
+            "pleased to meet", "good to meet",
+            
+            # Casual conversation starters
+            "what do you think", "tell me about yourself", "what can you tell me",
+            "how's your day", "how was your", "what have you been up to"
+        ]
         if any(pattern in query_lower for pattern in conversational_patterns):
+            print(f"DEBUG: Matched conversational pattern: {query}")
             # Let the AI respond naturally to conversational queries
             try:
                 # Get conversation context for natural responses
@@ -601,8 +621,8 @@ async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> st
                 
                 chat_result = await chat_service.general_chat(
                     context_query,
-                    jurisdiction=message_data.get("jurisdiction"),
-                    contract_type=message_data.get("contract_type"),
+                    jurisdiction=None,  # Don't pass legal context for natural conversation
+                    contract_type=None,  # Don't pass legal context for natural conversation
                     force_natural_response=True  # New parameter for natural responses
                 )
                 
