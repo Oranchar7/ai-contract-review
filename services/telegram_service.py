@@ -430,7 +430,7 @@ Is there anything contract or legal-related I can assist you with today?"""
     def get_dummy_responses(self) -> Dict[str, str]:
         """Get predefined dummy responses for testing"""
         return {
-            "hello": "👋 Hello! I'm your AI Contract Assistant.\n\n📋 I can help you:\n• Analyze contracts and agreements\n• Explain legal terms\n• Answer contract questions\n\n💡 Try asking me about contract terms like MSA, SLA, or NDA!",
+            "hello": "👋 Hi there! I'm so glad you reached out! \n\n✨ I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.\n\n🤝 I'd love to help you with:\n• Making sense of contracts and agreements\n• Breaking down confusing legal terms into plain English  \n• Reviewing documents and spotting important details\n• Answering any contract questions you might have\n\n💭 Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!\n\n🌟 What's on your mind today?",
             
             "help": "🔍 Available Commands:\n\n• Ask me about contract terms\n• Request contract analysis\n• Ask legal questions\n• Type 'test' for a sample analysis\n\n💡 Tip: I work best when you upload contract documents first!",
             
