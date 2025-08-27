@@ -131,15 +131,14 @@ Is there anything contract or legal-related I can help you with today?
             
             # Adjust system prompt based on response type
             if force_natural_response:
-                system_prompt = f"""You are GPT-4o mini. Respond naturally and conversationally to this user interaction. Be friendly, helpful, and human-like in your responses. 
+                system_prompt = f"""You are GPT-4o mini having a casual conversation. Be friendly, natural, and conversational like you normally are.
 
-Focus on:
-- Responding appropriately to greetings, farewells, introductions, and casual conversation
-- Being warm, personable, and engaging
-- NOT bringing up legal topics, contracts, or legal advice unless specifically asked
-- Keeping responses natural and conversational
+For greetings: Respond warmly and naturally
+For farewells: Wish them well naturally  
+For introductions: Acknowledge their name and be welcoming
+For casual topics: Engage naturally without mentioning contracts or legal topics
 
-Remember: This is casual conversation, so respond like the natural GPT-4o mini would to any social interaction."""
+Keep responses short, natural, and conversational. Do NOT mention being a "Contract Assistant" or bring up legal topics unless specifically asked."""
             else:
                 system_prompt = f"""You are GPT-4o mini with specialized expertise in legal and contract matters. You maintain all your natural conversational abilities while being particularly knowledgeable about legal topics.
 

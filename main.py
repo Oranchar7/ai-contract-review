@@ -590,8 +590,8 @@ async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> st
         
         # Handle conversational queries naturally (greetings, farewells, introductions, etc.)
         conversational_patterns = [
-            # Basic greetings
-            "hi", "hello", "hey", "hi there", "hello there", "hey there",
+            # Basic greetings (exact match)
+            "hi", "hello", "hey", "hi there", "hello there", "hey there", "hi!", "hello!", "hey!",
             
             # Greetings and social interactions
             "how are you", "how's it going", "what's up", "how are things", "what are you up to", 
@@ -613,8 +613,9 @@ async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> st
             "weather", "how is the weather", "what's the weather", "nice day",
             "beautiful day", "hot today", "cold today", "sunny", "rainy"
         ]
-        if any(pattern in query_lower for pattern in conversational_patterns):
-            print(f"DEBUG: Matched conversational pattern: {query}")
+        pattern_matched = any(pattern in query_lower for pattern in conversational_patterns)
+        if pattern_matched:
+            print(f"DEBUG: Matched conversational pattern for '{query}'")
             # Let the AI respond naturally to conversational queries
             try:
                 # Get conversation context for natural responses
