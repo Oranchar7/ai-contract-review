@@ -5,6 +5,7 @@ import asyncio
 from typing import Dict, Any, Optional
 import aiohttp
 from datetime import datetime
+from pathlib import Path
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -17,8 +18,9 @@ class TelegramService:
         self.bot_token = os.environ.get("TELEGRAM_BOT_TOKEN")
         self.base_url = f"https://api.telegram.org/bot{self.bot_token}"
         
-        # In-memory conversation storage (chat_id -> list of messages)
-        self.conversation_history = {}
+        # Persistent conversation storage 
+        self.conversation_file = "conversation_history.json"
+        self.conversation_history = self.load_conversations()
         self.max_history_length = 10  # Keep last 10 messages for context
         
         if not self.bot_token:
@@ -164,6 +166,9 @@ class TelegramService:
         # Keep only recent messages to avoid memory bloat
         if len(self.conversation_history[chat_id]) > self.max_history_length:
             self.conversation_history[chat_id] = self.conversation_history[chat_id][-self.max_history_length:]
+        
+        # Save to file after each addition
+        self.save_conversations()
     
     def get_conversation_context(self, chat_id: int, max_messages: int = 6) -> str:
         """Get recent conversation history as context string"""
@@ -179,6 +184,29 @@ class TelegramService:
             context_parts.append(f"{role}: {content}")
         
         return "\n".join(context_parts)
+    
+    def load_conversations(self) -> Dict[int, list]:
+        """Load conversation history from file"""
+        try:
+            if Path(self.conversation_file).exists():
+                with open(self.conversation_file, 'r') as f:
+                    data = json.load(f)
+                    # Convert string keys back to integers
+                    return {int(k): v for k, v in data.items()}
+            return {}
+        except Exception as e:
+            logger.error(f"Error loading conversations: {e}")
+            return {}
+    
+    def save_conversations(self):
+        """Save conversation history to file"""
+        try:
+            # Convert int keys to strings for JSON serialization
+            data = {str(k): v for k, v in self.conversation_history.items()}
+            with open(self.conversation_file, 'w') as f:
+                json.dump(data, f, indent=2)
+        except Exception as e:
+            logger.error(f"Error saving conversations: {e}")
     
     async def edit_message(self, chat_id: int, message_id: int, text: str) -> Dict[str, Any]:
         """Edit an existing message"""
