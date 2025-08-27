@@ -504,6 +504,9 @@ def is_contract_related_query(query: str) -> bool:
         "contract", "agreement", "nda", "clause", "terms", "conditions", "legal",
         "liability", "indemnity", "termination", "breach", "compliance", "negotiate",
         
+        # Contract abbreviations
+        "sla", "msa", "sow", "loi", "mou", "nca", "cda", "eula", "tos", "dpa", "baa",
+        
         # Legal concepts
         "law", "legal", "attorney", "lawyer", "court", "litigation", "dispute",
         "jurisdiction", "governing", "statute", "regulation", "rights", "obligations",
@@ -593,7 +596,12 @@ async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> st
             "directions", "travel", "shopping", "restaurant", "hotel", "flight"
         ]
         
-        if any(indicator in query_lower for indicator in non_contract_indicators):
+        # Only block if contains non-contract words AND no contract words
+        contract_words = ["contract", "agreement", "legal", "sla", "msa", "nda", "clause", "terms", "service level"]
+        has_non_contract = any(indicator in query_lower for indicator in non_contract_indicators)
+        has_contract = any(word in query_lower for word in contract_words)
+        
+        if has_non_contract and not has_contract:
             return get_friendly_purpose_statement()
         
         # Also check with original function
