@@ -85,7 +85,9 @@ I'm your AI Contract Review Assistant, and I specialize in helping with legal do
 • Upload a contract document for analysis
 • Type 'help' to see all available commands
 
-Is there anything contract or legal-related I can help you with today?"""
+Is there anything contract or legal-related I can help you with today?
+
+⚖️ *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review."""
 
     async def general_chat(
         self, 

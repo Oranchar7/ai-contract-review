@@ -473,9 +473,11 @@ This is a test response showing how contract analysis would work. Key areas iden
 
 📄 *Sources*: 3 document sections analyzed (dummy data)
 
-🔗 *References*: [Source: doc_abc123, chunk_001], [Source: doc_abc123, chunk_002]""",
+🔗 *References*: [Source: doc_abc123, chunk_001], [Source: doc_abc123, chunk_002]
+
+⚖️ *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review.""",
             
-            "default": "🤖 I understand you're asking about contracts. While I'm ready to help, I'm currently operating in test mode. Once document ingestion is complete, I'll be able to provide detailed analysis based on your uploaded contracts!\n\n💡 Try typing 'help' to see what I can do!"
+            "default": "🤖 I understand you're asking about contracts. While I'm ready to help, I'm currently operating in test mode. Once document ingestion is complete, I'll be able to provide detailed analysis based on your uploaded contracts!\n\n💡 Try typing 'help' to see what I can do!\n\n⚖️ *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review."
         }
     
     async def send_generating_response(self, chat_id: int, user_query: str) -> Dict[str, Any]:

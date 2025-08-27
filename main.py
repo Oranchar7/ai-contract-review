@@ -464,7 +464,9 @@ async def telegram_webhook(request: Request):
 
 💭 Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!
 
-🌟 What's on your mind today?"""
+🌟 What's on your mind today?
+
+⚖️ *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review."""
             
             await telegram_service.send_message(chat_id, clean_response)
             return {"status": "ok", "message": "Non-contract query handled"}
@@ -558,7 +560,9 @@ def get_friendly_purpose_statement() -> str:
 
 💭 Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!
 
-🌟 What's on your mind today?"""
+🌟 What's on your mind today?
+
+⚖️ *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review."""
 
 async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> str:
     """Process a query through RAG system with relevance checking and test mode fallback"""
@@ -687,11 +691,11 @@ async def debug_telegram_flow(request: Request):
         data = await request.json()
         query = data.get("query", "")
         
-        # Simulate message data
+        # Simulate message data with persistent chat ID
         message_data = {
-            "chat_id": 99999,
-            "user_id": 99999,
-            "jurisdiction": "unspecified",
+            "chat_id": 12345,  # Fixed chat ID for debugging
+            "user_id": 12345,
+            "jurisdiction": "unspecified", 
             "contract_type": "unspecified"
         }
         
