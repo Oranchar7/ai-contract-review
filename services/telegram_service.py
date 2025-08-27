@@ -78,7 +78,7 @@ class TelegramService:
             logger.error(f"Exception sending Telegram message: {str(e)}")
             return {"success": False, "error": str(e)}
     
-    async def edit_message(self, chat_id: int, message_id: int, text: str, parse_mode: str = None) -> Dict[str, Any]:
+    async def edit_message(self, chat_id: int, message_id: int, text: str) -> Dict[str, Any]:
         """Edit an existing message"""
         if not self.available:
             return {"success": False, "error": "Telegram service not available"}
