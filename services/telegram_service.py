@@ -58,8 +58,8 @@ class TelegramService:
             # Try without markdown first to avoid parsing issues
             payload = {
                 "chat_id": chat_id,
-                "text": text[:4096],  # Telegram message limit
-                "parse_mode": None  # Disable markdown to avoid parse errors
+                "text": text[:4096]  # Telegram message limit
+                # Remove parse_mode entirely to avoid issues
             }
             
             async with aiohttp.ClientSession() as session:
