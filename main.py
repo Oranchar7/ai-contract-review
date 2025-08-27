@@ -571,22 +571,44 @@ async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> st
     """Process a query through RAG system with relevance checking and test mode fallback"""
     try:
         query_lower = query.lower().strip()
+        chat_id = message_data.get("chat_id", 0)
         
-        # Check for dummy responses first (test mode)
+        # Add user message to conversation history
+        telegram_service.add_to_conversation_history(chat_id, "user", query)
+        
+        # Get conversation context for better understanding
+        conversation_context = telegram_service.get_conversation_context(chat_id)
+        
+        # Check if this could be a follow-up question based on conversation context
+        is_followup = False
+        if conversation_context and len(query.split()) < 10:  # Short queries are likely follow-ups
+            context_lower = conversation_context.lower()
+            contract_words = ["contract", "agreement", "legal", "sla", "msa", "nda", "clause", "terms", "service level"]
+            # If recent conversation mentions contracts, treat as follow-up
+            if any(word in context_lower for word in contract_words):
+                is_followup = True
+        
+        # Check for dummy responses first (test mode) - but skip if it's a follow-up
         dummy_responses = telegram_service.get_dummy_responses()
         
-        if query_lower in dummy_responses:
-            return dummy_responses[query_lower]
+        if query_lower in dummy_responses and not is_followup:
+            response = dummy_responses[query_lower]
+            telegram_service.add_to_conversation_history(chat_id, "assistant", response)
+            return response
         
-        # Check for common greeting patterns
+        # Check for common greeting patterns - but skip if it's a follow-up
         greetings = ["hello", "hi", "hey", "start", "/start"]
-        if any(greeting in query_lower for greeting in greetings):
-            return dummy_responses["hello"]
+        if any(greeting in query_lower for greeting in greetings) and not is_followup:
+            response = dummy_responses["hello"]
+            telegram_service.add_to_conversation_history(chat_id, "assistant", response)
+            return response
         
-        # Check for help patterns
+        # Check for help patterns - but skip if it's a follow-up
         help_patterns = ["help", "/help", "what can you do", "commands"]
-        if any(pattern in query_lower for pattern in help_patterns):
-            return dummy_responses["help"]
+        if any(pattern in query_lower for pattern in help_patterns) and not is_followup:
+            response = dummy_responses["help"]
+            telegram_service.add_to_conversation_history(chat_id, "assistant", response)
+            return response
         
         # IMMEDIATE FILTER: Check if query is definitely NOT contract-related
         query_words = query_lower.split()
@@ -601,35 +623,57 @@ async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> st
         has_non_contract = any(indicator in query_lower for indicator in non_contract_indicators)
         has_contract = any(word in query_lower for word in contract_words)
         
-        if has_non_contract and not has_contract:
-            return get_friendly_purpose_statement()
+        # (is_followup already determined above)
         
-        # Also check with original function
-        if not is_contract_related_query(query):
-            return get_friendly_purpose_statement()
+        if has_non_contract and not has_contract and not is_followup:
+            response = get_friendly_purpose_statement()
+            telegram_service.add_to_conversation_history(chat_id, "assistant", response)
+            return response
+        
+        # Also check with original function, but allow follow-ups
+        if not is_contract_related_query(query) and not is_followup:
+            response = get_friendly_purpose_statement()
+            telegram_service.add_to_conversation_history(chat_id, "assistant", response)
+            return response
         
         # Try RAG system if available, otherwise use chat service
         try:
             if rag_service.is_available():
+                # Add conversation context if available
+                context_query = query
+                if conversation_context:
+                    context_query = f"Previous conversation:\n{conversation_context}\n\nCurrent question: {query}"
+                
                 # Use RAG service for document-based queries
                 rag_result = await rag_service.ask_contract(
-                    query,
+                    context_query,
                     jurisdiction=message_data.get("jurisdiction"),
                     contract_type=message_data.get("contract_type")
                 )
-                return telegram_service.format_rag_response(rag_result, query)
+                response = telegram_service.format_rag_response(rag_result, query)
+                telegram_service.add_to_conversation_history(chat_id, "assistant", response)
+                return response
             else:
+                # Add conversation context if available
+                context_query = query
+                if conversation_context:
+                    context_query = f"Previous conversation:\n{conversation_context}\n\nCurrent question: {query}"
+                
                 # Fallback to general chat service
                 chat_result = await chat_service.general_chat(
-                    query,
+                    context_query,
                     jurisdiction=message_data.get("jurisdiction"),
                     contract_type=message_data.get("contract_type")
                 )
                 
                 if chat_result.get("answer"):
-                    return f"🤖 *AI Assistant*:\n\n{chat_result['answer']}"
+                    response = f"🤖 AI Assistant:\n\n{chat_result['answer']}"
+                    telegram_service.add_to_conversation_history(chat_id, "assistant", response)
+                    return response
                 else:
-                    return dummy_responses["default"]
+                    response = dummy_responses["default"]
+                    telegram_service.add_to_conversation_history(chat_id, "assistant", response)
+                    return response
                     
         except Exception as e:
             print(f"RAG/Chat service error: {str(e)}")

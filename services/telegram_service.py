@@ -17,6 +17,10 @@ class TelegramService:
         self.bot_token = os.environ.get("TELEGRAM_BOT_TOKEN")
         self.base_url = f"https://api.telegram.org/bot{self.bot_token}"
         
+        # In-memory conversation storage (chat_id -> list of messages)
+        self.conversation_history = {}
+        self.max_history_length = 10  # Keep last 10 messages for context
+        
         if not self.bot_token:
             logger.warning("TELEGRAM_BOT_TOKEN not found. Telegram functionality will be unavailable.")
             self.available = False
@@ -48,35 +52,133 @@ class TelegramService:
         except Exception as e:
             return {"success": False, "error": str(e)}
     
+    def split_long_message(self, text: str, max_length: int = 4096) -> list[str]:
+        """Split long messages intelligently at sentence boundaries"""
+        if len(text) <= max_length:
+            return [text]
+        
+        messages = []
+        current_message = ""
+        
+        # Split by paragraphs first, then sentences
+        paragraphs = text.split('\n\n')
+        
+        for paragraph in paragraphs:
+            if len(current_message + paragraph) <= max_length:
+                if current_message:
+                    current_message += "\n\n" + paragraph
+                else:
+                    current_message = paragraph
+            else:
+                # Save current message if it has content
+                if current_message:
+                    messages.append(current_message.strip())
+                    current_message = ""
+                
+                # Handle long paragraphs by splitting at sentences
+                if len(paragraph) > max_length:
+                    sentences = paragraph.split('. ')
+                    for sentence in sentences:
+                        if len(current_message + sentence) <= max_length:
+                            if current_message:
+                                current_message += ". " + sentence
+                            else:
+                                current_message = sentence
+                        else:
+                            if current_message:
+                                messages.append(current_message.strip())
+                            current_message = sentence
+                else:
+                    current_message = paragraph
+        
+        # Add remaining content
+        if current_message:
+            messages.append(current_message.strip())
+        
+        return messages
+
     async def send_message(self, chat_id: int, text: str, parse_mode: str = "Markdown") -> Dict[str, Any]:
-        """Send a message to a Telegram chat"""
+        """Send a message to a Telegram chat, splitting long messages properly"""
         if not self.available:
             return {"success": False, "error": "Telegram service not available"}
         
+        # Split long messages
+        message_parts = self.split_long_message(text)
+        
         try:
-            url = f"{self.base_url}/sendMessage"
-            # Try without markdown first to avoid parsing issues
-            payload = {
-                "chat_id": chat_id,
-                "text": text[:4096]  # Telegram message limit
-                # Remove parse_mode entirely to avoid issues
-            }
-            
+            results = []
             async with aiohttp.ClientSession() as session:
-                async with session.post(url, json=payload) as response:
-                    result = await response.json()
+                for i, part in enumerate(message_parts):
+                    url = f"{self.base_url}/sendMessage"
+                    payload = {
+                        "chat_id": chat_id,
+                        "text": part
+                    }
                     
-                    if response.status == 200 and result.get("ok"):
-                        logger.info(f"Message sent successfully to chat {chat_id}")
-                        return {"success": True, "message_id": result["result"]["message_id"]}
-                    else:
-                        error_msg = result.get("description", "Unknown error")
-                        logger.error(f"Failed to send message: {error_msg}")
-                        return {"success": False, "error": error_msg}
+                    async with session.post(url, json=payload) as response:
+                        result = await response.json()
+                        
+                        if response.status == 200 and result.get("ok"):
+                            results.append({
+                                "success": True, 
+                                "message_id": result["result"]["message_id"],
+                                "part": i + 1,
+                                "total_parts": len(message_parts)
+                            })
+                        else:
+                            error_msg = result.get("description", "Unknown error")
+                            logger.error(f"Failed to send message part {i+1}: {error_msg}")
+                            results.append({
+                                "success": False, 
+                                "error": error_msg,
+                                "part": i + 1
+                            })
+                    
+                    # Small delay between parts to avoid rate limiting
+                    if i < len(message_parts) - 1:
+                        await asyncio.sleep(0.5)
+            
+            # Return success if all parts sent successfully
+            all_success = all(r["success"] for r in results)
+            if all_success:
+                logger.info(f"All {len(message_parts)} message parts sent successfully to chat {chat_id}")
+                return {"success": True, "parts": len(message_parts), "results": results}
+            else:
+                return {"success": False, "parts": len(message_parts), "results": results}
                         
         except Exception as e:
             logger.error(f"Exception sending Telegram message: {str(e)}")
             return {"success": False, "error": str(e)}
+    
+    def add_to_conversation_history(self, chat_id: int, role: str, content: str):
+        """Add a message to conversation history"""
+        if chat_id not in self.conversation_history:
+            self.conversation_history[chat_id] = []
+        
+        self.conversation_history[chat_id].append({
+            "role": role,  # "user" or "assistant"
+            "content": content,
+            "timestamp": datetime.now().isoformat()
+        })
+        
+        # Keep only recent messages to avoid memory bloat
+        if len(self.conversation_history[chat_id]) > self.max_history_length:
+            self.conversation_history[chat_id] = self.conversation_history[chat_id][-self.max_history_length:]
+    
+    def get_conversation_context(self, chat_id: int, max_messages: int = 6) -> str:
+        """Get recent conversation history as context string"""
+        if chat_id not in self.conversation_history:
+            return ""
+        
+        recent_messages = self.conversation_history[chat_id][-max_messages:]
+        context_parts = []
+        
+        for msg in recent_messages:
+            role = "User" if msg["role"] == "user" else "Assistant"
+            content = msg["content"][:200] + "..." if len(msg["content"]) > 200 else msg["content"]
+            context_parts.append(f"{role}: {content}")
+        
+        return "\n".join(context_parts)
     
     async def edit_message(self, chat_id: int, message_id: int, text: str) -> Dict[str, Any]:
         """Edit an existing message"""
