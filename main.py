@@ -689,15 +689,16 @@ async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> st
                 if conversation_context:
                     context_query = f"Previous conversation:\n{conversation_context}\n\nCurrent question: {query}"
                 
-                # Fallback to general chat service
+                # Fallback to general chat service with natural response
                 chat_result = await chat_service.general_chat(
                     context_query,
                     jurisdiction=message_data.get("jurisdiction"),
-                    contract_type=message_data.get("contract_type")
+                    contract_type=message_data.get("contract_type"),
+                    force_natural_response=True  # Always use natural responses
                 )
                 
                 if chat_result.get("answer"):
-                    response = f"🤖 AI Assistant:\n\n{chat_result['answer']}"
+                    response = chat_result['answer']  # No robotic prefix
                     telegram_service.add_to_conversation_history(chat_id, "assistant", response)
                     return response
                 else:

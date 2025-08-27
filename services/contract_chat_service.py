@@ -165,23 +165,26 @@ Respond as Lexi. IMPORTANT: Always end your response with the disclaimer exactly
             if not content:
                 content = "I apologize, but I'm having trouble processing your question right now. Could you try rephrasing it?"
             
-            # Only add disclaimer for actual legal content, not casual chat
-            query_lower = query.lower()
-            casual_greetings = ["hello", "hi", "hey", "how are you", "good morning", "good afternoon", "good evening", "what's up", "how's it going"]
-            is_casual_greeting = any(greeting in query_lower for greeting in casual_greetings)
+            # Only add disclaimer for actual legal advice, not greetings or casual chat
+            query_lower = query.lower().strip()
+            content_lower = content.lower()
             
-            # Check if response discusses legal matters (not just keywords in query)
-            discusses_legal = any(word in content.lower() for word in ["legal", "contract", "law", "agreement", "clause", "liability", "terms", "attorney", "lawyer", "analyze", "review"])
+            # Simple greetings and casual responses should never have disclaimers
+            simple_greetings = ["hi", "hello", "hey", "hi!", "hello!", "hey!"]
+            is_simple_greeting = any(query_lower == greeting for greeting in simple_greetings)
             
-            if is_casual_greeting and not discusses_legal:
-                # Pure casual conversation - no disclaimer needed
+            # Only add disclaimer if giving actual legal advice or analysis
+            gives_legal_advice = any(phrase in content_lower for phrase in [
+                "analyze", "review", "recommend", "suggest", "should", "consider", 
+                "risky", "protect", "liability", "breach", "enforceable", "void"
+            ])
+            
+            if is_simple_greeting or not gives_legal_advice:
+                # No disclaimer for simple greetings or general info
                 formatted_content = content
-            elif discusses_legal:
-                # Legal discussion - add disclaimer
-                formatted_content = f"{content}\n\nDisclaimer: Not legal advice, general review — consult an attorney for your specific situation."
             else:
-                # General conversation - no disclaimer
-                formatted_content = content
+                # Only add disclaimer when actually giving legal advice
+                formatted_content = f"{content}\n\nDisclaimer: Not legal advice, general review — consult an attorney for your specific situation."
             
             return {
                 "answer": formatted_content,
