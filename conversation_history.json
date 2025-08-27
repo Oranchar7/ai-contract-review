@@ -135,6 +135,16 @@
       "role": "assistant",
       "content": "\ud83d\udc4b Hi there! I'm so glad you reached out! \n\n\u2728 I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.\n\n\ud83e\udd1d I'd love to help you with:\n\u2022 Making sense of contracts and agreements\n\u2022 Breaking down confusing legal terms into plain English  \n\u2022 Reviewing documents and spotting important details\n\u2022 Answering any contract questions you might have\n\n\ud83d\udcad Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!\n\n\ud83c\udf1f What's on your mind today?\n\n\u2696\ufe0f *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review.",
       "timestamp": "2025-08-27T16:04:39.853903"
+    },
+    {
+      "role": "user",
+      "content": "hi",
+      "timestamp": "2025-08-27T17:40:15.770902"
+    },
+    {
+      "role": "assistant",
+      "content": "Hi! I'm Lexi, I help with legal stuff. What can I do for you?\n\n\ud83d\udcc4 **Upload contract documents** for detailed analysis and risk assessment!",
+      "timestamp": "2025-08-27T17:40:15.771766"
     }
   ],
   "123": [
@@ -189,6 +199,18 @@
       "role": "assistant",
       "content": "Hi there! \ud83d\udc4b I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions.\n\n\ud83d\udcc4 **Upload your contract documents** for detailed analysis and risk assessment!\n\nI can also answer general legal questions. How can I assist you today?\n\nDisclaimer: Not legal advice, general review \u2014 consult an attorney for your specific situation.",
       "timestamp": "2025-08-27T17:03:07.057756"
+    }
+  ],
+  "123456789": [
+    {
+      "role": "user",
+      "content": "hi",
+      "timestamp": "2025-08-27T17:40:31.577206"
+    },
+    {
+      "role": "assistant",
+      "content": "Hi! I'm Lexi, I help with legal stuff. What can I do for you?\n\n\ud83d\udcc4 **Upload contract documents** for detailed analysis and risk assessment!",
+      "timestamp": "2025-08-27T17:40:31.578977"
     }
   ]
 }
