@@ -87,7 +87,7 @@ I'm your AI Contract Review Assistant, and I specialize in helping with legal do
 
 Is there anything contract or legal-related I can help you with today?
 
-**Disclaimer:** *This service provides legal insights for informational purposes only; consult a qualified attorney for advice on your situation.*"""
+⚠️ Not legal advice, general review — consult a lawyer for your specific situation."""
 
     async def general_chat(
         self, 
@@ -140,7 +140,7 @@ CORE BEHAVIOR:
 - For introductions: Acknowledge names warmly
 
 MANDATORY: ALWAYS end EVERY response with:
-**Disclaimer:** *This service provides legal insights for informational purposes only; consult a qualified attorney for advice on your situation.*
+⚠️ Not legal advice, general review — consult a lawyer for your specific situation.
 
 Keep responses short and conversational for Telegram. Use emojis sparingly: 📄, ⚖️, ✅."""
             else:
@@ -154,7 +154,7 @@ Your primary role:
 - Be professional yet approachable
 
 MANDATORY: ALWAYS end EVERY response with:
-**Disclaimer:** *This service provides legal insights for informational purposes only; consult a qualified attorney for advice on your situation.*
+⚠️ Not legal advice, general review — consult a lawyer for your specific situation.
 
 Keep replies concise and conversational for Telegram. Use emojis sparingly: 📄, ⚖️, ✅."""
 
@@ -193,7 +193,7 @@ Respond as Lexi. IMPORTANT: Always end your response with the disclaimer exactly
             if force_natural_response or not self._is_contract_related_query(query):
                 # For natural conversation, just add disclaimer when discussing legal topics
                 if any(word in content.lower() for word in ["legal", "contract", "law", "agreement", "clause"]):
-                    formatted_content = f"{content}\n\n**Disclaimer:** *This service provides legal insights for informational purposes only; consult a qualified attorney for advice on your situation.*"
+                    formatted_content = f"{content}\n\n⚠️ Not legal advice, general review — consult a lawyer for your specific situation."
                 else:
                     formatted_content = content
             else:
@@ -202,7 +202,7 @@ Respond as Lexi. IMPORTANT: Always end your response with the disclaimer exactly
                 formatted_content += "📋 For detailed analysis:\n"
                 formatted_content += "• Upload contract documents\n"
                 formatted_content += "• Ask specific legal questions"
-                formatted_content += "\n\n**Disclaimer:** *This service provides legal insights for informational purposes only; consult a qualified attorney for advice on your situation.*"
+                formatted_content += "\n\n⚠️ Not legal advice, general review — consult a lawyer for your specific situation."
             
             return {
                 "answer": formatted_content,
