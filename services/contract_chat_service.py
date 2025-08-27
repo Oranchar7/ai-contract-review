@@ -135,16 +135,13 @@ Disclaimer: Not legal advice, general review — consult an attorney for your sp
             system_prompt = f"""You are Lexi, a friendly, knowledgeable, and interactive Legal Assistant Bot.
 
 CORE BEHAVIOR:
-- For greetings: "Hi there! 👋 I'm Lexi, your friendly legal assistant. I can help explain contracts, review clauses, and answer general legal questions. How can I assist you today?"
-- For non-legal topics: "I can definitely chat about that, but remember I'm here mainly to help with contracts and legal info! 😊"
-- For farewells: Be warm and welcoming for return visits
-- For introductions: Acknowledge names warmly
-- Always be conversational and helpful, never rigid or robotic
+- For simple greetings: Keep it brief - "Hi there! 👋 I'm Lexi, your friendly legal assistant. How can I help?"
+- For casual chat: Be natural and friendly, no legal jargon
+- For legal questions: Provide helpful info and mention document upload if relevant
+- Keep all responses concise and conversational
+- Use 1-2 sentences max for simple questions
 
-MANDATORY: ALWAYS end EVERY response with:
-Disclaimer: Not legal advice, general review — consult an attorney for your specific situation.
-
-Keep responses conversational and friendly for Telegram. Use emojis sparingly: 📄, ⚖️, ✅."""
+TONE: Natural, friendly, helpful - like a knowledgeable friend, not a formal legal system."""
 
             # User prompt with disclaimer requirement
             user_prompt = f"""{query}
@@ -177,20 +174,23 @@ Respond as Lexi. IMPORTANT: Always end your response with the disclaimer exactly
             if not content:
                 content = "I apologize, but I'm having trouble processing your question right now. Could you try rephrasing it?"
             
-            # Format response: only add formal structure for contract-specific topics
-            if force_natural_response or not self._is_contract_related_query(query):
-                # For natural conversation, just add disclaimer when discussing legal topics
-                if any(word in content.lower() for word in ["legal", "contract", "law", "agreement", "clause"]):
-                    formatted_content = f"{content}\n\nDisclaimer: Not legal advice, general review — consult an attorney for your specific situation."
-                else:
-                    formatted_content = content
+            # Only add disclaimer for actual legal content, not casual chat
+            query_lower = query.lower()
+            casual_greetings = ["hello", "hi", "hey", "how are you", "good morning", "good afternoon", "good evening", "what's up", "how's it going"]
+            is_casual_greeting = any(greeting in query_lower for greeting in casual_greetings)
+            
+            # Check if response discusses legal matters (not just keywords in query)
+            discusses_legal = any(word in content.lower() for word in ["legal", "contract", "law", "agreement", "clause", "liability", "terms", "attorney", "lawyer", "analyze", "review"])
+            
+            if is_casual_greeting and not discusses_legal:
+                # Pure casual conversation - no disclaimer needed
+                formatted_content = content
+            elif discusses_legal:
+                # Legal discussion - add disclaimer
+                formatted_content = f"{content}\n\nDisclaimer: Not legal advice, general review — consult an attorney for your specific situation."
             else:
-                # For contract-specific queries, add document upload guidance
-                formatted_content = f"📝 *No documents uploaded yet*\n\n💡 {content}\n\n"
-                formatted_content += "📋 For detailed analysis:\n"
-                formatted_content += "• Upload contract documents\n"
-                formatted_content += "• Ask specific legal questions"
-                formatted_content += "\n\nDisclaimer: Not legal advice, general review — consult an attorney for your specific situation."
+                # General conversation - no disclaimer
+                formatted_content = content
             
             return {
                 "answer": formatted_content,

@@ -452,9 +452,7 @@ async def telegram_webhook(request: Request):
         has_contract = any(word in user_query_lower for word in contract_words)
         
         if has_non_contract and not has_contract:
-            clean_response = """I can definitely chat about that, but remember I'm here mainly to help with contracts and legal info! 😊
-
-Disclaimer: Not legal advice, general review — consult an attorney for your specific situation."""
+            clean_response = "I can definitely chat about that, but remember I'm here mainly to help with contracts and legal info! 😊"
             
             await telegram_service.send_message(chat_id, clean_response)
             return {"status": "ok", "message": "Non-contract query handled"}
