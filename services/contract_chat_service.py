@@ -13,6 +13,64 @@ class ContractChatService:
         # Use GPT-4o mini for friendly, conversational contract assistance
         self.chat_model = "gpt-4o-mini"
         
+    def _is_contract_related_query(self, query: str) -> bool:
+        """Check if a query is related to contracts, legal matters, or document analysis"""
+        query_lower = query.lower().strip()
+        
+        # Contract-related keywords
+        contract_keywords = [
+            # Direct contract terms
+            "contract", "agreement", "nda", "clause", "terms", "conditions", "legal",
+            "liability", "indemnity", "termination", "breach", "compliance", "negotiate",
+            
+            # Legal concepts
+            "law", "legal", "attorney", "lawyer", "court", "litigation", "dispute",
+            "jurisdiction", "governing", "statute", "regulation", "rights", "obligations",
+            
+            # Business/contract actions
+            "sign", "execute", "amend", "modify", "review", "analyze", "risk", "audit",
+            "due diligence", "merger", "acquisition", "partnership", "vendor", "supplier",
+            
+            # Document types
+            "employment", "lease", "rental", "purchase", "sale", "service", "licensing",
+            "confidentiality", "non-disclosure", "intellectual property", "copyright",
+            "trademark", "patent", "warranty", "guarantee", "insurance", "policy",
+            
+            # Financial/commercial terms
+            "payment", "invoice", "penalty", "damages", "compensation", "fee", "price",
+            "cost", "budget", "financial", "commercial", "business", "corporate",
+            
+            # Risk and analysis terms
+            "risky", "dangerous", "problematic", "unfair", "unreasonable", "standard",
+            "market", "industry", "benchmark", "best practice", "recommendation"
+        ]
+        
+        # Check if query contains contract keywords
+        if any(keyword in query_lower for keyword in contract_keywords):
+            return True
+        
+        return False
+
+    def _get_friendly_purpose_statement(self) -> str:
+        """Return a friendly statement about the bot's purpose for irrelevant queries"""
+        return """Hi there!
+
+I'm your AI Contract Review Assistant, and I specialize in helping with legal documents and contract-related questions.
+
+📋 What I can help you with:
+• Analyze contracts and agreements
+• Explain legal terms and clauses
+• Identify risks in documents
+• Answer contract-related questions
+• Provide legal guidance and recommendations
+
+💡 To get started:
+• Ask me about contract terms or legal concepts
+• Upload a contract document for analysis
+• Type 'help' to see all available commands
+
+Is there anything contract or legal-related I can help you with today?"""
+
     async def general_chat(
         self, 
         query: str, 
@@ -31,6 +89,13 @@ class ContractChatService:
             Conversational response with legal guidance
         """
         try:
+            # First check if query is contract-related
+            if not self._is_contract_related_query(query):
+                return {
+                    "answer": self._get_friendly_purpose_statement(),
+                    "type": "purpose_statement",
+                    "model_used": "filtering"
+                }
             # Build conversational context
             context_info = ""
             if jurisdiction:

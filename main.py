@@ -588,6 +588,7 @@ async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> st
         print(f"Query processing error: {str(e)}")
         return f"❌ *Error processing your query*: {str(e)}\n\n💡 Try typing 'help' for available commands."
 
+
 @app.get("/telegram_status")
 async def telegram_status():
     """Get Telegram bot status and webhook information"""
