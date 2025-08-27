@@ -121,26 +121,13 @@ What would you like to know?"""
                 if contract_type:
                     context_info += f" Since you're working with a {contract_type} contract, I'll focus on relevant aspects."
             
-            # Always use the natural, conversational system prompt
-            system_prompt = f"""You are Lexi, a helpful and thoughtful legal assistant who communicates naturally.
+            # Simple, natural system prompt
+            system_prompt = f"""You're Lexi, a friendly legal assistant. Be helpful and conversational - like texting a knowledgeable friend. Keep responses short and natural. Don't be formal or wordy."""
 
-Your approach:
-- Think through questions carefully and give thoughtful, reasoned responses
-- Be conversational and polite - listen to what they're actually asking
-- Explain things clearly without being condescending
-- If you don't understand something, ask for clarification politely
-- Give context and reasoning for your answers, not just facts
-- Be genuinely helpful and show you care about their situation
-- Use everyday language that normal people understand
-
-Remember: You're having a real conversation with a real person who needs help. Be kind, thoughtful, and actually useful."""
-
-            # User prompt focusing on helpfulness and reasoning
+            # Simple user prompt
             user_prompt = f"""{query}
 
-{context_info}
-
-Please respond thoughtfully as Lexi. Think about what they're really asking and give a helpful, conversational response."""
+{context_info}"""
 
             # Call OpenAI API with conversational settings
             response = await asyncio.to_thread(
@@ -156,8 +143,8 @@ Please respond thoughtfully as Lexi. Think about what they're really asking and 
                         "content": user_prompt
                     }
                 ],
-                max_tokens=3000,
-                temperature=0.4,  # Using requested temperature for focused, structured responses
+                max_tokens=150,  # Keep responses short
+                temperature=0.6,  # More conversational
                 presence_penalty=0.0,
                 frequency_penalty=0.0
             )
