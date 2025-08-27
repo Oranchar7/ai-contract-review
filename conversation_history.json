@@ -76,26 +76,6 @@
   "12345": [
     {
       "role": "user",
-      "content": "goodbye",
-      "timestamp": "2025-08-27T16:10:32.964248"
-    },
-    {
-      "role": "assistant",
-      "content": "RJ! It was great chatting with you again! If you ever want to talk or have more questions, just swing by. Take care and enjoy your day! \ud83c\udf1f\ud83d\udc4b",
-      "timestamp": "2025-08-27T16:10:32.967639"
-    },
-    {
-      "role": "user",
-      "content": "how is the weather",
-      "timestamp": "2025-08-27T16:11:18.038899"
-    },
-    {
-      "role": "assistant",
-      "content": "\ud83d\udc4b Hi there! I'm so glad you reached out! \n\n\u2728 I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.\n\n\ud83e\udd1d I'd love to help you with:\n\u2022 Making sense of contracts and agreements\n\u2022 Breaking down confusing legal terms into plain English  \n\u2022 Reviewing documents and spotting important details\n\u2022 Answering any contract questions you might have\n\n\ud83d\udcad Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!\n\n\ud83c\udf1f What's on your mind today?",
-      "timestamp": "2025-08-27T16:11:23.966878"
-    },
-    {
-      "role": "user",
       "content": "how is the weather",
       "timestamp": "2025-08-27T16:11:43.022929"
     },
@@ -123,6 +103,26 @@
       "role": "assistant",
       "content": "Hey! It sounds like you\u2019re heading out. If you ever want to chat again or need help with anything, just drop by! Take care and have a great day! \ud83d\ude0a\ud83d\udc4b",
       "timestamp": "2025-08-27T16:12:09.428388"
+    },
+    {
+      "role": "user",
+      "content": "hello",
+      "timestamp": "2025-08-27T16:13:29.780113"
+    },
+    {
+      "role": "assistant",
+      "content": "\ud83d\udc4b Hi there! I'm so glad you reached out! \n\n\u2728 I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.\n\n\ud83e\udd1d I'd love to help you with:\n\u2022 Making sense of contracts and agreements\n\u2022 Breaking down confusing legal terms into plain English  \n\u2022 Reviewing documents and spotting important details\n\u2022 Answering any contract questions you might have\n\n\ud83d\udcad Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!\n\n\ud83c\udf1f What's on your mind today?\n\n\u2696\ufe0f *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review.",
+      "timestamp": "2025-08-27T16:13:29.781008"
+    },
+    {
+      "role": "user",
+      "content": "how are you today",
+      "timestamp": "2025-08-27T16:13:30.949156"
+    },
+    {
+      "role": "assistant",
+      "content": "Hey! I'm doing great, thanks for asking! \ud83d\ude0a How about you? What\u2019s been going on in your world today?",
+      "timestamp": "2025-08-27T16:13:30.953308"
     }
   ],
   "789": [
