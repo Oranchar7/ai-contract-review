@@ -848,6 +848,81 @@ async def set_telegram_webhook(webhook_url: str = Form(...)):
             "message": str(e)
         }
 
+@app.post("/set_render_webhook")
+async def set_render_webhook():
+    """Set Telegram webhook to Render deployment URL (from environment)"""
+    try:
+        if not telegram_service.is_available():
+            return {
+                "status": "error",
+                "message": "Telegram service not available. Check TELEGRAM_BOT_TOKEN."
+            }
+        
+        # Try to get Render URL from environment
+        render_url = os.getenv('RENDER_EXTERNAL_URL')
+        if not render_url:
+            return {
+                "status": "error", 
+                "message": "RENDER_EXTERNAL_URL not set. Use /set_render_webhook_manual instead."
+            }
+        
+        webhook_url = f"{render_url}/telegram_webhook"
+        result = await telegram_service.set_webhook(webhook_url)
+        
+        if result.get("success"):
+            return {
+                "status": "success",
+                "message": f"Webhook set to Render URL: {webhook_url}",
+                "webhook_url": webhook_url
+            }
+        else:
+            return {
+                "status": "error", 
+                "message": result.get("error", "Failed to set webhook to Render URL")
+            }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": str(e)
+        }
+
+@app.post("/set_render_webhook_manual")
+async def set_render_webhook_manual(render_url: str = Form(...)):
+    """Manually set Telegram webhook to provided Render URL"""
+    try:
+        if not telegram_service.is_available():
+            return {
+                "status": "error",
+                "message": "Telegram service not available. Check TELEGRAM_BOT_TOKEN."
+            }
+        
+        # Ensure URL format is correct
+        if not render_url.startswith('https://'):
+            render_url = f"https://{render_url}"
+        
+        # Remove trailing slash if present
+        render_url = render_url.rstrip('/')
+        
+        webhook_url = f"{render_url}/telegram_webhook"
+        result = await telegram_service.set_webhook(webhook_url)
+        
+        if result.get("success"):
+            return {
+                "status": "success",
+                "message": f"Webhook set to: {webhook_url}",
+                "webhook_url": webhook_url
+            }
+        else:
+            return {
+                "status": "error", 
+                "message": result.get("error", "Failed to set webhook")
+            }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": str(e)
+        }
+
 @app.get("/test-vector")
 async def test_vector_storage():
     """Test endpoint to verify Pinecone vector storage persistence"""
