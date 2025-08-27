@@ -22,7 +22,9 @@ class FirebaseClient:
                 project_id = os.environ.get("FIREBASE_PROJECT_ID")
                 
                 if not project_id:
-                    raise Exception("FIREBASE_PROJECT_ID environment variable is required")
+                    print("Firebase disabled: FIREBASE_PROJECT_ID not configured")
+                    self.db = None
+                    return
                 
                 # Initialize with service account key from environment if available
                 service_account_info = os.environ.get("FIREBASE_SERVICE_ACCOUNT_KEY")
@@ -31,20 +33,26 @@ class FirebaseClient:
                     # Parse service account key from environment variable
                     service_account = json.loads(service_account_info)
                     cred = credentials.Certificate(service_account)
+                    
+                    firebase_admin.initialize_app(cred, {
+                        'projectId': project_id
+                    })
+                    
+                    self.db = firestore.client()
+                    print(f"Firebase initialized successfully with project: {project_id}")
                 else:
-                    # Use default credentials for production (works in Google Cloud environments)
-                    cred = credentials.ApplicationDefault()
-                
-                firebase_admin.initialize_app(cred, {
-                    'projectId': project_id
-                })
-            
-            self.db = firestore.client()
-            print(f"Firebase initialized successfully with project: {os.environ.get('FIREBASE_PROJECT_ID')}")
+                    # Firebase service account not configured - disable Firebase but continue
+                    print("Firebase disabled: Service account key not configured")
+                    print("System will work without data persistence")
+                    self.db = None
+            else:
+                # Firebase already initialized
+                self.db = firestore.client()
+                print(f"Firebase reusing existing connection")
             
         except Exception as e:
-            print(f"Warning: Firebase initialization failed: {str(e)}")
-            print("Contract analysis will work without Firebase, but data won't be persisted.")
+            print(f"Firebase initialization failed: {str(e)}")
+            print("System will continue without Firebase data persistence")
             self.db = None
     
     async def store_analysis(
