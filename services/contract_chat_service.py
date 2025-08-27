@@ -188,8 +188,14 @@ Please provide helpful, conversational advice that's easy to understand. If this
             if not content:
                 content = "I apologize, but I'm having trouble processing your question right now. Could you try rephrasing it?"
             
+            # Always add detailed analysis section for contract responses
+            formatted_content = f"📝 *No documents uploaded yet*\n\n💡 {content}\n\n"
+            formatted_content += "📋 For detailed analysis:\n"
+            formatted_content += "• Upload contract documents\n"
+            formatted_content += "• Ask specific legal questions"
+            
             return {
-                "answer": content,
+                "answer": formatted_content,
                 "type": "general_chat",
                 "model_used": self.chat_model
             }

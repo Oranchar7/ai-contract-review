@@ -24,53 +24,53 @@
   "99999": [
     {
       "role": "user",
-      "content": "hi",
-      "timestamp": "2025-08-27T12:58:08.657872"
+      "content": "what is liability clause",
+      "timestamp": "2025-08-27T13:08:47.852944"
     },
     {
       "role": "assistant",
-      "content": "\ud83d\udc4b Hi there! I'm so glad you reached out! \n\n\u2728 I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.\n\n\ud83e\udd1d I'd love to help you with:\n\u2022 Making sense of contracts and agreements\n\u2022 Breaking down confusing legal terms into plain English  \n\u2022 Reviewing documents and spotting important details\n\u2022 Answering any contract questions you might have\n\n\ud83d\udcad Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!\n\n\ud83c\udf1f What's on your mind today?",
-      "timestamp": "2025-08-27T12:58:08.658476"
-    },
-    {
-      "role": "user",
-      "content": "hey",
-      "timestamp": "2025-08-27T12:58:08.733781"
-    },
-    {
-      "role": "assistant",
-      "content": "\ud83d\udc4b Hi there! I'm so glad you reached out! \n\n\u2728 I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.\n\n\ud83e\udd1d I'd love to help you with:\n\u2022 Making sense of contracts and agreements\n\u2022 Breaking down confusing legal terms into plain English  \n\u2022 Reviewing documents and spotting important details\n\u2022 Answering any contract questions you might have\n\n\ud83d\udcad Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!\n\n\ud83c\udf1f What's on your mind today?",
-      "timestamp": "2025-08-27T12:58:08.734493"
-    },
-    {
-      "role": "user",
-      "content": "hi",
-      "timestamp": "2025-08-27T12:58:10.591755"
-    },
-    {
-      "role": "assistant",
-      "content": "\ud83d\udc4b Hi there! I'm so glad you reached out! \n\n\u2728 I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.\n\n\ud83e\udd1d I'd love to help you with:\n\u2022 Making sense of contracts and agreements\n\u2022 Breaking down confusing legal terms into plain English  \n\u2022 Reviewing documents and spotting important details\n\u2022 Answering any contract questions you might have\n\n\ud83d\udcad Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!\n\n\ud83c\udf1f What's on your mind today?",
-      "timestamp": "2025-08-27T12:58:10.595602"
-    },
-    {
-      "role": "user",
-      "content": "hey",
-      "timestamp": "2025-08-27T12:58:12.175536"
-    },
-    {
-      "role": "assistant",
-      "content": "\ud83d\udc4b Hi there! I'm so glad you reached out! \n\n\u2728 I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.\n\n\ud83e\udd1d I'd love to help you with:\n\u2022 Making sense of contracts and agreements\n\u2022 Breaking down confusing legal terms into plain English  \n\u2022 Reviewing documents and spotting important details\n\u2022 Answering any contract questions you might have\n\n\ud83d\udcad Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!\n\n\ud83c\udf1f What's on your mind today?",
-      "timestamp": "2025-08-27T12:58:12.177250"
+      "content": "\ud83d\udca1 A liability clause is a provision in a contract that outlines the responsibilities and potential liabilities of the parties involved. It typically specifies who is responsible for damages or losses that may occur as a result of the contract. This clause can help protect parties from unforeseen circumstances and clarify the extent of their obligations. It's important to ensure that the liability clause is fair and reasonable, taking into consideration the nature of the agreement and the risks involved.\n\n\ud83d\udccb For detailed analysis:\n\u2022 Upload contract documents\n\u2022 Ask specific legal questions",
+      "timestamp": "2025-08-27T13:08:52.361164"
     },
     {
       "role": "user",
       "content": "hello",
-      "timestamp": "2025-08-27T13:02:22.829982"
+      "timestamp": "2025-08-27T13:08:52.616192"
     },
     {
       "role": "assistant",
       "content": "\ud83d\udc4b Hi there! I'm so glad you reached out! \n\n\u2728 I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.\n\n\ud83e\udd1d I'd love to help you with:\n\u2022 Making sense of contracts and agreements\n\u2022 Breaking down confusing legal terms into plain English  \n\u2022 Reviewing documents and spotting important details\n\u2022 Answering any contract questions you might have\n\n\ud83d\udcad Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!\n\n\ud83c\udf1f What's on your mind today?",
-      "timestamp": "2025-08-27T13:02:22.830529"
+      "timestamp": "2025-08-27T13:08:52.616594"
+    },
+    {
+      "role": "user",
+      "content": "what is liability clause",
+      "timestamp": "2025-08-27T13:09:06.052205"
+    },
+    {
+      "role": "assistant",
+      "content": "\ud83d\udcdd *No documents uploaded yet*\n\n\ud83d\udca1 A liability clause is a provision in a contract that defines the extent to which each party is responsible for damages or losses that may occur during the execution of the contract. It helps to allocate risk between the parties and can limit liability to a certain amount or exclude certain types of damages. It's essential to ensure that the liability clause is clear and fair to both parties to avoid disputes in the future.\n\n\ud83d\udccb For detailed analysis:\n\u2022 Upload contract documents\n\u2022 Ask specific legal questions",
+      "timestamp": "2025-08-27T13:09:12.005420"
+    },
+    {
+      "role": "user",
+      "content": "explain MSA terms",
+      "timestamp": "2025-08-27T13:09:12.359047"
+    },
+    {
+      "role": "assistant",
+      "content": "\ud83d\udcdd *No documents uploaded yet*\n\n\ud83d\udca1 An MSA, or Master Service Agreement, is a contract that outlines the general terms and conditions between parties who anticipate entering into multiple agreements or transactions over time. It typically includes key terms such as the scope of services, payment terms, confidentiality obligations, liability clauses, and dispute resolution procedures. The purpose of an MSA is to streamline future agreements by establishing a framework that governs the relationship between the parties.\n\n\ud83d\udccb For detailed analysis:\n\u2022 Upload contract documents\n\u2022 Ask specific legal questions",
+      "timestamp": "2025-08-27T13:09:18.028854"
+    },
+    {
+      "role": "user",
+      "content": "hello",
+      "timestamp": "2025-08-27T13:09:26.934015"
+    },
+    {
+      "role": "assistant",
+      "content": "\ud83d\udc4b Hi there! I'm so glad you reached out! \n\n\u2728 I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.\n\n\ud83e\udd1d I'd love to help you with:\n\u2022 Making sense of contracts and agreements\n\u2022 Breaking down confusing legal terms into plain English  \n\u2022 Reviewing documents and spotting important details\n\u2022 Answering any contract questions you might have\n\n\ud83d\udcad Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!\n\n\ud83c\udf1f What's on your mind today?",
+      "timestamp": "2025-08-27T13:09:26.934353"
     }
   ]
 }

@@ -363,7 +363,21 @@ class TelegramService:
             if "response" in rag_result:
                 # Simple chat response
                 response = rag_result["response"].replace("*", "").replace("**", "")
-                return f"💡 {response}"
+                retrieved_chunks = rag_result.get("retrieved_chunks", 0)
+                
+                # Add no documents indicator if no documents available
+                formatted_response = ""
+                if retrieved_chunks == 0:
+                    formatted_response += "📝 *No documents uploaded yet*\n\n"
+                
+                formatted_response += f"💡 {response}\n\n"
+                
+                # Always add detailed analysis section for contract responses
+                formatted_response += "📋 For detailed analysis:\n"
+                formatted_response += "• Upload contract documents\n"
+                formatted_response += "• Ask specific legal questions"
+                
+                return formatted_response
             
             elif "summary" in rag_result:
                 # RAG analysis response
@@ -375,23 +389,20 @@ class TelegramService:
                 summary = summary.replace("*", "").replace("**", "")
                 
                 # Check if this is a "no documents" response
-                if retrieved_chunks == 0 and "No documents uploaded" in summary:
-                    # Extract the main answer from summary (remove the "No documents uploaded yet." part)
+                if retrieved_chunks == 0:
+                    # Always add no documents indicator at beginning
+                    formatted_response = "📝 *No documents uploaded yet*\n\n"
+                    
+                    # Extract the main answer from summary (remove the "No documents uploaded yet." part if present)
                     main_answer = summary.replace("No documents uploaded yet.", "").strip()
                     
-                    # Format clean response with clear sections
-                    if len(main_answer) > 200:
-                        # For longer responses, break into sections
-                        formatted_response = f"💡 {main_answer}\n\n"
-                        formatted_response += "📋 For detailed analysis:\n"
-                        formatted_response += "• Upload contract documents\n"
-                        formatted_response += "• Ask specific legal questions"
-                    else:
-                        # For shorter responses, keep it simple
-                        formatted_response = f"💡 {main_answer}\n\n"
-                        formatted_response += "📋 Next steps:\n"
-                        formatted_response += "• Upload documents for analysis\n"
-                        formatted_response += "• Ask about specific contract terms"
+                    # Add the main response
+                    formatted_response += f"💡 {main_answer}\n\n"
+                    
+                    # Always add detailed analysis section
+                    formatted_response += "📋 For detailed analysis:\n"
+                    formatted_response += "• Upload contract documents\n"
+                    formatted_response += "• Ask specific legal questions"
                     
                     return formatted_response
                 
@@ -413,6 +424,11 @@ class TelegramService:
                     citations = rag_result.get("source_citations", [])
                     if citations:
                         formatted_response += f"\n\n🔗 References: {', '.join(citations[:3])}"
+                    
+                    # Always add detailed analysis section
+                    formatted_response += "\n\n📋 For detailed analysis:\n"
+                    formatted_response += "• Upload contract documents\n"
+                    formatted_response += "• Ask specific legal questions"
                     
                     return formatted_response
             
