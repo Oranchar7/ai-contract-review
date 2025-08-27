@@ -47,7 +47,18 @@ class ContractChatService:
             # Service Level Agreements and related terms
             "sla", "service level agreement", "service level", "uptime", "availability",
             "response time", "escalation", "service credit", "maintenance window",
-            "performance metric", "service delivery", "downtime", "outage"
+            "performance metric", "service delivery", "downtime", "outage",
+            
+            # Contract type abbreviations
+            "msa", "master service agreement", "sow", "statement of work", "loi", "letter of intent",
+            "mou", "memorandum of understanding", "nca", "non-compete agreement", 
+            "cda", "confidentiality disclosure agreement", "pii", "personally identifiable information",
+            "gdpr", "general data protection regulation", "ccpa", "california consumer privacy act",
+            "hipaa", "health insurance portability", "sox", "sarbanes oxley", "pci", "payment card industry",
+            "eula", "end user license agreement", "tos", "terms of service", "pp", "privacy policy",
+            "dpa", "data processing agreement", "baa", "business associate agreement",
+            "rfi", "request for information", "rfp", "request for proposal", "rfq", "request for quote",
+            "po", "purchase order", "dnr", "do not resuscitate", "aup", "acceptable use policy"
         ]
         
         # Check if query contains contract keywords
