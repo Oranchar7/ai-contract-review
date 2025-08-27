@@ -193,6 +193,7 @@ Please provide helpful, conversational advice that's easy to understand. If this
             formatted_content += "📋 For detailed analysis:\n"
             formatted_content += "• Upload contract documents\n"
             formatted_content += "• Ask specific legal questions"
+            formatted_content += "\n\n⚖️ *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review."
             
             return {
                 "answer": formatted_content,

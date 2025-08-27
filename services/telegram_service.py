@@ -185,6 +185,10 @@ class TelegramService:
         
         return "\n".join(context_parts)
     
+    def get_legal_disclaimer(self) -> str:
+        """Get standard legal disclaimer for all responses"""
+        return "\n\n⚖️ *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review."
+    
     def load_conversations(self) -> Dict[int, list]:
         """Load conversation history from file"""
         try:
@@ -377,6 +381,9 @@ class TelegramService:
                 formatted_response += "• Upload contract documents\n"
                 formatted_response += "• Ask specific legal questions"
                 
+                # Add legal disclaimer
+                formatted_response += self.get_legal_disclaimer()
+                
                 return formatted_response
             
             elif "summary" in rag_result:
@@ -404,6 +411,9 @@ class TelegramService:
                     formatted_response += "• Upload contract documents\n"
                     formatted_response += "• Ask specific legal questions"
                     
+                    # Add legal disclaimer
+                    formatted_response += self.get_legal_disclaimer()
+                    
                     return formatted_response
                 
                 # Regular analysis with documents
@@ -430,6 +440,9 @@ class TelegramService:
                     formatted_response += "• Upload contract documents\n"
                     formatted_response += "• Ask specific legal questions"
                     
+                    # Add legal disclaimer
+                    formatted_response += self.get_legal_disclaimer()
+                    
                     return formatted_response
             
             else:
@@ -443,9 +456,9 @@ class TelegramService:
     def get_dummy_responses(self) -> Dict[str, str]:
         """Get predefined dummy responses for testing"""
         return {
-            "hello": "👋 Hi there! I'm so glad you reached out! \n\n✨ I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.\n\n🤝 I'd love to help you with:\n• Making sense of contracts and agreements\n• Breaking down confusing legal terms into plain English  \n• Reviewing documents and spotting important details\n• Answering any contract questions you might have\n\n💭 Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!\n\n🌟 What's on your mind today?",
+            "hello": "👋 Hi there! I'm so glad you reached out! \n\n✨ I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.\n\n🤝 I'd love to help you with:\n• Making sense of contracts and agreements\n• Breaking down confusing legal terms into plain English  \n• Reviewing documents and spotting important details\n• Answering any contract questions you might have\n\n💭 Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!\n\n🌟 What's on your mind today?\n\n⚖️ *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review.",
             
-            "help": "🔍 Available Commands:\n\n• Ask me about contract terms\n• Request contract analysis\n• Ask legal questions\n• Type 'test' for a sample analysis\n\n💡 Tip: I work best when you upload contract documents first!",
+            "help": "🔍 Available Commands:\n\n• Ask me about contract terms\n• Request contract analysis\n• Ask legal questions\n• Type 'test' for a sample analysis\n\n💡 Tip: I work best when you upload contract documents first!\n\n⚖️ *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review.",
             
             "test": """📋 *Sample Contract Analysis*
             
