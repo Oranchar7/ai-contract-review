@@ -210,26 +210,50 @@ class TelegramService:
             elif "summary" in rag_result:
                 # RAG analysis response
                 summary = rag_result.get("summary", "")
-                risk_score = rag_result.get("overall_risk_score", 0)
                 retrieved_chunks = rag_result.get("retrieved_chunks", 0)
+                notes = rag_result.get("notes", [])
                 
-                formatted_response = f"📋 *Contract Analysis*\n\n"
+                # Check if this is a "no documents" response
+                if retrieved_chunks == 0 and "No documents uploaded" in summary:
+                    # Format for no documents case
+                    formatted_response = f"📄 *No documents uploaded yet*\n\n"
+                    
+                    # Extract the main answer from summary (remove the "No documents uploaded yet." part)
+                    main_answer = summary.replace("No documents uploaded yet.", "").strip()
+                    if main_answer:
+                        formatted_response += f"{main_answer}\n\n"
+                    
+                    # Add friendly instructions from notes
+                    if notes:
+                        formatted_response += "*💡 To get specific analysis:*\n"
+                        for note in notes:
+                            if note.startswith("•"):
+                                formatted_response += f"{note}\n"
+                            else:
+                                formatted_response += f"• {note}\n"
+                    
+                    return formatted_response
                 
-                if risk_score > 0:
-                    risk_emoji = "🔴" if risk_score >= 7 else "🟡" if risk_score >= 4 else "🟢"
-                    formatted_response += f"{risk_emoji} *Risk Score*: {risk_score}/10\n\n"
-                
-                formatted_response += f"*Analysis*:\n{summary}"
-                
-                if retrieved_chunks > 0:
-                    formatted_response += f"\n\n📄 *Sources*: {retrieved_chunks} document sections analyzed"
-                
-                # Add citations if available
-                citations = rag_result.get("source_citations", [])
-                if citations:
-                    formatted_response += f"\n\n🔗 *References*: {', '.join(citations[:3])}"
-                
-                return formatted_response
+                # Regular analysis with documents
+                else:
+                    risk_score = rag_result.get("overall_risk_score", 0)
+                    formatted_response = f"📋 *Contract Analysis*\n\n"
+                    
+                    if risk_score > 0:
+                        risk_emoji = "🔴" if risk_score >= 7 else "🟡" if risk_score >= 4 else "🟢"
+                        formatted_response += f"{risk_emoji} *Risk Score*: {risk_score}/10\n\n"
+                    
+                    formatted_response += f"*Analysis*:\n{summary}"
+                    
+                    if retrieved_chunks > 0:
+                        formatted_response += f"\n\n📄 *Sources*: {retrieved_chunks} document sections analyzed"
+                    
+                    # Add citations if available
+                    citations = rag_result.get("source_citations", [])
+                    if citations:
+                        formatted_response += f"\n\n🔗 *References*: {', '.join(citations[:3])}"
+                    
+                    return formatted_response
             
             else:
                 # Fallback for unexpected format
