@@ -42,7 +42,12 @@ class ContractChatService:
             
             # Risk and analysis terms
             "risky", "dangerous", "problematic", "unfair", "unreasonable", "standard",
-            "market", "industry", "benchmark", "best practice", "recommendation"
+            "market", "industry", "benchmark", "best practice", "recommendation",
+            
+            # Service Level Agreements and related terms
+            "sla", "service level agreement", "service level", "uptime", "availability",
+            "response time", "escalation", "service credit", "maintenance window",
+            "performance metric", "service delivery", "downtime", "outage"
         ]
         
         # Check if query contains contract keywords
