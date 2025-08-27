@@ -236,7 +236,7 @@ Is there anything contract or legal-related I can assist you with today?"""
             if "response" in rag_result:
                 # Simple chat response
                 response = rag_result["response"].replace("*", "").replace("**", "")
-                return f"💡 AI Legal Assistant\n\n{response}"
+                return f"💡 {response[:400]}..."
             
             elif "summary" in rag_result:
                 # RAG analysis response
@@ -249,25 +249,22 @@ Is there anything contract or legal-related I can assist you with today?"""
                 
                 # Check if this is a "no documents" response
                 if retrieved_chunks == 0 and "No documents uploaded" in summary:
-                    # Format for no documents case
-                    formatted_response = f"💡 AI Legal Assistant\n\n"
-                    
                     # Extract the main answer from summary (remove the "No documents uploaded yet." part)
                     main_answer = summary.replace("No documents uploaded yet.", "").strip()
-                    if main_answer:
-                        formatted_response += f"{main_answer}\n\n"
                     
-                    # Add friendly instructions from notes
-                    if notes and len(notes) > 0:
-                        formatted_response += "📋 To get specific analysis:\n"
-                        for note in notes:
-                            clean_note = note.replace("*", "").replace("**", "").replace("💡", "").strip()
-                            # Skip redundant instruction notes
-                            if clean_note and not clean_note.startswith("To get specific analysis") and not "To get specific analysis" in clean_note:
-                                if clean_note.startswith("•"):
-                                    formatted_response += f"{clean_note}\n"
-                                elif clean_note.startswith("Upload"):
-                                    formatted_response += f"• {clean_note}\n"
+                    # Format clean response with clear sections
+                    if len(main_answer) > 200:
+                        # For longer responses, break into sections
+                        formatted_response = f"💡 {main_answer[:200]}...\n\n"
+                        formatted_response += "📋 For detailed analysis:\n"
+                        formatted_response += "• Upload contract documents\n"
+                        formatted_response += "• Ask specific legal questions"
+                    else:
+                        # For shorter responses, keep it simple
+                        formatted_response = f"💡 {main_answer}\n\n"
+                        formatted_response += "📋 Next steps:\n"
+                        formatted_response += "• Upload documents for analysis\n"
+                        formatted_response += "• Ask about specific contract terms"
                     
                     return formatted_response
                 
@@ -303,9 +300,9 @@ Is there anything contract or legal-related I can assist you with today?"""
     def get_dummy_responses(self) -> Dict[str, str]:
         """Get predefined dummy responses for testing"""
         return {
-            "hello": "👋 Hello! I'm your AI Contract Assistant. I can help you analyze contracts and answer legal questions. Try asking me about contract terms or upload a document for analysis!",
+            "hello": "👋 Hello! I'm your AI Contract Assistant.\n\n📋 I can help you:\n• Analyze contracts and agreements\n• Explain legal terms\n• Answer contract questions\n\n💡 Try asking me about contract terms like MSA, SLA, or NDA!",
             
-            "help": "🔍 *Available Commands*:\n\n• Ask me about contract terms\n• Request contract analysis\n• Ask legal questions\n• Type 'test' for a sample analysis\n\n💡 *Tip*: I work best when you upload contract documents first!",
+            "help": "🔍 Available Commands:\n\n• Ask me about contract terms\n• Request contract analysis\n• Ask legal questions\n• Type 'test' for a sample analysis\n\n💡 Tip: I work best when you upload contract documents first!",
             
             "test": """📋 *Sample Contract Analysis*
             
