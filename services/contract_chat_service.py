@@ -122,7 +122,9 @@ What would you like to know?"""
                     context_info += f" Since you're working with a {contract_type} contract, I'll focus on relevant aspects."
             
             # Simple, natural system prompt
-            system_prompt = f"""You're Lexi, a friendly legal assistant. Be helpful and conversational - like texting a knowledgeable friend. Keep responses short and natural. Don't be formal or wordy."""
+            system_prompt = f"""You're Lexi, a friendly legal assistant. Be helpful and conversational - like texting a knowledgeable friend. Keep responses short and natural. Don't be formal or wordy.
+
+For capability questions ("help", "what can you do"), explain your abilities naturally and conversationally."""
 
             # Simple user prompt
             user_prompt = f"""{query}

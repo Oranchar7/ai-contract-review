@@ -128,16 +128,6 @@
   "789": [
     {
       "role": "user",
-      "content": "hello",
-      "timestamp": "2025-08-27T16:04:39.852780"
-    },
-    {
-      "role": "assistant",
-      "content": "\ud83d\udc4b Hi there! I'm so glad you reached out! \n\n\u2728 I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.\n\n\ud83e\udd1d I'd love to help you with:\n\u2022 Making sense of contracts and agreements\n\u2022 Breaking down confusing legal terms into plain English  \n\u2022 Reviewing documents and spotting important details\n\u2022 Answering any contract questions you might have\n\n\ud83d\udcad Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!\n\n\ud83c\udf1f What's on your mind today?\n\n\u2696\ufe0f *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review.",
-      "timestamp": "2025-08-27T16:04:39.853903"
-    },
-    {
-      "role": "user",
       "content": "hi",
       "timestamp": "2025-08-27T17:40:15.770902"
     },
@@ -145,28 +135,98 @@
       "role": "assistant",
       "content": "Hi! I'm Lexi, I help with legal stuff. What can I do for you?\n\n\ud83d\udcc4 **Upload contract documents** for detailed analysis and risk assessment!",
       "timestamp": "2025-08-27T17:40:15.771766"
+    },
+    {
+      "role": "user",
+      "content": "what can you do",
+      "timestamp": "2025-08-27T17:45:20.301238"
+    },
+    {
+      "role": "assistant",
+      "content": "I can help answer legal questions, explain legal terms, and give info on processes like contracts or disputes. Need help with something specific?",
+      "timestamp": "2025-08-27T17:45:20.304872"
+    },
+    {
+      "role": "user",
+      "content": "help",
+      "timestamp": "2025-08-27T17:45:22.144371"
+    },
+    {
+      "role": "assistant",
+      "content": "\ud83d\udd0d Available Commands:\n\n\u2022 Ask me about contract terms\n\u2022 Request contract analysis\n\u2022 Ask legal questions\n\u2022 Type 'test' for a sample analysis\n\n\ud83d\udca1 Tip: I work best when you upload contract documents first!\n\nDisclaimer: Not legal advice, general review \u2014 consult an attorney for your specific situation.",
+      "timestamp": "2025-08-27T17:45:22.145211"
+    },
+    {
+      "role": "user",
+      "content": "help",
+      "timestamp": "2025-08-27T17:45:59.857061"
+    },
+    {
+      "role": "assistant",
+      "content": "\ud83d\udd0d Available Commands:\n\n\u2022 Ask me about contract terms\n\u2022 Request contract analysis\n\u2022 Ask legal questions\n\u2022 Type 'test' for a sample analysis\n\n\ud83d\udca1 Tip: I work best when you upload contract documents first!\n\nDisclaimer: Not legal advice, general review \u2014 consult an attorney for your specific situation.",
+      "timestamp": "2025-08-27T17:45:59.861916"
+    },
+    {
+      "role": "user",
+      "content": "help",
+      "timestamp": "2025-08-27T17:46:44.944807"
+    },
+    {
+      "role": "assistant",
+      "content": "Hey! I\u2019m here to help with legal questions, explain concepts, or guide you through processes. What do you need help with?",
+      "timestamp": "2025-08-27T17:46:44.946652"
     }
   ],
   "123": [
     {
-      "role": "user",
-      "content": "hello",
-      "timestamp": "2025-08-27T16:17:43.031949"
-    },
-    {
       "role": "assistant",
-      "content": "\ud83d\udc4b Hi there! I'm so glad you reached out! \n\n\u2728 I'm your friendly AI Contract Assistant, and I'm here to make legal documents less intimidating and more understandable for you.\n\n\ud83e\udd1d I'd love to help you with:\n\u2022 Making sense of contracts and agreements\n\u2022 Breaking down confusing legal terms into plain English  \n\u2022 Reviewing documents and spotting important details\n\u2022 Answering any contract questions you might have\n\n\ud83d\udcad Feel free to ask me about anything - whether it's understanding an MSA, figuring out what an NDA means, or just chatting about legal stuff in general. I'm here to help!\n\n\ud83c\udf1f What's on your mind today?\n\n\u2696\ufe0f *Legal Disclaimer:* This is not legal advice. Consult a lawyer for final review.",
-      "timestamp": "2025-08-27T16:17:43.037526"
+      "content": "\ud83d\udd0d Available Commands:\n\n\u2022 Ask me about contract terms\n\u2022 Request contract analysis\n\u2022 Ask legal questions\n\u2022 Type 'test' for a sample analysis\n\n\ud83d\udca1 Tip: I work best when you upload contract documents first!\n\nDisclaimer: Not legal advice, general review \u2014 consult an attorney for your specific situation.",
+      "timestamp": "2025-08-27T17:44:35.731091"
     },
     {
       "role": "user",
-      "content": "can you help me constructing my SLA",
-      "timestamp": "2025-08-27T17:43:35.195426"
+      "content": "can you help me with my contract",
+      "timestamp": "2025-08-27T17:44:36.485164"
     },
     {
       "role": "assistant",
-      "content": "Of course! What specific parts of the SLA do you need help with? Like the scope, responsibilities, or maybe the metrics?",
-      "timestamp": "2025-08-27T17:43:35.199589"
+      "content": "Of course! What do you need help with?",
+      "timestamp": "2025-08-27T17:44:36.486058"
+    },
+    {
+      "role": "user",
+      "content": "what do you think about this clause",
+      "timestamp": "2025-08-27T17:44:37.366911"
+    },
+    {
+      "role": "assistant",
+      "content": "Sure! Just share the clause, and I\u2019ll give you my thoughts on it. \ud83d\ude0a",
+      "timestamp": "2025-08-27T17:44:37.368049"
+    },
+    {
+      "role": "user",
+      "content": "goodbye",
+      "timestamp": "2025-08-27T17:44:37.941788"
+    },
+    {
+      "role": "assistant",
+      "content": "No problem! If you need help later, just drop by. Take care! \ud83d\udc4b\ud83d\ude0a",
+      "timestamp": "2025-08-27T17:44:37.943245"
+    },
+    {
+      "role": "user",
+      "content": "thank you",
+      "timestamp": "2025-08-27T17:44:37.945596"
+    },
+    {
+      "role": "user",
+      "content": "help",
+      "timestamp": "2025-08-27T17:46:25.565683"
+    },
+    {
+      "role": "assistant",
+      "content": "\ud83d\udd0d Available Commands:\n\n\u2022 Ask me about contract terms\n\u2022 Request contract analysis\n\u2022 Ask legal questions\n\u2022 Type 'test' for a sample analysis\n\n\ud83d\udca1 Tip: I work best when you upload contract documents first!\n\nDisclaimer: Not legal advice, general review \u2014 consult an attorney for your specific situation.",
+      "timestamp": "2025-08-27T17:46:25.568342"
     }
   ],
   "8311809336": [

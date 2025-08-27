@@ -573,8 +573,8 @@ async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> st
         # Handle basic greetings and commands
         dummy_responses = telegram_service.get_dummy_responses()
         
-        # Check exact matches
-        if query_lower in dummy_responses:
+        # Check exact matches (but skip "help" - handle it conversationally)
+        if query_lower in dummy_responses and query_lower != "help":
             response = dummy_responses[query_lower]
             telegram_service.add_to_conversation_history(chat_id, "user", query)
             telegram_service.add_to_conversation_history(chat_id, "assistant", response)
@@ -607,7 +607,10 @@ async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> st
             
             # Introductions
             "i am", "my name is", "i'm", "call me", "this is", "nice to meet you",
-            "pleased to meet", "good to meet"
+            "pleased to meet", "good to meet",
+            
+            # Thanks and appreciation
+            "thank you", "thanks", "appreciate it", "much appreciated", "thank you so much"
         ]
         pattern_matched = any(pattern in query_lower for pattern in conversational_patterns)
         if pattern_matched and not is_legal_question:
@@ -636,13 +639,29 @@ async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> st
                 print(f"Natural response error: {e}")
                 pass  # Fall through to normal processing
         
-        # Check for help patterns
-        help_patterns = ["help", "/help", "what can you do", "commands"]
+        # Handle help/capability questions conversationally
+        help_patterns = ["help", "/help", "what can you do", "commands", "what do you do"]
         if any(pattern in query_lower for pattern in help_patterns):
-            response = dummy_responses["help"]
-            telegram_service.add_to_conversation_history(chat_id, "user", query)
-            telegram_service.add_to_conversation_history(chat_id, "assistant", response)
-            return response
+            try:
+                chat_result = await chat_service.general_chat(
+                    query,
+                    jurisdiction=None,
+                    contract_type=None,
+                    force_natural_response=True
+                )
+                
+                if chat_result.get("answer"):
+                    response = chat_result['answer']
+                    telegram_service.add_to_conversation_history(chat_id, "user", query)
+                    telegram_service.add_to_conversation_history(chat_id, "assistant", response)
+                    return response
+            except Exception as e:
+                print(f"Help question error: {e}")
+                # Try simple fallback response instead of dummy
+                response = "I help with legal questions and contract review! Ask me about clauses, terms, or upload your contracts for analysis. What can I help you with?"
+                telegram_service.add_to_conversation_history(chat_id, "user", query)
+                telegram_service.add_to_conversation_history(chat_id, "assistant", response)
+                return response
         
         # Add user message to conversation history
         telegram_service.add_to_conversation_history(chat_id, "user", query)
