@@ -445,7 +445,13 @@ async def telegram_webhook(request: Request):
         # EMERGENCY OVERRIDE: Block non-contract queries immediately
         user_query_lower = user_query.lower()
         non_contract_words = ["weather", "joke", "recipe", "cook", "food", "movie", "music", "game", "sports", "news"]
-        if any(word in user_query_lower for word in non_contract_words):
+        contract_words = ["contract", "agreement", "legal", "sla", "msa", "nda", "clause", "terms", "service level"]
+        
+        # Only block if contains non-contract words AND no contract words
+        has_non_contract = any(word in user_query_lower for word in non_contract_words)
+        has_contract = any(word in user_query_lower for word in contract_words)
+        
+        if has_non_contract and not has_contract:
             clean_response = """🤖 Hi there!
 
 I'm your AI Contract Review Assistant, specialized in legal document analysis and contract guidance.
