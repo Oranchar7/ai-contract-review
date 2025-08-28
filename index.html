@@ -160,7 +160,7 @@
     .risk-high { background: #f8d7da; color: #721c24; }
     
     .risk-item, .protection-item {
-      background: white;
+      background: #ffebee; /* Light red background for errors/risks */
       border-left: 4px solid var(--secondary-color);
       padding: 1rem;
       margin: 0.75rem 0;
@@ -168,9 +168,28 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
     
-    .risk-item.high { border-left-color: var(--danger-color); }
-    .risk-item.medium { border-left-color: var(--warning-color); }
-    .risk-item.low { border-left-color: var(--success-color); }
+    .risk-item.high { 
+      border-left-color: var(--danger-color);
+      background: #ffebee; /* Light red for high risk */
+    }
+    .risk-item.medium { 
+      border-left-color: var(--warning-color);
+      background: #fff8e1; /* Light yellow for medium risk */
+    }
+    .risk-item.low { 
+      border-left-color: var(--success-color);
+      background: #f3e5f5; /* Light purple for low risk */
+    }
+    
+    /* Correction/Recommendation styling */
+    .risk-item .text-muted {
+      background: #e8f5e8; /* Light green background for corrections */
+      padding: 0.75rem;
+      border-radius: 6px;
+      margin-top: 0.5rem;
+      color: #2d5016 !important; /* Darker green text */
+      border-left: 3px solid #4caf50;
+    }
     
     .legal-disclaimer {
       background: #fff3cd;
