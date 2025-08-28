@@ -182,8 +182,11 @@
       background: #f3e5f5; /* Light purple for low risk */
     }
     
-    /* Correction/Recommendation styling */
+    /* Correction/Recommendation styling - Light green for suggestions */
     .risk-item .text-muted,
+    .analysis-report .text-muted,
+    div[class*="recommendation"],
+    div[class*="suggestion"],
     .clause-recommendation,
     .protection-importance {
       background: #e8f5e8 !important; /* Light green background for corrections */
@@ -193,6 +196,17 @@
       color: #2d5016 !important; /* Darker green text */
       border-left: 3px solid #4caf50 !important;
       display: block !important;
+    }
+    
+    /* Ensure recommendations in risk items have green background */
+    .analysis-report .risk-item div:last-child,
+    .analysis-report .risk-item .text-muted:last-child {
+      background: #e8f5e8 !important;
+      color: #2d5016 !important;
+      padding: 0.75rem !important;
+      border-radius: 6px !important;
+      border-left: 3px solid #4caf50 !important;
+      margin-top: 0.5rem !important;
     }
     
     /* Additional styling for protection items */
