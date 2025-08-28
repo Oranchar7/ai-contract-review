@@ -19,6 +19,7 @@ from services.notification_service import NotificationService
 from services.pinecone_rag_service import PineconeRAGService
 from services.contract_chat_service import ContractChatService
 from services.telegram_service import TelegramService
+from services.voice_legal_service import VoiceLegalService
 from models.contract_analysis import ContractAnalysisResponse
 from utils.validators import validate_file_type
 
@@ -53,6 +54,7 @@ notification_service = NotificationService()
 rag_service = PineconeRAGService()
 chat_service = ContractChatService()
 telegram_service = TelegramService()
+voice_legal_service = VoiceLegalService()
 
 # Security
 security = HTTPBearer(auto_error=False)
@@ -1248,6 +1250,38 @@ async def create_checkout_session():
     # Placeholder for Stripe checkout session creation
     # TODO: Implement Stripe checkout session logic
     return {"url": "https://checkout.stripe.com/placeholder"}
+
+# Voice Legal Jargon Explainer API
+from pydantic import BaseModel
+
+class VoiceLegalRequest(BaseModel):
+    text: str
+    context: Optional[str] = None
+    voice_optimized: bool = False
+
+@app.post("/api/voice-legal-explain")
+async def explain_legal_term(request: VoiceLegalRequest):
+    """Voice-to-text legal jargon explainer endpoint"""
+    try:
+        if request.voice_optimized:
+            result = await voice_legal_service.get_voice_friendly_explanation(
+                request.text, 
+                request.context
+            )
+        else:
+            result = await voice_legal_service.explain_legal_jargon(
+                request.text, 
+                request.context
+            )
+        
+        return result
+        
+    except Exception as e:
+        return {
+            "explanation": f"Sorry, I had trouble explaining that legal term. Please try again.",
+            "type": "error",
+            "error": str(e)
+        }
 
 if __name__ == "__main__":
     # Get port from environment (Render sets this) or default to 5000
