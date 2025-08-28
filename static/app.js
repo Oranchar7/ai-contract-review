@@ -194,19 +194,40 @@ function formatDetailedSummary(detailedAnalysis) {
             return `<div style="line-height: 1.5;">${detailedAnalysis}</div>`;
         }
         
-        // Split into paragraphs and format properly
+        // Split into paragraphs and format properly with color coding
         const paragraphs = detailedAnalysis.split(/\n\s*\n/).filter(p => p.trim().length > 0);
         
         return paragraphs.map(paragraph => {
             const trimmed = paragraph.trim().replace(/\n/g, ' ');
+            const lowerCase = trimmed.toLowerCase();
             
-            // Check if it's a header-like line (short line followed by longer content)
-            if (trimmed.length < 60 && trimmed.endsWith(':')) {
-                return `<h6 class="fw-bold text-primary mt-3 mb-2" style="line-height: 1.5;">${escapeHtml(trimmed)}</h6>`;
+            // Check if it's a header-like line
+            if (trimmed.includes('**') || trimmed.endsWith(':') || trimmed.length < 60) {
+                return `<h6 class="fw-bold text-primary mt-3 mb-2" style="line-height: 1.5;">${escapeHtml(trimmed.replace(/\*\*/g, ''))}</h6>`;
             }
             
-            // Regular paragraph with 1.5 line spacing
-            return `<p class="mb-3" style="line-height: 1.5;">${escapeHtml(trimmed)}</p>`;
+            // Color code based on content - Issues/Problems (Red)
+            if (lowerCase.includes('risk') || lowerCase.includes('issue') || lowerCase.includes('problem') || 
+                lowerCase.includes('concern') || lowerCase.includes('warning') || lowerCase.includes('caution') ||
+                lowerCase.includes('unfavorable') || lowerCase.includes('problematic') || lowerCase.includes('lacks') ||
+                lowerCase.includes('missing') || lowerCase.includes('absent') || lowerCase.includes('unclear') ||
+                lowerCase.includes('ambiguous') || lowerCase.includes('one-sided') || lowerCase.includes('biased')) {
+                return `<div style="background-color: #ffeaea; padding: 12px; margin: 8px 0; border-radius: 8px; border-left: 4px solid #dc3545; border: 1px solid #f5a5a5; line-height: 1.5;">${escapeHtml(trimmed)}</div>`;
+            }
+            
+            // Color code based on content - Recommendations/Solutions (Green)
+            else if (lowerCase.includes('recommend') || lowerCase.includes('suggest') || lowerCase.includes('should') ||
+                     lowerCase.includes('consider') || lowerCase.includes('advised') || lowerCase.includes('better') ||
+                     lowerCase.includes('improvement') || lowerCase.includes('enhance') || lowerCase.includes('add') ||
+                     lowerCase.includes('include') || lowerCase.includes('ensure') || lowerCase.includes('clarify') ||
+                     lowerCase.includes('negotiate') || lowerCase.includes('request') || lowerCase.includes('favorable')) {
+                return `<div style="background-color: #e6f9e6; padding: 12px; margin: 8px 0; border-radius: 8px; border-left: 4px solid #28a745; border: 1px solid #a8e6a2; line-height: 1.5;">${escapeHtml(trimmed)}</div>`;
+            }
+            
+            // Regular paragraph with neutral styling
+            else {
+                return `<p class="mb-3" style="line-height: 1.5; padding: 8px 0;">${escapeHtml(trimmed)}</p>`;
+            }
         }).join('');
     }
     
