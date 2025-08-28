@@ -189,16 +189,33 @@ function displayMissingProtections(protections) {
 
 function formatDetailedSummary(detailedAnalysis) {
     if (typeof detailedAnalysis === 'string') {
-        return escapeHtml(detailedAnalysis).replace(/\n/g, '<br>');
+        // Split into paragraphs and format properly
+        const paragraphs = detailedAnalysis.split(/\n\s*\n/).filter(p => p.trim().length > 0);
+        
+        return paragraphs.map(paragraph => {
+            const trimmed = paragraph.trim().replace(/\n/g, ' ');
+            
+            // Check if it's a header-like line (short line followed by longer content)
+            if (trimmed.length < 60 && trimmed.endsWith(':')) {
+                return `<h6 class="fw-bold text-primary mt-3 mb-2">${escapeHtml(trimmed)}</h6>`;
+            }
+            
+            // Regular paragraph
+            return `<p class="mb-3 lh-base">${escapeHtml(trimmed)}</p>`;
+        }).join('');
     }
     
     if (typeof detailedAnalysis === 'object') {
         return Object.entries(detailedAnalysis)
-            .map(([key, value]) => `<strong>${escapeHtml(key)}:</strong> ${escapeHtml(value)}`)
-            .join('<br><br>');
+            .map(([key, value]) => `
+                <div class="mb-3">
+                    <h6 class="fw-bold text-primary">${escapeHtml(key)}:</h6>
+                    <p class="mb-0 lh-base">${escapeHtml(value)}</p>
+                </div>
+            `).join('');
     }
     
-    return 'Detailed analysis not available.';
+    return '<p class="text-muted">No detailed analysis available.</p>';
 }
 
 function downloadReport() {
