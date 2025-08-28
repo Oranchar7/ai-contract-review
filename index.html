@@ -1381,7 +1381,7 @@
           
           <hr style="border: 0; height: 1px; background-color: #dee2e6; margin: 1.5rem 0;">
           
-          <div class="mb-4">
+          <div class="mb-4" style="margin-top: 1.5rem;">
             <h6><i class="fas fa-clipboard-list me-2"></i>Executive Summary</h6>
             <p class="mb-0">${analysis.summary}</p>
           </div>
@@ -1390,17 +1390,23 @@
       if (analysis.risky_clauses && analysis.risky_clauses.length > 0) {
         html += `
           <hr style="border: 0; height: 1px; background-color: #dee2e6; margin: 1.5rem 0;">
-          <div class="mb-4">
+          <div class="mb-4" style="margin-top: 1.5rem;">
             <h6><i class="fas fa-exclamation-triangle me-2"></i>Risk Analysis (${analysis.risky_clauses.length} items)</h6>
         `;
         
         analysis.risky_clauses.forEach(clause => {
           html += `
-            <div style="background-color: #ffeaea !important; border-left: 4px solid #dc3545 !important; border: 1px solid #f5a5a5 !important; padding: 12px !important; margin: 8px 0 !important; border-radius: 8px !important; line-height: 1.5 !important;">
-              <div class="fw-bold">${clause.clause_type}</div>
-              <div class="mb-2">${clause.description}</div>
-              <div style="background-color: #e6f9e6 !important; border-left: 4px solid #28a745 !important; border: 1px solid #a8e6a2 !important; padding: 12px !important; margin: 8px 0 !important; border-radius: 8px !important; line-height: 1.5 !important;">
-                <i class="fas fa-lightbulb me-1"></i><strong>Recommendation:</strong> ${clause.recommendation}
+            <div style="margin-bottom: 24px !important;">
+              <div style="background-color: #ffeaea !important; border-left: 4px solid #dc3545 !important; border: 1px solid #f5a5a5 !important; padding: 12px !important; margin: 8px 0 !important; border-radius: 8px !important; line-height: 1.5 !important;">
+                <div class="fw-bold">${clause.clause_type}</div>
+                <div class="mb-2">${clause.description}</div>
+              </div>
+              
+              <div style="margin-top: 12px; border-top: 2px solid #28a745; padding-top: 8px;">
+                <h6 style="color: #28a745; font-size: 0.9rem; font-weight: bold; margin-bottom: 8px;"><i class="fas fa-lightbulb me-1"></i>💡 CORRECTION & RECOMMENDATION</h6>
+                <div style="background-color: #e6f9e6 !important; border-left: 4px solid #28a745 !important; border: 1px solid #a8e6a2 !important; padding: 12px !important; margin: 0 !important; border-radius: 8px !important; line-height: 1.5 !important;">
+                  ${clause.recommendation}
+                </div>
               </div>
             </div>
           `;
@@ -1411,19 +1417,27 @@
       if (analysis.missing_protections && analysis.missing_protections.length > 0) {
         html += `
           <hr style="border: 0; height: 1px; background-color: #dee2e6; margin: 1.5rem 0;">
-          <div class="mb-4">
+          <div class="mb-4" style="margin-top: 1.5rem;">
             <h6><i class="fas fa-shield-alt me-2"></i>Missing Protections (${analysis.missing_protections.length} items)</h6>
         `;
         
         analysis.missing_protections.forEach(protection => {
           html += `
-            <div style="background-color: #ffeaea !important; border-left: 4px solid #dc3545 !important; border: 1px solid #f5a5a5 !important; padding: 12px !important; margin: 8px 0 !important; border-radius: 8px !important; line-height: 1.5 !important;">
-              <div class="fw-bold">${protection.protection_type}</div>
-              <div class="mb-2">${protection.description}</div>
-              <div style="background-color: #e6f9e6 !important; border-left: 4px solid #28a745 !important; border: 1px solid #a8e6a2 !important; padding: 12px !important; margin: 8px 0 !important; border-radius: 8px !important; line-height: 1.5 !important;" class="mb-2">
-                <strong>Why it matters:</strong> ${protection.importance}
+            <div style="margin-bottom: 24px !important;">
+              <div style="background-color: #ffeaea !important; border-left: 4px solid #dc3545 !important; border: 1px solid #f5a5a5 !important; padding: 12px !important; margin: 8px 0 !important; border-radius: 8px !important; line-height: 1.5 !important;">
+                <div class="fw-bold">${protection.protection_type}</div>
+                <div class="mb-2">${protection.description}</div>
               </div>
-              <div class="text-muted"><i class="fas fa-plus-circle me-1"></i><strong>Suggested:</strong> ${protection.suggested_clause}</div>
+              
+              <div style="margin-top: 12px; border-top: 2px solid #28a745; padding-top: 8px;">
+                <h6 style="color: #28a745; font-size: 0.9rem; font-weight: bold; margin-bottom: 8px;"><i class="fas fa-plus-circle me-1"></i>✅ SUGGESTED PROTECTION & CORRECTION</h6>
+                <div style="background-color: #e6f9e6 !important; border-left: 4px solid #28a745 !important; border: 1px solid #a8e6a2 !important; padding: 12px !important; margin: 0 0 8px 0 !important; border-radius: 8px !important; line-height: 1.5 !important;">
+                  <strong>Why it matters:</strong> ${protection.importance}
+                </div>
+                <div style="background-color: #e6f9e6 !important; border-left: 4px solid #28a745 !important; border: 1px solid #a8e6a2 !important; padding: 12px !important; margin: 0 !important; border-radius: 8px !important; line-height: 1.5 !important;">
+                  <strong>Suggested clause:</strong> ${protection.suggested_clause}
+                </div>
+              </div>
             </div>
           `;
         });
@@ -1457,7 +1471,7 @@
 
         html += `
           <hr style="border: 0; height: 1px; background-color: #dee2e6; margin: 1.5rem 0;">
-          <div class="mb-4">
+          <div class="mb-4" style="margin-top: 1.5rem;">
             <h6><i class="fas fa-search me-2"></i>Detailed Analysis</h6>
             <div>${formatted}</div>
           </div>
