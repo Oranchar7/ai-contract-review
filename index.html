@@ -75,6 +75,21 @@
       align-items: center;
     }
     
+    /* Jargon Translator Card Styling */
+    .jargon-card {
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .jargon-header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
+      border: none !important;
+      border-radius: 12px 12px 0 0 !important;
+      padding: 1rem 1.25rem !important;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
     .card-header h5 {
       margin: 0;
       color: var(--primary-color);
@@ -891,9 +906,10 @@
       <!-- Right Column: Chat Assistant & Legal Jargon Translator -->
       <div class="col-lg-4">
         <!-- Legal Jargon Translator -->
-        <div class="card mb-3">
-          <div class="card-header">
-            <h5><i class="fas fa-language me-2"></i>Legal Jargon Translator</h5>
+        <div class="card mb-3 jargon-card">
+          <div class="card-header jargon-header">
+            <h5 style="color: white; font-weight: 600; margin: 0;"><i class="fas fa-language me-2" style="color: #ffc107;"></i>Legal Jargon Translator</h5>
+            <small style="color: rgba(255,255,255,0.9); font-weight: 500;">Translate complex legal terms</small>
           </div>
           <div class="card-body p-0">
             <div id="jargonTranslator">
