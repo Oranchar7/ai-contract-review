@@ -158,10 +158,10 @@ function displayRiskyClauses(clauses) {
     }
     
     container.innerHTML = clauses.map(clause => `
-        <div class="clause-item" style="background-color: #ffeaea; padding: 1rem; margin: 0.75rem 0; border-radius: 0 8px 8px 0; border-left: 4px solid #dc3545; border: 1px solid #f5a5a5;">
-            <div class="clause-title">${escapeHtml(clause.clause_type || 'Risky Clause')}</div>
+        <div class="flagged-section">
+            <div class="clause-title"><strong>${escapeHtml(clause.clause_type || 'Risky Clause')}</strong></div>
             <div class="clause-description">${escapeHtml(clause.description || '')}</div>
-            <div class="clause-recommendation" style="background-color: #e6f9e6; padding: 0.75rem; border-radius: 6px; margin-top: 0.5rem; border-left: 3px solid #28a745; border: 1px solid #a8e6a2;">
+            <div class="correction-section" style="margin-top: 0.5rem;">
                 <strong>Recommendation:</strong> ${escapeHtml(clause.recommendation || '')}
             </div>
         </div>
@@ -177,10 +177,10 @@ function displayMissingProtections(protections) {
     }
     
     container.innerHTML = protections.map(protection => `
-        <div class="missing-protection" style="background-color: #ffeaea; padding: 1rem; margin: 0.75rem 0; border-radius: 0 8px 8px 0; border-left: 4px solid #dc3545; border: 1px solid #f5a5a5;">
-            <div class="protection-title">${escapeHtml(protection.protection_type || 'Missing Protection')}</div>
+        <div class="flagged-section">
+            <div class="protection-title"><strong>${escapeHtml(protection.protection_type || 'Missing Protection')}</strong></div>
             <div class="protection-description">${escapeHtml(protection.description || '')}</div>
-            <div class="protection-importance" style="background-color: #e6f9e6; padding: 0.75rem; border-radius: 6px; margin-top: 0.5rem; border-left: 3px solid #28a745; border: 1px solid #a8e6a2;">
+            <div class="correction-section" style="margin-top: 0.5rem;">
                 <strong>Why it matters:</strong> ${escapeHtml(protection.importance || '')}
             </div>
         </div>
@@ -203,7 +203,7 @@ function formatDetailedSummary(detailedAnalysis) {
             
             // Check if it's a header-like line
             if (trimmed.includes('**') || trimmed.endsWith(':') || trimmed.length < 60) {
-                return `<h6 class="fw-bold text-primary mt-3 mb-2" style="line-height: 1.5;">${escapeHtml(trimmed.replace(/\*\*/g, ''))}</h6>`;
+                return `<h6 class="analysis-header">${escapeHtml(trimmed.replace(/\*\*/g, ''))}</h6>`;
             }
             
             // Color code based on content - Issues/Problems (Red)
@@ -212,7 +212,7 @@ function formatDetailedSummary(detailedAnalysis) {
                 lowerCase.includes('unfavorable') || lowerCase.includes('problematic') || lowerCase.includes('lacks') ||
                 lowerCase.includes('missing') || lowerCase.includes('absent') || lowerCase.includes('unclear') ||
                 lowerCase.includes('ambiguous') || lowerCase.includes('one-sided') || lowerCase.includes('biased')) {
-                return `<div style="background-color: #ffeaea; padding: 12px; margin: 8px 0; border-radius: 8px; border-left: 4px solid #dc3545; border: 1px solid #f5a5a5; line-height: 1.5;">${escapeHtml(trimmed)}</div>`;
+                return `<div class="flagged-section">${escapeHtml(trimmed)}</div>`;
             }
             
             // Color code based on content - Recommendations/Solutions (Green)
@@ -221,12 +221,12 @@ function formatDetailedSummary(detailedAnalysis) {
                      lowerCase.includes('improvement') || lowerCase.includes('enhance') || lowerCase.includes('add') ||
                      lowerCase.includes('include') || lowerCase.includes('ensure') || lowerCase.includes('clarify') ||
                      lowerCase.includes('negotiate') || lowerCase.includes('request') || lowerCase.includes('favorable')) {
-                return `<div style="background-color: #e6f9e6; padding: 12px; margin: 8px 0; border-radius: 8px; border-left: 4px solid #28a745; border: 1px solid #a8e6a2; line-height: 1.5;">${escapeHtml(trimmed)}</div>`;
+                return `<div class="correction-section">${escapeHtml(trimmed)}</div>`;
             }
             
             // Regular paragraph with neutral styling
             else {
-                return `<p class="mb-3" style="line-height: 1.5; padding: 8px 0;">${escapeHtml(trimmed)}</p>`;
+                return `<p class="neutral-content">${escapeHtml(trimmed)}</p>`;
             }
         }).join('');
     }
@@ -234,9 +234,9 @@ function formatDetailedSummary(detailedAnalysis) {
     if (typeof detailedAnalysis === 'object') {
         return Object.entries(detailedAnalysis)
             .map(([key, value]) => `
-                <div class="mb-3" style="line-height: 1.5;">
-                    <h6 class="fw-bold text-primary" style="line-height: 1.5;">${escapeHtml(key)}:</h6>
-                    <p class="mb-0" style="line-height: 1.5;">${escapeHtml(value)}</p>
+                <div class="mb-3">
+                    <h6 class="analysis-header">${escapeHtml(key)}:</h6>
+                    <p class="neutral-content">${escapeHtml(value)}</p>
                 </div>
             `).join('');
     }
