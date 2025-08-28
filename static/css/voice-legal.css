@@ -35,8 +35,8 @@
 
 /* Impactful Voice Control Buttons */
 .btn-voice-primary {
-    background: #007bff;
-    border: 2px solid #007bff;
+    background: #28a745;
+    border: 2px solid #28a745;
     color: white;
     font-weight: 500;
     padding: 10px 20px;
@@ -47,23 +47,23 @@
 }
 
 .btn-voice-primary:hover {
-    background: #0056b3;
-    border-color: #0056b3;
+    background: #218838;
+    border-color: #218838;
     color: white;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
 }
 
 .btn-voice-primary:active {
-    background: #004085;
-    border-color: #004085;
+    background: #1e7e34;
+    border-color: #1e7e34;
     transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
     color: white;
 }
 
 .btn-voice-primary:focus {
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.25);
     color: white;
 }
 
@@ -84,14 +84,14 @@
     border-color: #c82333;
     color: white;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
 }
 
 .btn-voice-stop:active:not(:disabled) {
     background: #a71e2a;
     border-color: #a71e2a;
     transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.2);
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
     color: white;
 }
 
