@@ -436,24 +436,68 @@
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
-    .voice-controls .btn-primary {
-      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-      border: none;
+    /* Voice Control Buttons */
+    .btn-voice-primary {
+      background: #28a745;
+      border: 2px solid #28a745;
+      color: white;
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
     }
 
-    .voice-controls .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+    .btn-voice-primary:hover {
+      background: #218838;
+      border-color: #218838;
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
     }
 
-    .voice-controls .btn-danger {
-      background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
-      border: none;
+    .btn-voice-primary:active {
+      background: #1e7e34;
+      border-color: #1e7e34;
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+      color: white;
     }
 
-    .voice-controls .btn-danger:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+    .btn-voice-stop {
+      background: #dc3545;
+      border: 2px solid #dc3545;
+      color: white;
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+    }
+
+    .btn-voice-stop:hover:not(:disabled) {
+      background: #c82333;
+      border-color: #c82333;
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+    }
+
+    .btn-voice-stop:active:not(:disabled) {
+      background: #a71e2a;
+      border-color: #a71e2a;
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+      color: white;
+    }
+
+    .btn-voice-stop:disabled {
+      background: #6c757d;
+      border-color: #6c757d;
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
     }
 
     .voice-controls .btn:disabled {
