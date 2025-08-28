@@ -181,11 +181,11 @@ class AIAnalyzer:
                 
             line_lower = line.lower()
             if any(keyword in line_lower for keyword in ["recommendation", "recommend", "suggest", "should consider", "advised to", "better to"]):
-                formatted_lines.append(f'<div style="background-color: #e6f9e6; padding: 10px; margin: 6px 0; border-radius: 8px; border: 1px solid #a8e6a2;">{line}</div>')
+                formatted_lines.append(f'<div style="background-color: #e6f9e6; padding: 10px; margin: 6px 0; border-radius: 8px; border: 1px solid #a8e6a2; line-height: 1.5;">{line}</div>')
             elif any(keyword in line_lower for keyword in ["issue", "problem", "concern", "risk", "warning", "caution", "problematic", "unfavorable"]):
-                formatted_lines.append(f'<div style="background-color: #ffeaea; padding: 10px; margin: 6px 0; border-radius: 8px; border: 1px solid #f5a5a5;">{line}</div>')
+                formatted_lines.append(f'<div style="background-color: #ffeaea; padding: 10px; margin: 6px 0; border-radius: 8px; border: 1px solid #f5a5a5; line-height: 1.5;">{line}</div>')
             else:
-                formatted_lines.append(f'<div>{line}</div>')
+                formatted_lines.append(f'<div style="line-height: 1.5;">{line}</div>')
                 
         return "".join(formatted_lines)
     

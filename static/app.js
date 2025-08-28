@@ -189,9 +189,9 @@ function displayMissingProtections(protections) {
 
 function formatDetailedSummary(detailedAnalysis) {
     if (typeof detailedAnalysis === 'string') {
-        // If it already contains HTML from backend formatting, return as is
+        // If it already contains HTML from backend formatting, return as is with line spacing
         if (detailedAnalysis.includes('<div style=')) {
-            return detailedAnalysis;
+            return `<div style="line-height: 1.5;">${detailedAnalysis}</div>`;
         }
         
         // Split into paragraphs and format properly
@@ -202,20 +202,20 @@ function formatDetailedSummary(detailedAnalysis) {
             
             // Check if it's a header-like line (short line followed by longer content)
             if (trimmed.length < 60 && trimmed.endsWith(':')) {
-                return `<h6 class="fw-bold text-primary mt-3 mb-2">${escapeHtml(trimmed)}</h6>`;
+                return `<h6 class="fw-bold text-primary mt-3 mb-2" style="line-height: 1.5;">${escapeHtml(trimmed)}</h6>`;
             }
             
-            // Regular paragraph
-            return `<p class="mb-3 lh-base">${escapeHtml(trimmed)}</p>`;
+            // Regular paragraph with 1.5 line spacing
+            return `<p class="mb-3" style="line-height: 1.5;">${escapeHtml(trimmed)}</p>`;
         }).join('');
     }
     
     if (typeof detailedAnalysis === 'object') {
         return Object.entries(detailedAnalysis)
             .map(([key, value]) => `
-                <div class="mb-3">
-                    <h6 class="fw-bold text-primary">${escapeHtml(key)}:</h6>
-                    <p class="mb-0 lh-base">${escapeHtml(value)}</p>
+                <div class="mb-3" style="line-height: 1.5;">
+                    <h6 class="fw-bold text-primary" style="line-height: 1.5;">${escapeHtml(key)}:</h6>
+                    <p class="mb-0" style="line-height: 1.5;">${escapeHtml(value)}</p>
                 </div>
             `).join('');
     }
