@@ -302,5 +302,37 @@
       "content": "\ud83d\udd0d Available Commands:\n\n\u2022 Ask me about contract terms\n\u2022 Request contract analysis\n\u2022 Ask legal questions\n\u2022 Type 'test' for a sample analysis\n\n\ud83d\udca1 Tip: I work best when you upload contract documents first!\n\nDisclaimer: Not legal advice, general review \u2014 consult an attorney for your specific situation.",
       "timestamp": "2025-08-27T17:42:39.431756"
     }
+  ],
+  "999999": [
+    {
+      "role": "user",
+      "content": "What should I look for in an NDA?",
+      "timestamp": "2025-08-28T19:16:10.900822"
+    },
+    {
+      "role": "assistant",
+      "content": "Great question! When reviewing an NDA, check for these key things:\n\n1. **Definition of Confidential Information**: Make sure it clearly outlines what info is considered confidential.\n2. **Obligations**: Look at what each party is required to do with the info.\n3. **Duration**: See how long the confidentiality lasts.\n4. **Permitted Disclosures**: Check if there are any exceptions for sharing info.\n5. **Consequences of Breach**: Understand what happens if someone breaks the NDA.\n\nIf you need help with something specific, just let me know!\n\nDisclaimer: For informational use only. Please consult an attorney for your specific case.",
+      "timestamp": "2025-08-28T19:16:10.902003"
+    },
+    {
+      "role": "user",
+      "content": "Tell me about service level agreements",
+      "timestamp": "2025-08-28T19:16:12.434830"
+    },
+    {
+      "role": "assistant",
+      "content": "Sure! Service Level Agreements (SLAs) are contracts that outline the expected level of service between a provider and a customer. They typically include details like response times, quality metrics, and responsibilities. Basically, they help set clear expectations and hold both parties accountable. Need more specifics on a certain type of SLA?",
+      "timestamp": "2025-08-28T19:16:12.435997"
+    },
+    {
+      "role": "user",
+      "content": "What are typical payment terms?",
+      "timestamp": "2025-08-28T19:16:16.193732"
+    },
+    {
+      "role": "assistant",
+      "content": "Typical payment terms can vary, but you often see things like \"Net 30\" (payment due in 30 days), \"Net 60,\" or \"Due on receipt.\" Some contracts might also include discounts for early payment, like \"2/10 Net 30,\" meaning you get a 2% discount if paid within 10 days. Just depends on the agreement! Need more specifics?",
+      "timestamp": "2025-08-28T19:16:16.196748"
+    }
   ]
 }
