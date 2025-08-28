@@ -5,6 +5,8 @@
 
 class VoiceLegalExplainer {
     constructor() {
+        console.log('VoiceLegalExplainer constructor called');
+        
         this.recognition = null;
         this.isListening = false;
         this.isSupported = false;
@@ -12,6 +14,8 @@ class VoiceLegalExplainer {
         
         this.initializeSpeechRecognition();
         this.setupUI();
+        
+        console.log('Constructor completed. isSupported:', this.isSupported);
     }
     
     initializeSpeechRecognition() {
@@ -65,13 +69,15 @@ class VoiceLegalExplainer {
     }
     
     setupUI() {
-        // Create voice interface if it doesn't exist
-        if (!document.getElementById('voice-legal-interface')) {
-            this.createVoiceInterface();
-        }
-        
-        // Setup event listeners
+        // Always setup event listeners for existing HTML elements
+        // Don't create a new interface since it already exists in HTML
         this.setupEventListeners();
+        
+        // Update initial UI state
+        this.updateUI();
+        
+        // Show browser support status
+        this.updateBrowserSupport();
     }
     
     createVoiceInterface() {
@@ -141,17 +147,37 @@ class VoiceLegalExplainer {
     }
     
     setupEventListeners() {
+        console.log('Setting up event listeners...');
+        
         const startBtn = document.getElementById('startVoiceBtn');
         const stopBtn = document.getElementById('stopVoiceBtn');
         const speakBtn = document.getElementById('speakExplanationBtn');
         const askAnotherBtn = document.getElementById('askAnotherBtn');
         
+        console.log('Found elements:', {
+            startBtn: !!startBtn,
+            stopBtn: !!stopBtn,
+            speakBtn: !!speakBtn,
+            askAnotherBtn: !!askAnotherBtn
+        });
+        
         if (startBtn) {
-            startBtn.addEventListener('click', () => this.startListening());
+            console.log('Adding click listener to start button');
+            startBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('Start button clicked!');
+                this.startListening();
+            });
+        } else {
+            console.error('Start button not found');
         }
         
         if (stopBtn) {
-            stopBtn.addEventListener('click', () => this.stopListening());
+            stopBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('Stop button clicked!');
+                this.stopListening();
+            });
         }
         
         if (speakBtn) {
@@ -164,6 +190,8 @@ class VoiceLegalExplainer {
     }
     
     startListening() {
+        console.log('startListening called, isSupported:', this.isSupported, 'isListening:', this.isListening);
+        
         if (!this.isSupported) {
             this.showError('Speech recognition is not supported in your browser');
             return;
@@ -173,7 +201,25 @@ class VoiceLegalExplainer {
             return;
         }
         
+        // Check for microphone permissions
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(() => {
+                    console.log('Microphone access granted');
+                    this.startSpeechRecognition();
+                })
+                .catch((error) => {
+                    console.error('Microphone access denied:', error);
+                    this.showError('Microphone access required. Please allow microphone access and try again.');
+                });
+        } else {
+            this.startSpeechRecognition();
+        }
+    }
+    
+    startSpeechRecognition() {
         try {
+            console.log('Starting speech recognition...');
             this.recognition.start();
             this.updateStatus('Listening... Speak now!', 'listening');
         } catch (error) {
@@ -366,13 +412,40 @@ class VoiceLegalExplainer {
     showError(message) {
         this.updateStatus(message, 'error');
     }
+    
+    updateBrowserSupport() {
+        const statusElement = document.getElementById('voiceStatus');
+        if (!statusElement) return;
+        
+        if (!this.isSupported) {
+            statusElement.innerHTML = '<span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>Speech recognition not supported in this browser</span>';
+        } else {
+            statusElement.innerHTML = '<span class="text-muted">Click "Start Listening" to ask about legal terms</span>';
+        }
+    }
 }
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM Content Loaded - Voice Legal Explainer');
+    
     // Only initialize if we're on the main page (not in an iframe, etc.)
     if (window.self === window.top) {
-        window.voiceLegalExplainer = new VoiceLegalExplainer();
-        console.log('Voice Legal Explainer initialized');
+        console.log('Initializing Voice Legal Explainer...');
+        
+        // Add a small delay to ensure all DOM elements are ready
+        setTimeout(() => {
+            try {
+                window.voiceLegalExplainer = new VoiceLegalExplainer();
+                console.log('Voice Legal Explainer initialized successfully');
+                
+                // Test if elements exist
+                const testBtn = document.getElementById('startVoiceBtn');
+                console.log('Test button found:', !!testBtn);
+                
+            } catch (error) {
+                console.error('Error initializing Voice Legal Explainer:', error);
+            }
+        }, 100);
     }
 });
