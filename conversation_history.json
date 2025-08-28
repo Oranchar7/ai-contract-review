@@ -128,16 +128,6 @@
   "789": [
     {
       "role": "user",
-      "content": "what can you do",
-      "timestamp": "2025-08-27T17:45:20.301238"
-    },
-    {
-      "role": "assistant",
-      "content": "I can help answer legal questions, explain legal terms, and give info on processes like contracts or disputes. Need help with something specific?",
-      "timestamp": "2025-08-27T17:45:20.304872"
-    },
-    {
-      "role": "user",
       "content": "help",
       "timestamp": "2025-08-27T17:45:22.144371"
     },
@@ -175,6 +165,16 @@
       "role": "assistant",
       "content": "\ud83d\udccb *Sample Contract Analysis*\n            \n\ud83d\udfe1 *Risk Score*: 5/10\n\n*Analysis*:\nThis is a test response showing how contract analysis would work. Key areas identified:\n\n\u2022 **Payment Terms**: 30-day payment terms are standard\n\u2022 **Liability**: Limited liability clauses present\n\u2022 **Termination**: Standard 30-day notice required\n\n\ud83d\udcc4 *Sources*: 3 document sections analyzed (dummy data)\n\n\ud83d\udd17 *References*: [Source: doc_abc123, chunk_001], [Source: doc_abc123, chunk_002]\n\nDisclaimer: Not legal advice, general review \u2014 consult an attorney for your specific situation.",
       "timestamp": "2025-08-28T12:12:43.440685"
+    },
+    {
+      "role": "user",
+      "content": "test",
+      "timestamp": "2025-08-28T12:18:22.635265"
+    },
+    {
+      "role": "assistant",
+      "content": "\ud83d\udccb *Sample Contract Analysis*\n            \n\ud83d\udfe1 *Risk Score*: 5/10\n\n*Analysis*:\nThis is a test response showing how contract analysis would work. Key areas identified:\n\n\u2022 **Payment Terms**: 30-day payment terms are standard\n\u2022 **Liability**: Limited liability clauses present\n\u2022 **Termination**: Standard 30-day notice required\n\n\ud83d\udcc4 *Sources*: 3 document sections analyzed (dummy data)\n\n\ud83d\udd17 *References*: [Source: doc_abc123, chunk_001], [Source: doc_abc123, chunk_002]\n\nFor informational use only. Please consult an attorney for your specific case.",
+      "timestamp": "2025-08-28T12:18:22.639850"
     }
   ],
   "123": [

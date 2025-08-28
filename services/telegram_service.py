@@ -187,7 +187,7 @@ class TelegramService:
     
     def get_legal_disclaimer(self) -> str:
         """Get standard legal disclaimer for all responses"""
-        return "\n\nDisclaimer Not legal advise, Informational Use- Please consult an attorney for your specific case."
+        return "\n\nFor informational use only. Please consult an attorney for your specific case."
     
     def load_conversations(self) -> Dict[int, list]:
         """Load conversation history from file"""
@@ -344,7 +344,7 @@ class TelegramService:
             if has_non_contract and not has_contract:
                 return """I can definitely chat about that, but remember I'm here mainly to help with contracts and legal info! 😊
 
-Disclaimer Not legal advise, Informational Use- Please consult an attorney for your specific case."""
+For informational use only. Please consult an attorney for your specific case."""
             
             # Check for filtered non-contract queries first
             if rag_result.get("error") == "FILTERED_NON_CONTRACT_QUERY":
@@ -448,7 +448,7 @@ Disclaimer Not legal advise, Informational Use- Please consult an attorney for y
         return {
             "hello": "Hi! I'm Lexi, I help with legal stuff. What can I do for you?\n\n📄 **Upload contract documents** for detailed analysis and risk assessment!",
             
-            "help": "🔍 Available Commands:\n\n• Ask me about contract terms\n• Request contract analysis\n• Ask legal questions\n• Type 'test' for a sample analysis\n\n💡 Tip: I work best when you upload contract documents first!\n\nDisclaimer Not legal advise, Informational Use- Please consult an attorney for your specific case.",
+            "help": "🔍 Available Commands:\n\n• Ask me about contract terms\n• Request contract analysis\n• Ask legal questions\n• Type 'test' for a sample analysis\n\n💡 Tip: I work best when you upload contract documents first!\n\nFor informational use only. Please consult an attorney for your specific case.",
             
             "test": """📋 *Sample Contract Analysis*
             
@@ -465,9 +465,9 @@ This is a test response showing how contract analysis would work. Key areas iden
 
 🔗 *References*: [Source: doc_abc123, chunk_001], [Source: doc_abc123, chunk_002]
 
-Disclaimer Not legal advise, Informational Use- Please consult an attorney for your specific case.""",
+For informational use only. Please consult an attorney for your specific case.""",
             
-            "default": "🤖 I understand you're asking about contracts. While I'm ready to help, I'm currently operating in test mode. Once document ingestion is complete, I'll be able to provide detailed analysis based on your uploaded contracts!\n\n💡 Try typing 'help' to see what I can do!\n\nDisclaimer Not legal advise, Informational Use- Please consult an attorney for your specific case."
+            "default": "🤖 I understand you're asking about contracts. While I'm ready to help, I'm currently operating in test mode. Once document ingestion is complete, I'll be able to provide detailed analysis based on your uploaded contracts!\n\n💡 Try typing 'help' to see what I can do!\n\nFor informational use only. Please consult an attorney for your specific case."
         }
     
     async def send_generating_response(self, chat_id: int, user_query: str) -> Dict[str, Any]:

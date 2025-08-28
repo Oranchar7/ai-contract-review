@@ -174,7 +174,7 @@ For capability questions ("help", "what can you do"), explain your abilities nat
                 formatted_content = content
             else:
                 # Only add disclaimer when actually giving legal advice
-                formatted_content = f"{content}\n\nDisclaimer Not legal advise, Informational Use- Please consult an attorney for your specific case."
+                formatted_content = f"{content}\n\nFor informational use only. Please consult an attorney for your specific case."
             
             return {
                 "answer": formatted_content,
