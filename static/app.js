@@ -158,10 +158,10 @@ function displayRiskyClauses(clauses) {
     }
     
     container.innerHTML = clauses.map(clause => `
-        <div class="clause-item" style="background: #ffebee !important; background-color: #ffebee !important;">
+        <div class="clause-item">
             <div class="clause-title">${escapeHtml(clause.clause_type || 'Risky Clause')}</div>
             <div class="clause-description">${escapeHtml(clause.description || '')}</div>
-            <div class="clause-recommendation" style="background: #e8f5e8 !important; background-color: #e8f5e8 !important; padding: 0.5rem !important;">
+            <div class="clause-recommendation">
                 <strong>Recommendation:</strong> ${escapeHtml(clause.recommendation || '')}
             </div>
         </div>
@@ -177,10 +177,10 @@ function displayMissingProtections(protections) {
     }
     
     container.innerHTML = protections.map(protection => `
-        <div class="missing-protection" style="background: #ffebee !important; background-color: #ffebee !important;">
+        <div class="missing-protection">
             <div class="protection-title">${escapeHtml(protection.protection_type || 'Missing Protection')}</div>
             <div class="protection-description">${escapeHtml(protection.description || '')}</div>
-            <div class="protection-importance" style="background: #e8f5e8 !important; background-color: #e8f5e8 !important; padding: 0.5rem !important;">
+            <div class="protection-importance">
                 <strong>Why it matters:</strong> ${escapeHtml(protection.importance || '')}
             </div>
         </div>
