@@ -165,23 +165,35 @@
     
     /* Light red background for risky clauses and missing protections */
     .clause-item, .missing-protection {
-      background: #ffebee !important; /* Light red background for errors/risks */
-      border-left: 4px solid var(--secondary-color);
-      padding: 1rem;
-      margin: 0.75rem 0;
-      border-radius: 0 8px 8px 0;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      background-color: #ffebee !important; /* Light red background for errors/risks */
+      border-left: 4px solid var(--secondary-color) !important;
+      padding: 1rem !important;
+      margin: 0.75rem 0 !important;
+      border-radius: 0 8px 8px 0 !important;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
     }
     
     /* Light green background for recommendations and importance sections */
     .clause-recommendation, .protection-importance {
-      background: #e8f5e8 !important; /* Light green background for corrections */
+      background-color: #e8f5e8 !important; /* Light green background for corrections */
       padding: 0.75rem !important;
       border-radius: 6px !important;
       margin-top: 0.5rem !important;
       color: #2d5016 !important; /* Darker green text */
       border-left: 3px solid #4caf50 !important;
       display: block !important;
+    }
+    
+    /* Additional specificity for contract analysis sections */
+    #riskyClauses .clause-item,
+    #missingProtections .missing-protection {
+      background-color: #ffebee !important;
+    }
+    
+    #riskyClauses .clause-recommendation,
+    #missingProtections .protection-importance {
+      background-color: #e8f5e8 !important;
+      color: #2d5016 !important;
     }
     
     .legal-disclaimer {
