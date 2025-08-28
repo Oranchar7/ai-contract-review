@@ -158,10 +158,10 @@ function displayRiskyClauses(clauses) {
     }
     
     container.innerHTML = clauses.map(clause => `
-        <div class="clause-item">
+        <div class="clause-item" style="background-color: #ffeaea; padding: 1rem; margin: 0.75rem 0; border-radius: 0 8px 8px 0; border-left: 4px solid #dc3545; border: 1px solid #f5a5a5;">
             <div class="clause-title">${escapeHtml(clause.clause_type || 'Risky Clause')}</div>
             <div class="clause-description">${escapeHtml(clause.description || '')}</div>
-            <div class="clause-recommendation">
+            <div class="clause-recommendation" style="background-color: #e6f9e6; padding: 0.75rem; border-radius: 6px; margin-top: 0.5rem; border-left: 3px solid #28a745; border: 1px solid #a8e6a2;">
                 <strong>Recommendation:</strong> ${escapeHtml(clause.recommendation || '')}
             </div>
         </div>
@@ -177,10 +177,10 @@ function displayMissingProtections(protections) {
     }
     
     container.innerHTML = protections.map(protection => `
-        <div class="missing-protection">
+        <div class="missing-protection" style="background-color: #ffeaea; padding: 1rem; margin: 0.75rem 0; border-radius: 0 8px 8px 0; border-left: 4px solid #dc3545; border: 1px solid #f5a5a5;">
             <div class="protection-title">${escapeHtml(protection.protection_type || 'Missing Protection')}</div>
             <div class="protection-description">${escapeHtml(protection.description || '')}</div>
-            <div class="protection-importance">
+            <div class="protection-importance" style="background-color: #e6f9e6; padding: 0.75rem; border-radius: 6px; margin-top: 0.5rem; border-left: 3px solid #28a745; border: 1px solid #a8e6a2;">
                 <strong>Why it matters:</strong> ${escapeHtml(protection.importance || '')}
             </div>
         </div>
@@ -189,6 +189,11 @@ function displayMissingProtections(protections) {
 
 function formatDetailedSummary(detailedAnalysis) {
     if (typeof detailedAnalysis === 'string') {
+        // If it already contains HTML from backend formatting, return as is
+        if (detailedAnalysis.includes('<div style=')) {
+            return detailedAnalysis;
+        }
+        
         // Split into paragraphs and format properly
         const paragraphs = detailedAnalysis.split(/\n\s*\n/).filter(p => p.trim().length > 0);
         
