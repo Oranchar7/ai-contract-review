@@ -128,16 +128,6 @@
   "789": [
     {
       "role": "user",
-      "content": "hi",
-      "timestamp": "2025-08-27T17:40:15.770902"
-    },
-    {
-      "role": "assistant",
-      "content": "Hi! I'm Lexi, I help with legal stuff. What can I do for you?\n\n\ud83d\udcc4 **Upload contract documents** for detailed analysis and risk assessment!",
-      "timestamp": "2025-08-27T17:40:15.771766"
-    },
-    {
-      "role": "user",
       "content": "what can you do",
       "timestamp": "2025-08-27T17:45:20.301238"
     },
@@ -175,6 +165,16 @@
       "role": "assistant",
       "content": "Hey! I\u2019m here to help with legal questions, explain concepts, or guide you through processes. What do you need help with?",
       "timestamp": "2025-08-27T17:46:44.946652"
+    },
+    {
+      "role": "user",
+      "content": "test",
+      "timestamp": "2025-08-28T12:12:43.439130"
+    },
+    {
+      "role": "assistant",
+      "content": "\ud83d\udccb *Sample Contract Analysis*\n            \n\ud83d\udfe1 *Risk Score*: 5/10\n\n*Analysis*:\nThis is a test response showing how contract analysis would work. Key areas identified:\n\n\u2022 **Payment Terms**: 30-day payment terms are standard\n\u2022 **Liability**: Limited liability clauses present\n\u2022 **Termination**: Standard 30-day notice required\n\n\ud83d\udcc4 *Sources*: 3 document sections analyzed (dummy data)\n\n\ud83d\udd17 *References*: [Source: doc_abc123, chunk_001], [Source: doc_abc123, chunk_002]\n\nDisclaimer: Not legal advice, general review \u2014 consult an attorney for your specific situation.",
+      "timestamp": "2025-08-28T12:12:43.440685"
     }
   ],
   "123": [
