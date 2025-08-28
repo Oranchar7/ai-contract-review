@@ -1392,12 +1392,13 @@
         `;
         
         analysis.risky_clauses.forEach(clause => {
-          const level = clause.risk_level ? clause.risk_level.toLowerCase() : 'medium';
           html += `
-            <div class="risk-item ${level}">
+            <div class="clause-item">
               <div class="fw-bold">${clause.clause_type}</div>
               <div class="mb-2">${clause.description}</div>
-              <div class="text-muted"><i class="fas fa-lightbulb me-1"></i>${clause.recommendation}</div>
+              <div class="clause-recommendation">
+                <i class="fas fa-lightbulb me-1"></i><strong>Recommendation:</strong> ${clause.recommendation}
+              </div>
             </div>
           `;
         });
@@ -1412,10 +1413,12 @@
         
         analysis.missing_protections.forEach(protection => {
           html += `
-            <div class="protection-item">
+            <div class="missing-protection">
               <div class="fw-bold">${protection.protection_type}</div>
               <div class="mb-2">${protection.description}</div>
-              <div class="text-muted mb-2"><strong>Importance:</strong> ${protection.importance}</div>
+              <div class="protection-importance mb-2">
+                <strong>Why it matters:</strong> ${protection.importance}
+              </div>
               <div class="text-muted"><i class="fas fa-plus-circle me-1"></i><strong>Suggested:</strong> ${protection.suggested_clause}</div>
             </div>
           `;
