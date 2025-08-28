@@ -60,34 +60,60 @@
       padding: 1.25rem;
     }
     
-    /* Analysis Card Styling */
+    /* Analysis Card Styling - Force Override with Higher Specificity */
     .analysis-card {
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15) !important;
     }
     
-    .analysis-header {
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
+    .card .analysis-header,
+    .analysis-card .analysis-header,
+    .analysis-header.card-header {
+      background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%) !important;
       border: none !important;
       border-radius: 12px 12px 0 0 !important;
       padding: 1rem 1.25rem !important;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      color: white !important;
     }
     
-    /* Jargon Translator Card Styling */
+    .analysis-header h5,
+    .analysis-header h5 i {
+      color: white !important;
+      margin: 0 !important;
+    }
+    
+    .analysis-header i.fas {
+      color: #ffc107 !important;
+    }
+    
+    /* Jargon Translator Card Styling - Force Override with Higher Specificity */
     .jargon-card {
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15) !important;
     }
     
-    .jargon-header {
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
+    .card .jargon-header,
+    .jargon-card .jargon-header,
+    .jargon-header.card-header {
+      background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%) !important;
       border: none !important;
       border-radius: 12px 12px 0 0 !important;
       padding: 1rem 1.25rem !important;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      color: white !important;
+    }
+    
+    .jargon-header h5,
+    .jargon-header h5 i {
+      color: white !important;
+      margin: 0 !important;
+    }
+    
+    .jargon-header i.fas {
+      color: #ffc107 !important;
     }
     
     .card-header h5 {
