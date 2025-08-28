@@ -1,4 +1,4 @@
-// Global variables - Cache bust: 20250128174500
+// Global variables - FORCE RELOAD: 20250128175630 - NEW CONDITIONAL FORMATTING
 let currentAnalysis = null;
 
 // DOM elements
