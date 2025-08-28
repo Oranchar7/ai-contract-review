@@ -158,10 +158,10 @@ function displayRiskyClauses(clauses) {
     }
     
     container.innerHTML = clauses.map(clause => `
-        <div class="clause-item">
+        <div class="clause-item" style="background-color: #ffebee !important; border-left: 4px solid #dc3545 !important; padding: 1rem !important; margin: 0.75rem 0 !important; border-radius: 0 8px 8px 0 !important; box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;">
             <div class="clause-title">${escapeHtml(clause.clause_type || 'Risky Clause')}</div>
             <div class="clause-description">${escapeHtml(clause.description || '')}</div>
-            <div class="clause-recommendation">
+            <div class="clause-recommendation" style="background-color: #e8f5e8 !important; padding: 0.75rem !important; border-radius: 6px !important; margin-top: 0.5rem !important; color: #2d5016 !important; border-left: 3px solid #4caf50 !important;">
                 <strong>Recommendation:</strong> ${escapeHtml(clause.recommendation || '')}
             </div>
         </div>
@@ -177,10 +177,10 @@ function displayMissingProtections(protections) {
     }
     
     container.innerHTML = protections.map(protection => `
-        <div class="missing-protection">
+        <div class="missing-protection" style="background-color: #ffebee !important; border-left: 4px solid #dc3545 !important; padding: 1rem !important; margin: 0.75rem 0 !important; border-radius: 0 8px 8px 0 !important; box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;">
             <div class="protection-title">${escapeHtml(protection.protection_type || 'Missing Protection')}</div>
             <div class="protection-description">${escapeHtml(protection.description || '')}</div>
-            <div class="protection-importance">
+            <div class="protection-importance" style="background-color: #e8f5e8 !important; padding: 0.75rem !important; border-radius: 6px !important; margin-top: 0.5rem !important; color: #2d5016 !important; border-left: 3px solid #4caf50 !important;">
                 <strong>Why it matters:</strong> ${escapeHtml(protection.importance || '')}
             </div>
         </div>
