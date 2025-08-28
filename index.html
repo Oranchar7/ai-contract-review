@@ -168,7 +168,8 @@
     .risk-high { background: #f8d7da; color: #721c24; }
     
     .clause-item, .missing-protection {
-      background-color: #ffeaea !important; /* Light red background for issues */
+      background: #ffeaea !important; /* Light red background for issues */
+      background-color: #ffeaea !important;
       border-left: 4px solid #dc3545 !important; /* Red side indicator */
       padding: 1rem !important;
       margin: 0.75rem 0 !important;
@@ -177,7 +178,8 @@
     }
     
     .clause-recommendation, .protection-importance {
-      background-color: #e6f9e6 !important; /* Light green background for recommendations */
+      background: #e6f9e6 !important; /* Light green background for recommendations */
+      background-color: #e6f9e6 !important;
       padding: 0.75rem !important;
       border-radius: 6px !important;
       margin-top: 0.5rem !important;
@@ -185,15 +187,21 @@
       display: block !important;
     }
     
-    /* Additional specificity to ensure colors apply */
+    /* Maximum specificity to override Bootstrap and other CSS */
     #riskyClauses .clause-item,
-    #missingProtections .missing-protection {
+    #missingProtections .missing-protection,
+    div#riskyClauses .clause-item,
+    div#missingProtections .missing-protection {
+      background: #ffeaea !important;
       background-color: #ffeaea !important;
       border-left: 4px solid #dc3545 !important;
     }
     
     #riskyClauses .clause-recommendation,
-    #missingProtections .protection-importance {
+    #missingProtections .protection-importance,
+    div#riskyClauses .clause-recommendation,
+    div#missingProtections .protection-importance {
+      background: #e6f9e6 !important;
       background-color: #e6f9e6 !important;
       border-left: 3px solid #28a745 !important;
     }
