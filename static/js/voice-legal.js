@@ -425,27 +425,64 @@ class VoiceLegalExplainer {
     }
 }
 
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM Content Loaded - Voice Legal Explainer');
+// Initialize function
+function initVoiceLegalExplainer() {
+    console.log('Attempting to initialize Voice Legal Explainer...');
     
-    // Only initialize if we're on the main page (not in an iframe, etc.)
-    if (window.self === window.top) {
-        console.log('Initializing Voice Legal Explainer...');
+    // Test if elements exist first
+    const testBtn = document.getElementById('startVoiceBtn');
+    console.log('Test button found:', !!testBtn);
+    
+    if (testBtn) {
+        try {
+            window.voiceLegalExplainer = new VoiceLegalExplainer();
+            console.log('Voice Legal Explainer initialized successfully');
+            return true;
+        } catch (error) {
+            console.error('Error creating VoiceLegalExplainer:', error);
+            return false;
+        }
+    } else {
+        console.error('Voice interface elements not found');
         
-        // Add a small delay to ensure all DOM elements are ready
-        setTimeout(() => {
-            try {
-                window.voiceLegalExplainer = new VoiceLegalExplainer();
-                console.log('Voice Legal Explainer initialized successfully');
-                
-                // Test if elements exist
-                const testBtn = document.getElementById('startVoiceBtn');
-                console.log('Test button found:', !!testBtn);
-                
-            } catch (error) {
-                console.error('Error initializing Voice Legal Explainer:', error);
-            }
-        }, 100);
+        // Debug: Try to find all buttons
+        const allButtons = document.querySelectorAll('button');
+        console.log('All buttons found:', allButtons.length);
+        allButtons.forEach((btn, i) => {
+            console.log(`Button ${i}:`, btn.id, btn.textContent?.trim());
+        });
+        return false;
+    }
+}
+
+// Multiple initialization attempts for better reliability
+console.log('Voice Legal Explainer script loaded');
+
+// Try immediate initialization
+if (document.readyState === 'loading') {
+    console.log('Document still loading, adding DOMContentLoaded listener');
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM Content Loaded event fired');
+        setTimeout(initVoiceLegalExplainer, 100);
+    });
+} else {
+    console.log('Document already loaded, initializing immediately');
+    setTimeout(initVoiceLegalExplainer, 100);
+}
+
+// Also try after window load as backup
+window.addEventListener('load', function() {
+    console.log('Window load event fired');
+    if (!window.voiceLegalExplainer) {
+        console.log('Voice explainer not initialized yet, trying again...');
+        setTimeout(initVoiceLegalExplainer, 200);
     }
 });
+
+// Final backup - try again after a longer delay
+setTimeout(() => {
+    if (!window.voiceLegalExplainer) {
+        console.log('Final initialization attempt...');
+        initVoiceLegalExplainer();
+    }
+}, 2000);
