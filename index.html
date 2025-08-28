@@ -1379,6 +1379,8 @@
             <div>${riskScore}/10</div>
           </div>
           
+          <hr style="border: 0; height: 1px; background-color: #dee2e6; margin: 1.5rem 0;">
+          
           <div class="mb-4">
             <h6><i class="fas fa-clipboard-list me-2"></i>Executive Summary</h6>
             <p class="mb-0">${analysis.summary}</p>
@@ -1387,6 +1389,7 @@
 
       if (analysis.risky_clauses && analysis.risky_clauses.length > 0) {
         html += `
+          <hr style="border: 0; height: 1px; background-color: #dee2e6; margin: 1.5rem 0;">
           <div class="mb-4">
             <h6><i class="fas fa-exclamation-triangle me-2"></i>Risk Analysis (${analysis.risky_clauses.length} items)</h6>
         `;
@@ -1407,6 +1410,7 @@
 
       if (analysis.missing_protections && analysis.missing_protections.length > 0) {
         html += `
+          <hr style="border: 0; height: 1px; background-color: #dee2e6; margin: 1.5rem 0;">
           <div class="mb-4">
             <h6><i class="fas fa-shield-alt me-2"></i>Missing Protections (${analysis.missing_protections.length} items)</h6>
         `;
@@ -1452,6 +1456,7 @@
         }).join('');
 
         html += `
+          <hr style="border: 0; height: 1px; background-color: #dee2e6; margin: 1.5rem 0;">
           <div class="mb-4">
             <h6><i class="fas fa-search me-2"></i>Detailed Analysis</h6>
             <div>${formatted}</div>
