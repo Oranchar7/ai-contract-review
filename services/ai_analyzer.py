@@ -154,14 +154,40 @@ class AIAnalyzer:
                 suggested_clause=protection_data.get('suggested_clause', '')
             ))
         
+        # Format detailed analysis with HTML classes
+        detailed_analysis = self._format_detailed_analysis_html(analysis_data.get('detailed_analysis', 'Detailed analysis not available'))
+        
         return ContractAnalysisResponse(
             risk_score=min(10, max(1, analysis_data.get('risk_score', 5))),
             summary=analysis_data.get('summary', 'Analysis completed'),
             risky_clauses=risky_clauses,
             missing_protections=missing_protections,
-            detailed_analysis=analysis_data.get('detailed_analysis', 'Detailed analysis not available'),
+            detailed_analysis=detailed_analysis,
             document_id=""  # Will be set by the main handler
         )
+    
+    def _format_detailed_analysis_html(self, raw_text: str) -> str:
+        """Format the detailed analysis text with appropriate HTML classes for styling"""
+        if not raw_text or not isinstance(raw_text, str):
+            return raw_text
+            
+        lines = raw_text.split("\n")
+        formatted_lines = []
+        
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+                
+            line_lower = line.lower()
+            if any(keyword in line_lower for keyword in ["recommendation", "recommend", "suggest", "should consider", "advised to", "better to"]):
+                formatted_lines.append(f'<div class="recommendation">{line}</div>')
+            elif any(keyword in line_lower for keyword in ["issue", "problem", "concern", "risk", "warning", "caution", "problematic", "unfavorable"]):
+                formatted_lines.append(f'<div class="issue">{line}</div>')
+            else:
+                formatted_lines.append(f'<div>{line}</div>')
+                
+        return "".join(formatted_lines)
     
     async def generate_recommendations(self, analysis: ContractAnalysisResponse) -> Dict[str, str]:
         """
