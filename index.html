@@ -8,6 +8,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
+  <!-- Cache buster: 20250128-171600 -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     :root {
@@ -182,13 +183,21 @@
     }
     
     /* Correction/Recommendation styling */
-    .risk-item .text-muted {
-      background: #e8f5e8; /* Light green background for corrections */
-      padding: 0.75rem;
-      border-radius: 6px;
-      margin-top: 0.5rem;
+    .risk-item .text-muted,
+    .clause-recommendation,
+    .protection-importance {
+      background: #e8f5e8 !important; /* Light green background for corrections */
+      padding: 0.75rem !important;
+      border-radius: 6px !important;
+      margin-top: 0.5rem !important;
       color: #2d5016 !important; /* Darker green text */
-      border-left: 3px solid #4caf50;
+      border-left: 3px solid #4caf50 !important;
+      display: block !important;
+    }
+    
+    /* Additional styling for protection items */
+    .protection-item {
+      background: #ffebee !important; /* Light red background for missing protections */
     }
     
     .legal-disclaimer {
