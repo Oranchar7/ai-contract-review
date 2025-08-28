@@ -1,4 +1,4 @@
-// Global variables
+// Global variables - Cache bust: 20250128174500
 let currentAnalysis = null;
 
 // DOM elements
