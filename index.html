@@ -592,60 +592,6 @@
       <strong>Disclaimer: For informational use only. Please consult an attorney for your specific case.</strong>
     </div>
 
-    <!-- Voice Legal Assistant -->
-    <div id="voice-legal-interface" class="voice-interface mb-4">
-      <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">
-            <i class="fas fa-microphone me-2"></i>
-            Voice Legal Assistant
-          </h5>
-          <small>Ask about legal terms using your voice</small>
-        </div>
-        <div class="card-body">
-          <div class="voice-controls text-center mb-3">
-            <button id="startVoiceBtn" class="btn btn-primary btn-lg me-2">
-              <i class="fas fa-microphone"></i>
-              Start Listening
-            </button>
-            <button id="stopVoiceBtn" class="btn btn-danger btn-lg" disabled>
-              <i class="fas fa-stop"></i>
-              Stop
-            </button>
-          </div>
-          
-          <div id="voiceStatus" class="voice-status text-center mb-3">
-            <span class="text-muted">Click "Start Listening" to ask about legal terms</span>
-          </div>
-          
-          <div id="voiceTranscript" class="voice-transcript p-3 bg-light rounded" style="min-height: 60px; display: none;">
-            <strong>You said:</strong> <span id="transcriptText"></span>
-          </div>
-          
-          <div id="voiceExplanation" class="voice-explanation mt-3" style="display: none;">
-            <div class="alert alert-info">
-              <h6><i class="fas fa-lightbulb me-2"></i>Legal Explanation:</h6>
-              <div id="explanationText"></div>
-              <div class="mt-2">
-                <button id="speakExplanationBtn" class="btn btn-sm btn-outline-primary me-2">
-                  <i class="fas fa-volume-up"></i> Listen to Explanation
-                </button>
-                <button id="askAnotherBtn" class="btn btn-sm btn-outline-secondary">
-                  <i class="fas fa-microphone"></i> Ask Another Term
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <div class="voice-examples mt-3">
-            <small class="text-muted">
-              <strong>Try saying:</strong> "What does force majeure mean?" • "Explain liquidated damages" • "What is indemnification?"
-            </small>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="row">
       <!-- Left Column: Contract Analysis -->
       <div class="col-lg-8">
@@ -804,7 +750,63 @@
           </div>
         </div>
       </div>
+    </div>
 
+    <!-- Voice Legal Assistant -->
+    <div id="voice-legal-interface" class="voice-interface mb-4">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">
+            <i class="fas fa-microphone me-2"></i>
+            Voice Legal Assistant
+          </h5>
+          <small>Ask about legal terms using your voice</small>
+        </div>
+        <div class="card-body">
+          <div class="voice-controls text-center mb-3">
+            <button id="startVoiceBtn" class="btn btn-primary btn-lg me-2">
+              <i class="fas fa-microphone"></i>
+              Start Listening
+            </button>
+            <button id="stopVoiceBtn" class="btn btn-danger btn-lg" disabled>
+              <i class="fas fa-stop"></i>
+              Stop
+            </button>
+          </div>
+          
+          <div id="voiceStatus" class="voice-status text-center mb-3">
+            <span class="text-muted">Click "Start Listening" to ask about legal terms</span>
+          </div>
+          
+          <div id="voiceTranscript" class="voice-transcript p-3 bg-light rounded" style="min-height: 60px; display: none;">
+            <strong>You said:</strong> <span id="transcriptText"></span>
+          </div>
+          
+          <div id="voiceExplanation" class="voice-explanation mt-3" style="display: none;">
+            <div class="alert alert-info">
+              <h6><i class="fas fa-lightbulb me-2"></i>Legal Explanation:</h6>
+              <div id="explanationText"></div>
+              <div class="mt-2">
+                <button id="speakExplanationBtn" class="btn btn-sm btn-outline-primary me-2">
+                  <i class="fas fa-volume-up"></i> Listen to Explanation
+                </button>
+                <button id="askAnotherBtn" class="btn btn-sm btn-outline-secondary">
+                  <i class="fas fa-microphone"></i> Ask Another Term
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="voice-examples mt-3">
+            <small class="text-muted">
+              <strong>Try saying:</strong> "What does force majeure mean?" • "Explain liquidated damages" • "What is indemnification?"
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
       <!-- Right Column: Chat Assistant & Legal Jargon Translator -->
       <div class="col-lg-4">
         <!-- Legal Jargon Translator -->
