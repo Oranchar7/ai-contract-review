@@ -540,7 +540,7 @@ def get_friendly_purpose_statement() -> str:
 
 I can also answer general legal questions. How can I assist you today?
 
-For informational use only. Please consult an attorney for your specific case."""
+Disclaimer: For informational use only. Please consult an attorney for your specific case."""
 
 async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> str:
     """Process a query through RAG system with relevance checking and test mode fallback"""
