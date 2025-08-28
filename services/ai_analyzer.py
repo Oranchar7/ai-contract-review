@@ -110,7 +110,7 @@ class AIAnalyzer:
                     "suggested_clause": "<suggested clause language to add>"
                 }}
             ],
-            "detailed_analysis": "<comprehensive analysis covering key terms, obligations, termination clauses, liability, intellectual property, confidentiality, dispute resolution, and any other significant legal considerations>"
+            "detailed_analysis": "<comprehensive analysis with proper formatting and structure. Use clear section headers, paragraph breaks, and organized content covering:\n\n**Key Terms Analysis:**\n[Analysis of key terms]\n\n**Obligations and Responsibilities:**\n[Analysis of obligations]\n\n**Termination Clauses:**\n[Analysis of termination terms]\n\n**Liability and Risk Allocation:**\n[Analysis of liability terms]\n\n**Intellectual Property:**\n[Analysis of IP terms]\n\n**Confidentiality:**\n[Analysis of confidentiality terms]\n\n**Dispute Resolution:**\n[Analysis of dispute resolution]\n\n**Overall Assessment:**\n[Final recommendations and conclusions]\n\nFormat with double line breaks between sections and clear paragraph structure.>"
         }}
         
         Focus on identifying:
@@ -129,6 +129,14 @@ class AIAnalyzer:
         {f"Focus on issues specific to {contract_type} contracts." if contract_type else ""}
         
         Provide specific, actionable recommendations for each identified issue.
+        
+        IMPORTANT FORMATTING INSTRUCTIONS FOR detailed_analysis:
+        - Use clear section headers with ** bold formatting **
+        - Separate sections with double line breaks (\\n\\n)
+        - Write in well-structured paragraphs
+        - Include specific examples and actionable advice
+        - Use bullet points where appropriate
+        - Make it readable and professional
         """
     
     def _parse_analysis_response(self, analysis_data: Dict[str, Any]) -> ContractAnalysisResponse:
