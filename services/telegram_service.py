@@ -6,6 +6,7 @@ from typing import Dict, Any, Optional
 import aiohttp
 from datetime import datetime
 from pathlib import Path
+from services.voice_legal_service import VoiceLegalService
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -22,6 +23,9 @@ class TelegramService:
         self.conversation_file = "conversation_history.json"
         self.conversation_history = self.load_conversations()
         self.max_history_length = 10  # Keep last 10 messages for context
+        
+        # Initialize voice legal service for jargon explanations
+        self.voice_legal_service = VoiceLegalService()
         
         if not self.bot_token:
             logger.warning("TELEGRAM_BOT_TOKEN not found. Telegram functionality will be unavailable.")
@@ -519,3 +523,50 @@ Disclaimer: For informational use only. Please consult an attorney for your spec
     def is_available(self) -> bool:
         """Check if Telegram service is available"""
         return self.available
+    
+    async def handle_legal_term_query(self, user_message: str) -> str:
+        """Handle legal term explanation queries using voice legal service"""
+        try:
+            # Check if this looks like a legal term question
+            legal_keywords = [
+                "what is", "what does", "explain", "define", "meaning",
+                "force majeure", "liquidated damages", "indemnification", 
+                "liability", "breach", "arbitration", "mediation",
+                "covenant", "consideration", "jurisdiction", "governing law",
+                "termination", "confidentiality", "intellectual property"
+            ]
+            
+            message_lower = user_message.lower()
+            is_legal_query = any(keyword in message_lower for keyword in legal_keywords)
+            
+            if is_legal_query:
+                # Use voice legal service to explain the term
+                result = await self.voice_legal_service.explain_legal_jargon(user_message)
+                
+                if result["type"] == "legal_explanation":
+                    # Format for Telegram
+                    response = f"💡 *Legal Explanation:*\n\n"
+                    response += result["explanation"]
+                    
+                    # Add related terms if available
+                    if result.get("related_terms"):
+                        response += f"\n\n📚 *Related Terms:* {', '.join(result['related_terms'][:3])}"
+                    
+                    response += "\n\n" + self.get_legal_disclaimer()
+                    return response
+                    
+                elif result["type"] == "redirect":
+                    response = f"🤔 {result['explanation']}\n\n"
+                    if result.get("suggestions"):
+                        response += "*Try asking:*\n"
+                        for suggestion in result["suggestions"][:3]:
+                            response += f"• {suggestion}\n"
+                    response += "\n" + self.get_legal_disclaimer()
+                    return response
+            
+            # Not a legal term query, return None to use regular chat
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error handling legal term query: {str(e)}")
+            return f"❌ Sorry, I had trouble explaining that legal term. Please try again."

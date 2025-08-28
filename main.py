@@ -550,7 +550,14 @@ async def process_telegram_query(query: str, message_data: Dict[str, Any]) -> st
         query_lower = query.lower().strip()
         chat_id = message_data.get("chat_id", 0)
         
-        # FIRST: Check if this is a legal question - handle immediately  
+        # FIRST: Check if this is a legal term explanation query
+        legal_term_response = await telegram_service.handle_legal_term_query(query)
+        if legal_term_response:
+            telegram_service.add_to_conversation_history(chat_id, "user", query)
+            telegram_service.add_to_conversation_history(chat_id, "assistant", legal_term_response)
+            return legal_term_response
+        
+        # SECOND: Check if this is a legal question - handle immediately  
         legal_keywords = ["sla", "contract", "agreement", "nda", "msa", "legal", "clause", "terms", "constructing", "analyze", "review"]
         is_legal_question = any(keyword in query_lower for keyword in legal_keywords)
         

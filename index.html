@@ -400,6 +400,143 @@
       }
     }
     
+    /* Voice Legal Explainer Styles */
+    .voice-interface {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      margin-bottom: 2rem;
+    }
+
+    .voice-interface .card {
+      border: none;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+    }
+
+    .voice-interface .card-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 15px 15px 0 0;
+      color: white;
+    }
+
+    .voice-controls {
+      padding: 20px 0;
+    }
+
+    .voice-controls .btn-lg {
+      padding: 12px 30px;
+      border-radius: 25px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .voice-controls .btn-primary {
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      border: none;
+    }
+
+    .voice-controls .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+    }
+
+    .voice-controls .btn-danger {
+      background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+      border: none;
+    }
+
+    .voice-controls .btn-danger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+    }
+
+    .voice-controls .btn:disabled {
+      opacity: 0.6;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    .voice-status {
+      font-size: 1.1em;
+      font-weight: 500;
+      padding: 15px;
+      border-radius: 10px;
+      background: rgba(102, 126, 234, 0.1);
+      border: 2px dashed rgba(102, 126, 234, 0.3);
+      margin: 15px 0;
+    }
+
+    .voice-status.listening {
+      background: rgba(220, 53, 69, 0.1);
+      border-color: rgba(220, 53, 69, 0.3);
+      animation: voicePulse 2s infinite;
+    }
+
+    @keyframes voicePulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .voice-transcript {
+      background: linear-gradient(135deg, #e3f2fd 0%, #f1f8e9 100%);
+      border: 2px solid rgba(102, 126, 234, 0.2);
+      border-radius: 10px;
+      min-height: 80px;
+      font-size: 1.1em;
+      line-height: 1.6;
+      transition: all 0.3s ease;
+    }
+
+    .voice-transcript.final-transcript {
+      border-color: #28a745;
+      background: linear-gradient(135deg, #d4edda 0%, #f8f9fa 100%);
+    }
+
+    .voice-explanation {
+      animation: voiceSlideIn 0.5s ease-out;
+    }
+
+    @keyframes voiceSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .voice-explanation .alert-info {
+      background: linear-gradient(135deg, #d1ecf1 0%, #e7f3ff 100%);
+      border: 2px solid #17a2b8;
+      border-radius: 10px;
+    }
+
+    .voice-explanation .btn-outline-primary,
+    .voice-explanation .btn-outline-secondary {
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .fa-microphone.text-danger {
+      animation: micPulse 1.5s infinite;
+    }
+
+    @keyframes micPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
     /* Clean Markdown formatting */
     .markdown-content h1,
     .markdown-content h2,
@@ -453,6 +590,60 @@
     <div class="legal-disclaimer">
       <i class="fas fa-exclamation-triangle"></i>
       <strong>Disclaimer: For informational use only. Please consult an attorney for your specific case.</strong>
+    </div>
+
+    <!-- Voice Legal Assistant -->
+    <div id="voice-legal-interface" class="voice-interface mb-4">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">
+            <i class="fas fa-microphone me-2"></i>
+            Voice Legal Assistant
+          </h5>
+          <small>Ask about legal terms using your voice</small>
+        </div>
+        <div class="card-body">
+          <div class="voice-controls text-center mb-3">
+            <button id="startVoiceBtn" class="btn btn-primary btn-lg me-2">
+              <i class="fas fa-microphone"></i>
+              Start Listening
+            </button>
+            <button id="stopVoiceBtn" class="btn btn-danger btn-lg" disabled>
+              <i class="fas fa-stop"></i>
+              Stop
+            </button>
+          </div>
+          
+          <div id="voiceStatus" class="voice-status text-center mb-3">
+            <span class="text-muted">Click "Start Listening" to ask about legal terms</span>
+          </div>
+          
+          <div id="voiceTranscript" class="voice-transcript p-3 bg-light rounded" style="min-height: 60px; display: none;">
+            <strong>You said:</strong> <span id="transcriptText"></span>
+          </div>
+          
+          <div id="voiceExplanation" class="voice-explanation mt-3" style="display: none;">
+            <div class="alert alert-info">
+              <h6><i class="fas fa-lightbulb me-2"></i>Legal Explanation:</h6>
+              <div id="explanationText"></div>
+              <div class="mt-2">
+                <button id="speakExplanationBtn" class="btn btn-sm btn-outline-primary me-2">
+                  <i class="fas fa-volume-up"></i> Listen to Explanation
+                </button>
+                <button id="askAnotherBtn" class="btn btn-sm btn-outline-secondary">
+                  <i class="fas fa-microphone"></i> Ask Another Term
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="voice-examples mt-3">
+            <small class="text-muted">
+              <strong>Try saying:</strong> "What does force majeure mean?" • "Explain liquidated damages" • "What is indemnification?"
+            </small>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="row">
@@ -1171,5 +1362,6 @@
     }
 
   </script>
+  <script src="/static/js/voice-legal.js"></script>
 </body>
 </html>
