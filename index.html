@@ -167,37 +167,24 @@
     .risk-medium { background: #fff3cd; color: #856404; }
     .risk-high { background: #f8d7da; color: #721c24; }
     
-    /* Light red background for risky clauses and missing protections */
+    /* Issues - Light red background like the example */
     .clause-item, .missing-protection {
-      background-color: #ffebee !important; /* Light red background for errors/risks */
-      border-left: 4px solid var(--secondary-color) !important;
-      padding: 1rem !important;
-      margin: 0.75rem 0 !important;
-      border-radius: 0 8px 8px 0 !important;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
+      background-color: #ffeaea !important; /* Light red background for issues */
+      border-left: 6px solid #dc3545 !important; /* Red left border */
+      padding: 15px !important;
+      margin: 15px 0 !important;
+      border-radius: 8px !important;
+      line-height: 1.6 !important;
     }
     
-    /* Light green background for recommendations and importance sections */
+    /* Recommendations - Light green background like the example */
     .clause-recommendation, .protection-importance {
-      background-color: #e8f5e8 !important; /* Light green background for corrections */
-      padding: 0.75rem !important;
-      border-radius: 6px !important;
-      margin-top: 0.5rem !important;
-      color: #2d5016 !important; /* Darker green text */
-      border-left: 3px solid #4caf50 !important;
-      display: block !important;
-    }
-    
-    /* Additional specificity for contract analysis sections */
-    #riskyClauses .clause-item,
-    #missingProtections .missing-protection {
-      background-color: #ffebee !important;
-    }
-    
-    #riskyClauses .clause-recommendation,
-    #missingProtections .protection-importance {
-      background-color: #e8f5e8 !important;
-      color: #2d5016 !important;
+      background-color: #e6f9e6 !important; /* Light green background for recommendations */
+      border-left: 6px solid #28a745 !important; /* Green left border */
+      padding: 15px !important;
+      margin-top: 10px !important;
+      border-radius: 8px !important;
+      line-height: 1.6 !important;
     }
     
     /* 1.5 line spacing for detailed analysis */

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contract Analysis Results</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+      color: #222;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    .section {
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 8px;
+      line-height: 1.6;
+    }
+
+    .recommendation {
+      background-color: #e6f9e6;
+      border-left: 6px solid #28a745;
+    }
+
+    .issue {
+      background-color: #ffeaea;
+      border-left: 6px solid #dc3545;
+    }
+
+    .disclaimer {
+      margin-top: 25px;
+      padding: 10px;
+      font-size: 0.9rem;
+      text-align: center;
+      color: #555;
+      background: #f1f1f1;
+      border-radius: 6px;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 15px;
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Contract Analysis</h1>
+    <div id="results"></div>
+    <div class="disclaimer">
+      Disclaimer: This tool provides legal insights but is not a substitute for professional legal advice.
+    </div>
+  </div>
+
+  <script>
+    // Example dynamic AI response
+    const aiResponse = {
+      recommendations: [
+        "Add a termination clause to protect your rights.",
+        "Include late payment penalties for better enforcement."
+      ],
+      issues: [
+        "Conflicting payment terms between Sections 3 and 5.",
+        "Missing data privacy clause, required by state regulations."
+      ]
+    };
+
+    const resultsContainer = document.getElementById("results");
+
+    // Render recommendations
+    aiResponse.recommendations.forEach(rec => {
+      const div = document.createElement("div");
+      div.classList.add("section", "recommendation");
+      div.innerHTML = `<strong>Recommendation:</strong> ${rec}`;
+      resultsContainer.appendChild(div);
+    });
+
+    // Render issues
+    aiResponse.issues.forEach(issue => {
+      const div = document.createElement("div");
+      div.classList.add("section", "issue");
+      div.innerHTML = `<strong>Issue:</strong> ${issue}`;
+      resultsContainer.appendChild(div);
+    });
+  </script>
+</body>
+</html>
