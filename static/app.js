@@ -157,15 +157,18 @@ function displayRiskyClauses(clauses) {
         return;
     }
     
-    container.innerHTML = clauses.map(clause => `
-        <div class="flagged-section">
+    container.innerHTML = clauses.map(clause => {
+        // Create elements and apply classes like risk score does
+        return `
+        <div class="clause-item">
             <div class="clause-title"><strong>${escapeHtml(clause.clause_type || 'Risky Clause')}</strong></div>
             <div class="clause-description">${escapeHtml(clause.description || '')}</div>
-            <div class="correction-section" style="margin-top: 0.5rem;">
+            <div class="clause-recommendation">
                 <strong>Recommendation:</strong> ${escapeHtml(clause.recommendation || '')}
             </div>
         </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 function displayMissingProtections(protections) {
@@ -176,15 +179,18 @@ function displayMissingProtections(protections) {
         return;
     }
     
-    container.innerHTML = protections.map(protection => `
-        <div class="flagged-section">
+    container.innerHTML = protections.map(protection => {
+        // Create elements and apply classes like risk score does
+        return `
+        <div class="missing-protection">
             <div class="protection-title"><strong>${escapeHtml(protection.protection_type || 'Missing Protection')}</strong></div>
             <div class="protection-description">${escapeHtml(protection.description || '')}</div>
-            <div class="correction-section" style="margin-top: 0.5rem;">
+            <div class="protection-importance">
                 <strong>Why it matters:</strong> ${escapeHtml(protection.importance || '')}
             </div>
         </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 function formatDetailedSummary(detailedAnalysis) {
@@ -194,7 +200,7 @@ function formatDetailedSummary(detailedAnalysis) {
             return `<div style="line-height: 1.5;">${detailedAnalysis}</div>`;
         }
         
-        // Split into paragraphs and format properly with color coding
+        // Split into paragraphs and format properly with conditional filtering like risk score
         const paragraphs = detailedAnalysis.split(/\n\s*\n/).filter(p => p.trim().length > 0);
         
         return paragraphs.map(paragraph => {
@@ -206,27 +212,32 @@ function formatDetailedSummary(detailedAnalysis) {
                 return `<h6 class="analysis-header">${escapeHtml(trimmed.replace(/\*\*/g, ''))}</h6>`;
             }
             
-            // Color code based on content - Issues/Problems (Red)
+            // Apply conditional classes like risk score does
+            let cssClass = 'neutral-content';
+            
+            // Filter for issues/problems (flagged content)
             if (lowerCase.includes('risk') || lowerCase.includes('issue') || lowerCase.includes('problem') || 
                 lowerCase.includes('concern') || lowerCase.includes('warning') || lowerCase.includes('caution') ||
                 lowerCase.includes('unfavorable') || lowerCase.includes('problematic') || lowerCase.includes('lacks') ||
                 lowerCase.includes('missing') || lowerCase.includes('absent') || lowerCase.includes('unclear') ||
                 lowerCase.includes('ambiguous') || lowerCase.includes('one-sided') || lowerCase.includes('biased')) {
-                return `<div class="flagged-section">${escapeHtml(trimmed)}</div>`;
+                cssClass = 'issue';
             }
             
-            // Color code based on content - Recommendations/Solutions (Green)
+            // Filter for recommendations/solutions (corrections)
             else if (lowerCase.includes('recommend') || lowerCase.includes('suggest') || lowerCase.includes('should') ||
                      lowerCase.includes('consider') || lowerCase.includes('advised') || lowerCase.includes('better') ||
                      lowerCase.includes('improvement') || lowerCase.includes('enhance') || lowerCase.includes('add') ||
                      lowerCase.includes('include') || lowerCase.includes('ensure') || lowerCase.includes('clarify') ||
                      lowerCase.includes('negotiate') || lowerCase.includes('request') || lowerCase.includes('favorable')) {
-                return `<div class="correction-section">${escapeHtml(trimmed)}</div>`;
+                cssClass = 'recommendation';
             }
             
-            // Regular paragraph with neutral styling
-            else {
-                return `<p class="neutral-content">${escapeHtml(trimmed)}</p>`;
+            // Apply the filtered class conditionally 
+            if (cssClass === 'neutral-content') {
+                return `<p class="${cssClass}">${escapeHtml(trimmed)}</p>`;
+            } else {
+                return `<div class="${cssClass}">${escapeHtml(trimmed)}</div>`;
             }
         }).join('');
     }
