@@ -110,7 +110,15 @@ async def read_root(request: Request):
     # Insert Firebase config before closing </head> tag
     html_content = html_content.replace('</head>', f'{firebase_config}</head>')
     
-    return HTMLResponse(content=html_content)
+    # Create response with aggressive cache-busting headers
+    response = HTMLResponse(content=html_content)
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0, private"
+    response.headers["Pragma"] = "no-cache" 
+    response.headers["Expires"] = "0"
+    response.headers["Last-Modified"] = datetime.now().strftime("%a, %d %b %Y %H:%M:%S GMT")
+    response.headers["ETag"] = f'"{hash(html_content)}"'
+    
+    return response
 
 @app.post("/analyze")
 async def analyze_contract(
