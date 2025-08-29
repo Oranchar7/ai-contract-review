@@ -107,8 +107,11 @@ async def read_root(request: Request):
     </script>
     """
     
-    # Add timestamp for cache busting
+    # Add timestamp for cache busting  
     timestamp = str(int(datetime.now().timestamp()))
+    
+    # Force content change to bust Replit webview cache
+    html_content = html_content.replace('CACHE BUSTED VERSION 2024', f'CACHE BUSTED VERSION {timestamp}')
     
     # Insert cache-busting script and Firebase config before closing </head> tag
     cache_bust_script = f"""
