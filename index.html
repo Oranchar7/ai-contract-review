@@ -891,35 +891,114 @@
             
             <!-- DEDICATED ANALYSIS CONTAINER - ALWAYS VISIBLE FOR STYLING -->
             <div id="analysisReport" class="analysis-container" style="
-              border: 2px solid #dee2e6 !important; 
-              border-radius: 12px !important; 
-              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important; 
-              background: white !important; 
-              padding: 24px !important; 
-              margin: 20px 0 !important;
+              background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
+              border: 1px solid #e3e6ea !important; 
+              border-radius: 16px !important; 
+              box-shadow: 
+                0 8px 25px rgba(0, 0, 0, 0.08),
+                0 3px 10px rgba(0, 0, 0, 0.05) !important; 
+              padding: 28px !important; 
+              margin: 24px 0 !important;
               min-height: 200px !important;
               display: block !important;
+              position: relative !important;
+              overflow: hidden !important;
             ">
-              <div class="placeholder-content" style="color: #666; text-align: center; padding: 30px 20px;">
-                <h5 style="color: #495057; margin-bottom: 16px; font-weight: 500;">Contract Analysis Results</h5>
-                <p style="margin-bottom: 20px; color: #6c757d;">Upload and analyze your contract to see detailed risk assessment and recommendations</p>
-                <button onclick="showSampleFormatting()" class="btn btn-outline-primary btn-sm">
-                  <i class="fas fa-eye me-1"></i>Preview Sample Format
+              <div class="placeholder-content" style="text-align: center; padding: 35px 25px; position: relative; z-index: 2;">
+                <div style="
+                  display: inline-flex;
+                  align-items: center;
+                  justify-content: center;
+                  width: 60px;
+                  height: 60px;
+                  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+                  border-radius: 50%;
+                  margin-bottom: 20px;
+                  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.25);
+                ">
+                  <i class="fas fa-file-contract" style="color: white; font-size: 24px;"></i>
+                </div>
+                
+                <h5 style="
+                  color: #1f2937; 
+                  margin-bottom: 12px; 
+                  font-weight: 600;
+                  font-size: 1.25rem;
+                  letter-spacing: 0.3px;
+                ">Contract Analysis Results</h5>
+                
+                <p style="
+                  margin-bottom: 24px; 
+                  color: #6b7280;
+                  line-height: 1.6;
+                  max-width: 420px;
+                  margin-left: auto;
+                  margin-right: auto;
+                ">Upload and analyze your contract to see detailed risk assessment and professional recommendations</p>
+                
+                <button onclick="showSampleFormatting()" style="
+                  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+                  border: none;
+                  color: white;
+                  padding: 12px 24px;
+                  border-radius: 25px;
+                  font-weight: 500;
+                  font-size: 0.9rem;
+                  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+                  transition: all 0.2s ease;
+                  cursor: pointer;
+                " onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 16px rgba(59, 130, 246, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(59, 130, 246, 0.3)'">
+                  <i class="fas fa-eye" style="margin-right: 8px;"></i>Preview Sample Format
                 </button>
               </div>
               
               <!-- PROFESSIONAL SAMPLE CONTENT -->
-              <div class="sample-analysis" style="display: none;">
-                <div style="text-align: right; margin-bottom: 20px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
-                  <button onclick="hideSampleFormatting()" class="btn btn-outline-secondary btn-sm">
-                    <i class="fas fa-times me-1"></i>Close Preview
+              <div class="sample-analysis" style="display: none; position: relative; z-index: 2;">
+                <div style="text-align: right; margin-bottom: 20px; border-bottom: 1px solid #e5e7eb; padding-bottom: 15px;">
+                  <button onclick="hideSampleFormatting()" style="
+                    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+                    border: none;
+                    color: white;
+                    padding: 8px 16px;
+                    border-radius: 20px;
+                    font-weight: 500;
+                    font-size: 0.85rem;
+                    box-shadow: 0 3px 8px rgba(107, 114, 128, 0.25);
+                    transition: all 0.2s ease;
+                    cursor: pointer;
+                  " onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <i class="fas fa-times" style="margin-right: 6px;"></i>Close Preview
                   </button>
                 </div>
                 
-                <div class="risk-score" style="background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 25px; border: 1px solid #e9ecef;">
-                  <div style="font-size: 1.1rem; font-weight: 600; color: #495057; margin-bottom: 8px;">Overall Risk Score</div>
-                  <div style="font-size: 2.5rem; font-weight: 700; color: #dc3545;">7/10</div>
-                  <small style="color: #6c757d;">High Risk - Requires Attention</small>
+                <div class="risk-score" style="
+                  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%); 
+                  padding: 24px; 
+                  border-radius: 12px; 
+                  text-align: center; 
+                  margin-bottom: 30px; 
+                  border: 1px solid #e5e7eb;
+                  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+                ">
+                  <div style="font-size: 1.1rem; font-weight: 600; color: #374151; margin-bottom: 10px;">Overall Risk Score</div>
+                  <div style="
+                    font-size: 2.8rem; 
+                    font-weight: 700; 
+                    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                    margin-bottom: 8px;
+                  ">7/10</div>
+                  <div style="
+                    color: white; 
+                    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+                    padding: 6px 16px;
+                    border-radius: 15px;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                    display: inline-block;
+                  ">High Risk - Requires Attention</div>
                 </div>
                 
                 <hr style="border: 0; height: 1px; background-color: #dee2e6; margin: 30px 0;">
