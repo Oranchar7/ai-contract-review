@@ -900,76 +900,8 @@
               min-height: 200px !important;
               display: block !important;
             ">
-              <div class="placeholder-content" style="color: #666; font-style: italic; text-align: center; padding: 20px 0;">
-                📄 Contract analysis results will appear here with proper formatting and color coding
-                <br><br>
-                <button onclick="showSampleFormatting()" class="btn btn-outline-primary btn-sm">
-                  <i class="fas fa-eye me-1"></i>Show Sample Formatting
-                </button>
-              </div>
-              
-              <!-- SAMPLE FORMATTED CONTENT FOR TESTING -->
-              <div class="sample-analysis" style="display: none;">
-                <div style="text-align: right; margin-bottom: 15px;">
-                  <button onclick="hideSampleFormatting()" class="btn btn-outline-secondary btn-sm">
-                    <i class="fas fa-times me-1"></i>Close Sample
-                  </button>
-                </div>
-                
-                <div class="risk-score" style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
-                  <div style="font-size: 1.1rem; font-weight: bold; color: #495057;">Overall Risk Score</div>
-                  <div style="font-size: 2rem; font-weight: bold; color: #dc3545;">7/10</div>
-                </div>
-                
-                <hr style="border: 0; height: 1px; background-color: #dee2e6; margin: 24px 0;">
-                
-                <div style="margin: 24px 0;">
-                  <h6><i class="fas fa-clipboard-list me-2"></i>Executive Summary</h6>
-                  <p>This is a sample executive summary with proper paragraph formatting and spacing.</p>
-                </div>
-                
-                <hr style="border: 0; height: 1px; background-color: #dee2e6; margin: 24px 0;">
-                
-                <div style="margin: 24px 0;">
-                  <h6><i class="fas fa-exclamation-triangle me-2"></i>Risk Analysis Sample</h6>
-                  
-                  <!-- ISSUE EXAMPLE - RED -->
-                  <div style="background-color: #ffeaea !important; border-left: 4px solid #dc3545 !important; border: 1px solid #f5a5a5 !important; padding: 15px !important; margin: 12px 0 !important; border-radius: 8px !important;">
-                    <div class="fw-bold">Sample Risky Clause</div>
-                    <div class="mb-2">This clause contains problematic language that favors one party unfairly.</div>
-                  </div>
-                  
-                  <!-- RECOMMENDATION EXAMPLE - GREEN -->
-                  <div style="margin-top: 12px; border-top: 2px solid #28a745; padding-top: 8px;">
-                    <h6 style="color: #28a745; font-size: 0.9rem; font-weight: bold; margin-bottom: 8px;">
-                      <i class="fas fa-lightbulb me-1"></i>💡 CORRECTION & RECOMMENDATION
-                    </h6>
-                    <div style="background-color: #e6f9e6 !important; border-left: 4px solid #28a745 !important; border: 1px solid #a8e6a2 !important; padding: 15px !important; margin: 0 !important; border-radius: 8px !important;">
-                      Negotiate to add balanced language that protects both parties' interests equally.
-                    </div>
-                  </div>
-                </div>
-                
-                <hr style="border: 0; height: 1px; background-color: #dee2e6; margin: 24px 0;">
-                
-                <div style="margin: 24px 0;">
-                  <h6><i class="fas fa-search me-2"></i>Detailed Analysis Sample</h6>
-                  
-                  <!-- FORMATTED PARAGRAPH WITH ISSUES -->
-                  <div style="background-color: #ffeaea; padding: 15px; margin: 15px 0; border-radius: 8px; border-left: 5px solid #dc3545; border: 1px solid #f5a5a5;">
-                    <strong style="color: #dc3545;">⚠️ Issue:</strong> This paragraph demonstrates how issues and risks are highlighted with red backgrounds for easy identification.
-                  </div>
-                  
-                  <!-- FORMATTED PARAGRAPH WITH RECOMMENDATIONS -->
-                  <div style="background-color: #e6f9e6; padding: 15px; margin: 15px 0; border-radius: 8px; border-left: 5px solid #28a745; border: 1px solid #a8e6a2;">
-                    <strong style="color: #28a745;">💡 Recommendation:</strong> This paragraph shows how recommendations and suggestions are highlighted with green backgrounds.
-                  </div>
-                  
-                  <!-- REGULAR PARAGRAPH -->
-                  <p style="line-height: 1.7; margin: 18px 0; text-align: justify; padding: 10px 0;">
-                    This is a regular paragraph with proper spacing and formatting that doesn't contain specific risk or recommendation keywords.
-                  </p>
-                </div>
+              <div class="placeholder-content" style="color: #666; font-style: italic; text-align: center; padding: 40px 0;">
+                Contract analysis results will appear here
               </div>
             </div>
           </div>
@@ -1544,19 +1476,6 @@
       analysisReport.innerHTML = html;
     }
     
-    function showSampleFormatting() {
-      const placeholder = document.querySelector('.placeholder-content');
-      const sampleContent = document.querySelector('.sample-analysis');
-      if (placeholder) placeholder.style.display = 'none';
-      if (sampleContent) sampleContent.style.display = 'block';
-    }
-    
-    function hideSampleFormatting() {
-      const placeholder = document.querySelector('.placeholder-content');
-      const sampleContent = document.querySelector('.sample-analysis');
-      if (placeholder) placeholder.style.display = 'block';
-      if (sampleContent) sampleContent.style.display = 'none';
-    }
     
     // Handle "Other" contract type selection
     if (contractType) {
