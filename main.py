@@ -138,8 +138,10 @@ async def read_root(request: Request):
     response.headers["Pragma"] = "no-cache" 
     response.headers["Expires"] = "0"
     response.headers["Last-Modified"] = datetime.now().strftime("%a, %d %b %Y %H:%M:%S GMT")
-    response.headers["ETag"] = f'"{hash(html_content)}"'
+    response.headers["ETag"] = f'"{timestamp}-{hash(html_content)}"'
     response.headers["Vary"] = "*"
+    response.headers["X-Timestamp"] = timestamp
+    response.headers["X-Content-Hash"] = str(hash(html_content))
     
     return response
 
