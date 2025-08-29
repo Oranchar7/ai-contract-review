@@ -910,6 +910,12 @@
               
               <!-- SAMPLE FORMATTED CONTENT FOR TESTING -->
               <div class="sample-analysis" style="display: none;">
+                <div style="text-align: right; margin-bottom: 15px;">
+                  <button onclick="hideSampleFormatting()" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-times me-1"></i>Close Sample
+                  </button>
+                </div>
+                
                 <div class="risk-score" style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
                   <div style="font-size: 1.1rem; font-weight: bold; color: #495057;">Overall Risk Score</div>
                   <div style="font-size: 2rem; font-weight: bold; color: #dc3545;">7/10</div>
@@ -1543,6 +1549,13 @@
       const sampleContent = document.querySelector('.sample-analysis');
       if (placeholder) placeholder.style.display = 'none';
       if (sampleContent) sampleContent.style.display = 'block';
+    }
+    
+    function hideSampleFormatting() {
+      const placeholder = document.querySelector('.placeholder-content');
+      const sampleContent = document.querySelector('.sample-analysis');
+      if (placeholder) placeholder.style.display = 'block';
+      if (sampleContent) sampleContent.style.display = 'none';
     }
     
     // Handle "Other" contract type selection
