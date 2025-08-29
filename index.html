@@ -1448,41 +1448,59 @@
       }
 
       if (analysis.detailed_analysis) {
-        // Format detailed analysis with proper paragraphs and color coding
-        let paragraphs = analysis.detailed_analysis.split(/\n\s*\n/);
+        // Force paragraph breaks by splitting on common sentence patterns
+        let text = analysis.detailed_analysis;
         
-        // If no double newlines found, try single newlines
-        if (paragraphs.length === 1) {
-          paragraphs = analysis.detailed_analysis.split('\n');
-        }
+        // Split on multiple patterns to ensure paragraph breaks
+        text = text.replace(/\. ([A-Z][a-z])/g, '.|BREAK|$1');
+        text = text.replace(/\: ([A-Z][a-z])/g, ':|BREAK|$1');
+        text = text.replace(/\n\s*\n/g, '|BREAK|');
+        text = text.replace(/\n/g, '|BREAK|');
         
-        // If still one big block, split on periods followed by space and capital letter
-        if (paragraphs.length === 1 && analysis.detailed_analysis.length > 500) {
-          paragraphs = analysis.detailed_analysis.split(/\.\s+(?=[A-Z])/);
-          paragraphs = paragraphs.map(p => p.trim() + (p.endsWith('.') ? '' : '.'));
-        }
+        let paragraphs = text.split('|BREAK|').filter(p => p.trim().length > 10);
         
-        const formatted = paragraphs.filter(p => p.trim()).map(paragraph => {
-          const text = paragraph.trim();
-          const lower = text.toLowerCase();
+        const formatted = paragraphs.map(paragraph => {
+          const cleanText = paragraph.trim();
+          const lower = cleanText.toLowerCase();
           
-          // Headers (short lines or ending with colon)
-          if (text.endsWith(':') || text.length < 60) {
-            return `<h6 style="color: #0d6efd; font-weight: bold; margin: 16px 0 8px 0; line-height: 1.5;">${text.replace(/\*\*/g, '')}</h6>`;
+          // Always apply color coding - check for ANY matching keywords
+          let hasRiskKeyword = false;
+          let hasRecommendKeyword = false;
+          
+          const riskWords = ['risk', 'issue', 'problem', 'concern', 'warning', 'unfavorable', 'problematic', 'missing', 'unclear', 'ambiguous', 'weak', 'vulnerable', 'danger', 'fault', 'flaw', 'defect'];
+          const recommendWords = ['recommend', 'suggest', 'should', 'consider', 'better', 'improvement', 'ensure', 'clarify', 'negotiate', 'add', 'include', 'modify', 'change', 'strengthen'];
+          
+          for (let word of riskWords) {
+            if (lower.includes(word)) {
+              hasRiskKeyword = true;
+              break;
+            }
           }
           
-          // Issues (red background)
-          if (lower.includes('risk') || lower.includes('issue') || lower.includes('problem') || lower.includes('concern') || lower.includes('warning') || lower.includes('unfavorable') || lower.includes('problematic') || lower.includes('missing') || lower.includes('unclear') || lower.includes('ambiguous')) {
-            return `<div style="background-color: #ffeaea; padding: 12px; margin: 12px 0; border-radius: 8px; border-left: 4px solid #dc3545; border: 1px solid #f5a5a5; line-height: 1.6;">${text}</div>`;
+          for (let word of recommendWords) {
+            if (lower.includes(word)) {
+              hasRecommendKeyword = true;
+              break;
+            }
           }
           
-          // Recommendations (green background)  
-          if (lower.includes('recommend') || lower.includes('suggest') || lower.includes('should') || lower.includes('consider') || lower.includes('better') || lower.includes('improvement') || lower.includes('ensure') || lower.includes('clarify') || lower.includes('negotiate')) {
-            return `<div style="background-color: #e6f9e6; padding: 12px; margin: 12px 0; border-radius: 8px; border-left: 4px solid #28a745; border: 1px solid #a8e6a2; line-height: 1.6;">${text}</div>`;
+          // Headers (very short text or ends with colon)
+          if (cleanText.endsWith(':') || cleanText.length < 50) {
+            return `<h6 style="color: #0d6efd !important; font-weight: bold !important; margin: 20px 0 10px 0 !important; font-size: 1.1rem !important; border-bottom: 2px solid #0d6efd !important; padding-bottom: 5px !important;">${cleanText}</h6>`;
           }
           
-          // Regular paragraphs
-          return `<p style="line-height: 1.6; margin: 16px 0; text-align: justify;">${text}</p>`;
+          // Issues - RED background for problems
+          if (hasRiskKeyword) {
+            return `<div style="background-color: #ffeaea !important; padding: 15px !important; margin: 15px 0 !important; border-radius: 8px !important; border-left: 5px solid #dc3545 !important; border: 1px solid #f5a5a5 !important; line-height: 1.7 !important; box-shadow: 0 2px 4px rgba(220,53,69,0.1) !important;"><strong style="color: #dc3545;">⚠️ Issue:</strong> ${cleanText}</div>`;
+          }
+          
+          // Recommendations - GREEN background for solutions  
+          if (hasRecommendKeyword) {
+            return `<div style="background-color: #e6f9e6 !important; padding: 15px !important; margin: 15px 0 !important; border-radius: 8px !important; border-left: 5px solid #28a745 !important; border: 1px solid #a8e6a2 !important; line-height: 1.7 !important; box-shadow: 0 2px 4px rgba(40,167,69,0.1) !important;"><strong style="color: #28a745;">💡 Recommendation:</strong> ${cleanText}</div>`;
+          }
+          
+          // Regular paragraphs - well spaced
+          return `<p style="line-height: 1.7 !important; margin: 18px 0 !important; text-align: justify !important; padding: 10px 0 !important; font-size: 1rem !important;">${cleanText}</p>`;
         }).join('');
 
         html += `
