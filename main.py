@@ -107,8 +107,27 @@ async def read_root(request: Request):
     </script>
     """
     
-    # Insert Firebase config before closing </head> tag
-    html_content = html_content.replace('</head>', f'{firebase_config}</head>')
+    # Add timestamp for cache busting
+    timestamp = str(int(datetime.now().timestamp()))
+    
+    # Insert cache-busting script and Firebase config before closing </head> tag
+    cache_bust_script = f"""
+    <script>
+        // Force reload of cached content
+        if (!sessionStorage.getItem('cache_cleared_{timestamp}')) {{
+            sessionStorage.setItem('cache_cleared_{timestamp}', 'true');
+            if ('caches' in window) {{
+                caches.keys().then(names => {{
+                    names.forEach(name => caches.delete(name));
+                }});
+            }}
+            window.location.reload(true);
+        }}
+    </script>
+    {firebase_config}
+    """
+    
+    html_content = html_content.replace('</head>', f'{cache_bust_script}</head>')
     
     # Create response with aggressive cache-busting headers
     response = HTMLResponse(content=html_content)
@@ -117,6 +136,7 @@ async def read_root(request: Request):
     response.headers["Expires"] = "0"
     response.headers["Last-Modified"] = datetime.now().strftime("%a, %d %b %Y %H:%M:%S GMT")
     response.headers["ETag"] = f'"{hash(html_content)}"'
+    response.headers["Vary"] = "*"
     
     return response
 
