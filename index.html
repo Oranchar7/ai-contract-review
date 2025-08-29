@@ -1448,66 +1448,13 @@
       }
 
       if (analysis.detailed_analysis) {
-        // Force paragraph breaks by splitting on common sentence patterns
-        let text = analysis.detailed_analysis;
-        
-        // Split on multiple patterns to ensure paragraph breaks
-        text = text.replace(/\. ([A-Z][a-z])/g, '.|BREAK|$1');
-        text = text.replace(/\: ([A-Z][a-z])/g, ':|BREAK|$1');
-        text = text.replace(/\n\s*\n/g, '|BREAK|');
-        text = text.replace(/\n/g, '|BREAK|');
-        
-        let paragraphs = text.split('|BREAK|').filter(p => p.trim().length > 10);
-        
-        const formatted = paragraphs.map(paragraph => {
-          const cleanText = paragraph.trim();
-          const lower = cleanText.toLowerCase();
-          
-          // Always apply color coding - check for ANY matching keywords
-          let hasRiskKeyword = false;
-          let hasRecommendKeyword = false;
-          
-          const riskWords = ['risk', 'issue', 'problem', 'concern', 'warning', 'unfavorable', 'problematic', 'missing', 'unclear', 'ambiguous', 'weak', 'vulnerable', 'danger', 'fault', 'flaw', 'defect'];
-          const recommendWords = ['recommend', 'suggest', 'should', 'consider', 'better', 'improvement', 'ensure', 'clarify', 'negotiate', 'add', 'include', 'modify', 'change', 'strengthen'];
-          
-          for (let word of riskWords) {
-            if (lower.includes(word)) {
-              hasRiskKeyword = true;
-              break;
-            }
-          }
-          
-          for (let word of recommendWords) {
-            if (lower.includes(word)) {
-              hasRecommendKeyword = true;
-              break;
-            }
-          }
-          
-          // Headers (very short text or ends with colon)
-          if (cleanText.endsWith(':') || cleanText.length < 50) {
-            return `<h6 style="color: #0d6efd !important; font-weight: bold !important; margin: 20px 0 10px 0 !important; font-size: 1.1rem !important; border-bottom: 2px solid #0d6efd !important; padding-bottom: 5px !important;">${cleanText}</h6>`;
-          }
-          
-          // Issues - RED background for problems
-          if (hasRiskKeyword) {
-            return `<div style="background-color: #ffeaea !important; padding: 15px !important; margin: 15px 0 !important; border-radius: 8px !important; border-left: 5px solid #dc3545 !important; border: 1px solid #f5a5a5 !important; line-height: 1.7 !important; box-shadow: 0 2px 4px rgba(220,53,69,0.1) !important;"><strong style="color: #dc3545;">⚠️ Issue:</strong> ${cleanText}</div>`;
-          }
-          
-          // Recommendations - GREEN background for solutions  
-          if (hasRecommendKeyword) {
-            return `<div style="background-color: #e6f9e6 !important; padding: 15px !important; margin: 15px 0 !important; border-radius: 8px !important; border-left: 5px solid #28a745 !important; border: 1px solid #a8e6a2 !important; line-height: 1.7 !important; box-shadow: 0 2px 4px rgba(40,167,69,0.1) !important;"><strong style="color: #28a745;">💡 Recommendation:</strong> ${cleanText}</div>`;
-          }
-          
-          // Regular paragraphs - well spaced
-          return `<p style="line-height: 1.7 !important; margin: 18px 0 !important; text-align: justify !important; padding: 10px 0 !important; font-size: 1rem !important;">${cleanText}</p>`;
-        }).join('');
+        // The server already formats this properly - just display it as-is
 
         html += `
           <hr style="border: 0; height: 1px; background-color: #dee2e6; margin: 1.5rem 0;">
           <div class="mb-4" style="margin-top: 1.5rem;">
             <h6><i class="fas fa-search me-2"></i>Detailed Analysis</h6>
-            <div>${formatted}</div>
+            <div>${analysis.detailed_analysis}</div>
           </div>
         `;
       }

@@ -110,7 +110,7 @@ class AIAnalyzer:
                     "suggested_clause": "<suggested clause language to add>"
                 }}
             ],
-            "detailed_analysis": "<comprehensive analysis with proper formatting and structure. Use clear section headers, paragraph breaks, and organized content covering:\n\n**Key Terms Analysis:**\n[Analysis of key terms]\n\n**Obligations and Responsibilities:**\n[Analysis of obligations]\n\n**Termination Clauses:**\n[Analysis of termination terms]\n\n**Liability and Risk Allocation:**\n[Analysis of liability terms]\n\n**Intellectual Property:**\n[Analysis of IP terms]\n\n**Confidentiality:**\n[Analysis of confidentiality terms]\n\n**Dispute Resolution:**\n[Analysis of dispute resolution]\n\n**Overall Assessment:**\n[Final recommendations and conclusions]\n\nFormat with double line breaks between sections and clear paragraph structure.>"
+            "detailed_analysis": "CRITICAL: Format this as clearly separated paragraphs using \\n\\n between sections. Structure as:\n\n**Key Terms Analysis:**\n[2-3 sentences about key terms]\n\n**Risk Assessment:**\n[2-3 sentences about risks found]\n\n**Missing Protections:**\n[2-3 sentences about what's missing]\n\n**Recommendations:**\n[2-3 sentences with specific actions]\n\n**Overall Assessment:**\n[2-3 sentences with final conclusion]\n\nUse \\n\\n between each section. Keep each paragraph focused and readable. DO NOT create one long block of text."
         }}
         
         Focus on identifying:
