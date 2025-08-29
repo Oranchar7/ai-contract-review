@@ -334,6 +334,15 @@ function hideError() {
 }
 
 function showResults() {
+    // Hide placeholder content and show actual results
+    const placeholderContent = document.querySelector('.placeholder-content');
+    const sampleAnalysis = document.querySelector('.sample-analysis');
+    const actualResults = document.getElementById('actualResults');
+    
+    if (placeholderContent) placeholderContent.style.display = 'none';
+    if (sampleAnalysis) sampleAnalysis.style.display = 'none';
+    if (actualResults) actualResults.style.display = 'block';
+    
     resultsContainer.style.display = 'block';
     resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
