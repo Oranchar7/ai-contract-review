@@ -180,10 +180,10 @@ function displayMissingProtections(protections) {
     }
     
     container.innerHTML = protections.map(protection => {
-        // Create elements and apply classes like risk score does
+        // Create elements and apply GREEN classes for recommendations
         return `
-        <div class="missing-protection">
-            <div class="protection-title"><strong>${escapeHtml(protection.protection_type || 'Missing Protection')}</strong></div>
+        <div class="protection-item recommendation" style="background: #e6f9e6 !important; border-left: 4px solid #16a34a !important; border: 1px solid #a5d6a5 !important; padding: 12px !important; margin: 8px 0 !important; border-radius: 8px !important; color: #0d5318 !important;">
+            <div class="protection-title"><strong>${escapeHtml(protection.protection_type || 'Recommended Protection')}</strong></div>
             <div class="protection-description">${escapeHtml(protection.description || '')}</div>
             <div class="protection-importance">
                 <strong>Why it matters:</strong> ${escapeHtml(protection.importance || '')}
